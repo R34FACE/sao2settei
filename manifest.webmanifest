@@ -1,16 +1,31 @@
 {
-  "name": "SAO2 設定推測カウンター",
-  "short_name": "SAO2設定推測",
-  "description": "スマスロ ソードアート・オンラインII 実戦データ入力・設定推測ツール",
+  "name": "SAO2 判別カウンター",
+  "short_name": "SAO2判別",
+  "description": "スマスロ ソードアート・オンラインⅡ 設定推測・通常モード・GGOモード記録ツール",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#070b14",
   "theme_color": "#0b1020",
+  "orientation": "portrait-primary",
   "icons": [
-    {"src":"./icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"./icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
-    {"src":"./icons/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
