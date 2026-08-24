@@ -74,7 +74,7 @@
   .install-note{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(69,227,155,.08);border:1px solid rgba(69,227,155,.22);font-size:12px;color:#b8f5d9}
   .install-note.show{display:block}
 
-  .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}
+  .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}
   .tab-btn{min-height:40px;border:1px solid #2c3b58;border-radius:10px;background:#0c1424;color:#b8c8df;font-size:12px;font-weight:800}
   .tab-btn.active{background:linear-gradient(135deg,rgba(77,215,255,.20),rgba(124,92,255,.18));border-color:rgba(77,215,255,.55);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
   .tab-panel{display:none}.tab-panel.active{display:block}
@@ -86,15 +86,17 @@
   .statbox{background:#091120;border:1px solid var(--line);border-radius:12px;padding:10px}.statbox .k{font-size:10px;color:var(--muted)}.statbox .v{font-size:18px;font-weight:850;margin-top:2px}
   .linked-count{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;align-items:center}.linked-count button{height:40px;border-radius:10px;border:1px solid #2b3b59;background:#162139;color:#fff;font-size:20px;font-weight:800}.linked-value{height:40px;border-radius:10px;border:1px solid #2b3b59;background:#07101d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
   .legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.legend span{font-size:10px;border:1px solid #30405d;border-radius:999px;padding:4px 7px;color:#b8c9e1}
-  input[type=text], textarea.memo-text{width:100%;border-radius:10px;border:1px solid #2b3b59;background:#07101d;color:#fff;padding:9px 10px;outline:none}
-  input[type=text]{height:40px} textarea.memo-text{min-height:78px;resize:vertical;line-height:1.5}
-  input[type=text]:focus, textarea.memo-text:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(77,215,255,.10)}
+  input[type=text], input[type=date], textarea.memo-text{width:100%;border-radius:10px;border:1px solid #2b3b59;background:#07101d;color:#fff;padding:9px 10px;outline:none}
+  input[type=text], input[type=date]{height:40px} textarea.memo-text{min-height:78px;resize:vertical;line-height:1.5}
+  input[type=text]:focus, input[type=date]:focus, textarea.memo-text:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(77,215,255,.10)}
   .quick-row{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 2px}.quick-btn{border:1px solid #304261;background:#121d32;color:#dcecff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:750}
   .quick-btn:active{transform:scale(.98)}
   .memo-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0}.memo-count{font-size:12px;color:var(--muted)}
   .memo-list{display:grid;gap:9px}.memo-entry{border:1px solid var(--line);border-radius:13px;background:#091120;padding:10px}.memo-entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.memo-g{font-size:18px;font-weight:850}.memo-time{font-size:10px;color:var(--muted);white-space:nowrap}.memo-tags{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.memo-tag{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid #33445f;color:#cfe2fb}.memo-tag.result{border-color:rgba(69,227,155,.35);color:#9af3cb;background:rgba(69,227,155,.06)}.memo-tag.lamp{border-color:rgba(255,200,87,.35);color:#ffe09a;background:rgba(255,200,87,.06)}
   .memo-main{font-size:13px;font-weight:700;margin-top:5px}.memo-note{font-size:11px;color:#bdcbe0;margin-top:5px;white-space:pre-wrap}.memo-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.memo-actions button{min-height:32px;border-radius:9px;padding:5px 9px;font-size:10px;font-weight:750;border:1px solid #304261;background:#121d32;color:#dcecff}.memo-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}
   .empty-memo{font-size:12px;color:var(--muted);text-align:center;border:1px dashed #2b3b59;border-radius:12px;padding:18px 10px}
+  .history-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+  .history-list{display:grid;gap:10px}.history-entry{border:1px solid var(--line);border-radius:14px;background:#091120;padding:11px}.history-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.history-date{font-size:17px;font-weight:850}.history-sub{font-size:10px;color:var(--muted);margin-top:2px}.history-net{font-size:20px;font-weight:900;white-space:nowrap}.history-net.plus{color:#8bf0c2}.history-net.minus{color:#ff9ca5}.history-net.zero{color:#d7e3f4}.history-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.history-metric{background:#07101d;border:1px solid #22314a;border-radius:10px;padding:7px}.history-metric .k{font-size:9px;color:var(--muted)}.history-metric .v{font-size:13px;font-weight:800;margin-top:1px}.history-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px}.history-actions button{min-height:34px;border-radius:9px;padding:5px 7px;font-size:10px;font-weight:800;border:1px solid #304261;background:#121d32;color:#dcecff}.history-actions .restore{border-color:rgba(77,215,255,.35);color:#c8f5ff}.history-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}.net-preview{font-size:28px;font-weight:900;text-align:center;padding:8px 0}.net-preview.plus{color:#8bf0c2}.net-preview.minus{color:#ff9ca5}.net-preview.zero{color:#eaf3ff}
   @media(max-width:430px){.tabs{top:62px}.mode-summary{grid-template-columns:1fr 1fr}}
 
 </style>
@@ -102,7 +104,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">PWA / 端末保存</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.4 / PWA</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -112,6 +114,7 @@
     <button class="tab-btn" data-tab="normal">通常モード</button>
     <button class="tab-btn" data-tab="ggo">GGOモード</button>
     <button class="tab-btn" data-tab="memo">実戦メモ</button>
+    <button class="tab-btn" data-tab="history">履歴</button>
   </nav>
 
   <div class="tab-panel active" id="tab-setting">
@@ -253,8 +256,8 @@
 
   <section class="card">
     <h2>データ操作</h2>
-    <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">全データ削除</button></div>
-    <div class="footer-note">Ver.3改：設定推測・通常モード・GGOモード・実戦メモに加え、共通ベル（通常時 / AT中ナビなし右下がりベル）を参考記録として追加。共通ベルは現在、設定計算には未使用です。</div>
+    <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
+    <div class="footer-note">Ver.4：Ver.3改の全機能に加えて、実戦ごとの履歴保存を追加。日付・投資枚数・回収枚数・差枚と、その時点の全判別データ・実戦メモをまとめて端末内に保存できます。</div>
   </section>
   </div>
 
@@ -371,6 +374,34 @@
       <div class="memo-list" id="memoList"></div>
     </section>
   </div>
+
+  <div class="tab-panel" id="tab-history">
+    <section class="card">
+      <div class="mode-head">
+        <div><div class="mode-title">実戦終了 / 履歴保存</div><div class="mode-sub">その日の判別データと結果を1件として保存</div></div>
+        <span class="mode-badge calc">端末内保存</span>
+      </div>
+      <div class="notice">店名・台番号・金額は使わず、<strong>日付＋投資枚数＋回収枚数＋差枚</strong>だけを結果として残します。設定推測・通常/GGOモード・共通ベル・終了画面・実戦メモは自動で一緒に保存されます。</div>
+      <div class="grid">
+        <div class="field"><div class="name">実戦日</div><input id="playDate" type="date"></div>
+        <div class="field"><div class="name">投資枚数</div><input id="investmentCoins" type="number" min="0" value="0" inputmode="numeric"><div class="hint">金額ではなく枚数</div></div>
+        <div class="field"><div class="name">回収枚数</div><input id="returnCoins" type="number" min="0" value="0" inputmode="numeric"><div class="hint">最終的な回収枚数</div></div>
+        <div class="field"><div class="name">差枚（自動）</div><div class="net-preview zero" id="netCoinsPreview">±0枚</div><div class="hint">回収枚数 − 投資枚数</div></div>
+      </div>
+      <div class="actions"><button class="btn" id="saveHistory">実戦終了・履歴に保存</button><button class="btn secondary" id="newSession">新しい実戦を開始</button></div>
+      <div class="small" style="margin-top:8px">履歴へ保存しても現在の入力は消えません。「新しい実戦を開始」を押した時だけ現在データをリセットします。</div>
+    </section>
+
+    <section class="card">
+      <div class="mode-head"><div><div class="mode-title">過去の実戦</div><div class="mode-sub">保存時のデータを見返したり、現在データへ復元できます</div></div><span class="mode-badge" id="historyCountBadge">0件</span></div>
+      <div class="history-stats">
+        <div class="statbox"><div class="k">保存実戦数</div><div class="v" id="historyCountStat">0件</div></div>
+        <div class="statbox"><div class="k">累計差枚</div><div class="v" id="historyNetStat">±0枚</div></div>
+      </div>
+      <div class="history-list" id="historyList"></div>
+      <div class="actions"><button class="btn secondary" id="copyHistory">履歴一覧をコピー</button><button class="btn danger" id="clearHistory">履歴を全削除</button></div>
+    </section>
+  </div>
 </div>
 
 <div class="sticky-actions"><div class="inner"><button class="btn" id="copySummary">全データまとめをコピー</button><button class="btn secondary" id="scrollTop">期待度を見る</button><button class="btn secondary" id="openText">テキスト表示</button></div></div>
@@ -379,8 +410,8 @@
 
 <script>
 (() => {
-  const STORAGE_KEY = 'sao2-setting-tool-v3';
-  const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v2','sao2-setting-tool-v1'];
+  const STORAGE_KEY = 'sao2-setting-tool-v4';
+  const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v3','sao2-setting-tool-v2','sao2-setting-tool-v1'];
   const ids = [
     'normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
     'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','commonBellNormal','atGameCount','commonBellAT','strongChanceTotal','strongChanceDefCZ',
@@ -405,8 +436,11 @@
   let priors = [1,1,1,1,1,1];
   let memoLogs = [];
   let memoEditIndex = -1;
+  let playHistory = [];
 
   const $ = id => document.getElementById(id);
+  const todayLocal = () => {const d=new Date(), y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`;};
+  const fmtCoins = v => {const x=Number(v)||0; return `${x>0?'+':x<0?'−':'±'}${Math.abs(x).toLocaleString()}枚`;};
   const n = id => Math.max(0, Number($(id)?.value || 0));
   const b = id => !!$(id)?.checked;
   const fmtPct = (x,d=1) => Number.isFinite(x) ? (x*100).toFixed(d)+'%' : '―';
@@ -415,8 +449,14 @@
   const binLL = (k,total,p) => total>0 ? k*Math.log(clampP(p)) + (total-k)*Math.log(clampP(1-p)) : 0;
   const poiLL = (k,lambda) => lambda>0 ? k*Math.log(lambda)-lambda : 0;
 
+  function sessionSnapshot(){
+    const data={}; ids.forEach(id=>data[id]=n(id)); checks.forEach(id=>data[id]=b(id)); data.priors=priors.slice(); data.memoLogs=JSON.parse(JSON.stringify(memoLogs)); return data;
+  }
+  function currentMeta(){
+    return {date:$('playDate')?.value||todayLocal(),investment:Math.max(0,Number($('investmentCoins')?.value||0)),returns:Math.max(0,Number($('returnCoins')?.value||0))};
+  }
   function snapshot(){
-    const data={}; ids.forEach(id=>data[id]=n(id)); checks.forEach(id=>data[id]=b(id)); data.priors=priors.slice(); data.memoLogs=memoLogs; return data;
+    const data=sessionSnapshot(); data.currentMeta=currentMeta(); data.playHistory=playHistory; return data;
   }
   function save(){
     try{localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot()));$('saveState').textContent='保存済み '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});}catch(e){$('saveState').textContent='端末保存を利用できません';}
@@ -431,6 +471,12 @@
       checks.forEach(id=>{if(d[id]!==undefined)$(id).checked=!!d[id]});
       if(Array.isArray(d.priors)&&d.priors.length===6)priors=d.priors.map(x=>Math.max(.001,Number(x)||1));
       if(Array.isArray(d.memoLogs)) memoLogs=d.memoLogs;
+      if(Array.isArray(d.playHistory)) playHistory=d.playHistory;
+      if(d.currentMeta){
+        if($('playDate')) $('playDate').value=d.currentMeta.date||todayLocal();
+        if($('investmentCoins')) $('investmentCoins').value=Math.max(0,Number(d.currentMeta.investment||0));
+        if($('returnCoins')) $('returnCoins').value=Math.max(0,Number(d.currentMeta.returns||0));
+      }
     }catch(e){}
   }
 
@@ -538,11 +584,16 @@
     if($('lampPurpleView')) $('lampPurpleView').textContent=n('lampPurple')+'回';
     if($('directATMirror')) $('directATMirror').textContent=n('directAT');
     if($('lowStrongDirectMirror')) $('lowStrongDirectMirror').textContent=n('lowStrongDirect');
+    if($('netCoinsPreview')){
+      const meta=currentMeta(), net=meta.returns-meta.investment; const el=$('netCoinsPreview'); el.textContent=fmtCoins(net); el.className='net-preview '+(net>0?'plus':net<0?'minus':'zero');
+    }
   }
 
   function summary(){
     const G=n('normalG'), lines=[]; const lowK=n('lowStrongCZ')+n('lowStrongDirect'), highK=n('highStrongCZ')+n('highStrongDirect'); const res=calculate(); const top=res.probs.indexOf(Math.max(...res.probs));
     lines.push('【スマスロ ソードアート・オンラインⅡ 実戦データ】');
+    const meta=currentMeta(), net=meta.returns-meta.investment;
+    lines.push(`実戦日：${meta.date||'―'} / 投資 ${meta.investment.toLocaleString()}枚 / 回収 ${meta.returns.toLocaleString()}枚 / 差枚 ${fmtCoins(net)}`);
     lines.push(`通常ゲーム数：${G.toLocaleString()}G`);
     lines.push(`CZ：${n('czCount')}回 ${n('czCount')&&G?'('+fmtDen(n('czCount'),G)+')':''} / 成功${n('czSuccess')}・失敗${n('czFail')}`);
     lines.push(`AT初当たり：${n('atCount')}回 ${n('atCount')&&G?'('+fmtDen(n('atCount'),G)+')':''}`);
@@ -622,11 +673,59 @@
     const m=memoLogs[i];if(!m)return;memoEditIndex=i;$('memoGame').value=m.game;$('memoType').value=m.type||'その他';$('memoContent').value=m.content||'';$('memoResult').value=m.result||'';$('memoLamp').value=m.lamp||'';$('memoNote').value=m.note||'';$('addMemo').textContent='この記録を更新';$('cancelMemoEdit').style.display='block';activateTab('memo');setTimeout(()=>$('memoGame').focus(),250);
   }
 
+  function getBestFromSession(data){
+    const current={}; ids.forEach(id=>current[id]=$(id).value); checks.forEach(id=>current[id]=$(id).checked); const oldP=priors.slice(), oldMemo=memoLogs;
+    try{
+      ids.forEach(id=>{if(data[id]!==undefined)$(id).value=data[id]}); checks.forEach(id=>{if(data[id]!==undefined)$(id).checked=!!data[id]}); if(Array.isArray(data.priors)&&data.priors.length===6)priors=data.priors.slice();
+      const r=calculate(), mx=Math.max(...r.probs), idx=r.probs.indexOf(mx); return {setting:mx>0?idx+1:null,pct:mx>0?mx*100:0,probs:r.probs.slice()};
+    } finally {
+      ids.forEach(id=>$(id).value=current[id]); checks.forEach(id=>$(id).checked=current[id]); priors=oldP; memoLogs=oldMemo;
+    }
+  }
+  function saveCurrentToHistory(){
+    const meta=currentMeta();
+    if(!n('normalG') && !memoLogs.length && !n('czCount') && !n('atCount')){alert('保存する実戦データがありません。');return;}
+    const r=calculate(), mx=Math.max(...r.probs), top=r.probs.indexOf(mx);
+    const entry={id:'h'+Date.now()+'_'+Math.random().toString(36).slice(2,7),date:meta.date||todayLocal(),investment:meta.investment,returns:meta.returns,net:meta.returns-meta.investment,savedAt:new Date().toISOString(),normalG:n('normalG'),bestSetting:mx>0?top+1:null,bestPct:mx>0?mx*100:0,data:sessionSnapshot()};
+    playHistory.unshift(entry); save(); renderHistory(); $('saveState').textContent='実戦履歴に保存しました';
+  }
+  function historyText(entry){
+    const d=entry.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id]; const lines=[]; const lowK=hv('lowStrongCZ')+hv('lowStrongDirect');
+    lines.push('【SAO2 過去実戦】'); lines.push(`実戦日：${entry.date||'―'}`); lines.push(`投資：${Number(entry.investment||0).toLocaleString()}枚 / 回収：${Number(entry.returns||0).toLocaleString()}枚 / 差枚：${fmtCoins(entry.net||0)}`);
+    lines.push(`通常ゲーム数：${hv('normalG').toLocaleString()}G`); lines.push(`保存時設定推測：${entry.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}`);
+    lines.push(`CZ：${hv('czCount')} / 成功${hv('czSuccess')}・失敗${hv('czFail')} / AT初当たり：${hv('atCount')} / 詩乃直撃：${hv('directAT')}`);
+    lines.push(`低確強チェ：${hv('lowStrongTotal')} → CZ${hv('lowStrongCZ')} / 直撃${hv('lowStrongDirect')}${hv('lowStrongTotal')?` / CZ相当${fmtPct(lowK/hv('lowStrongTotal'))}`:''}`);
+    lines.push(`低確スイカ→シューティングチャージ：${hv('watermelonSC')}/${hv('watermelonTotal')}${hv('watermelonTotal')?` (${fmtPct(hv('watermelonSC')/hv('watermelonTotal'))})`:''}`);
+    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=hv('atGameCount'); lines.push(`共通ベル：通常${bellN}${bellN&&hv('normalG')?' ('+fmtDen(bellN,hv('normalG'))+')':''} / AT中${bellAT}${bellAT&&atG?' ('+fmtDen(bellAT,atG)+')':''}`);
+    lines.push(`終了画面：デフォ${hv('endDefault')} / 奇数${hv('endOdd')} / 偶数${hv('endEven')} / 高設定${hv('endHigh')} / 高設定強${hv('endHighStrong')} / 幼少期${hv('endChild')}`);
+    lines.push(`通常モードランプ：白${hv('lampWhite')} / 青${hv('lampBlue')} / 黄${hv('lampYellow')} / 緑${hv('lampGreen')} / 赤${hv('lampRed')} / 紫${hv('lampPurple')}`);
+    lines.push(`GGO詩乃：50%示唆${hv('shino50')} / 濃厚${hv('shinoSure')} / 直撃${hv('directAT')}`);
+    const ml=Array.isArray(d.memoLogs)?d.memoLogs:[]; if(ml.length){lines.push('');lines.push('【実戦メモ】');ml.forEach((m,i)=>{const parts=[];if(m.content)parts.push(m.content);if(m.result)parts.push(m.result);if(m.lamp)parts.push('ランプ'+m.lamp);lines.push(`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'} ${m.type||'その他'}${parts.length?'：'+parts.join(' / '):''}`);if(m.note)lines.push('  '+String(m.note).replace(/\n/g,' / '));});}
+    return lines.join('\n');
+  }
+  function renderHistory(){
+    if(!$('historyList'))return; $('historyCountBadge').textContent=playHistory.length+'件'; $('historyCountStat').textContent=playHistory.length+'件';
+    const totalNet=playHistory.reduce((a,h)=>a+Number(h.net||0),0); $('historyNetStat').textContent=fmtCoins(totalNet); $('historyNetStat').style.color=totalNet>0?'#8bf0c2':totalNet<0?'#ff9ca5':'#f4f7fb';
+    if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
+    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">通常G</div><div class="v">${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">実戦メモ</div><div class="v">${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">全データ</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
+  }
+  function restoreHistory(i){
+    const h=playHistory[i]; if(!h||!h.data)return; if(!confirm('現在の入力内容を、この過去実戦データで上書きしますか？\n履歴そのものは消えません。'))return; const d=h.data;
+    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=!!d[id]); priors=Array.isArray(d.priors)&&d.priors.length===6?d.priors.map(x=>Math.max(.001,Number(x)||1)):[1,1,1,1,1,1]; memoLogs=Array.isArray(d.memoLogs)?JSON.parse(JSON.stringify(d.memoLogs)):[];
+    $('playDate').value=h.date||todayLocal(); $('investmentCoins').value=Math.max(0,Number(h.investment||0)); $('returnCoins').value=Math.max(0,Number(h.returns||0)); clearMemoForm(); renderPriorInputs(); refresh(); activateTab('setting'); $('saveState').textContent='過去実戦を現在データへ復元しました';
+  }
+  function clearCurrentSession(){
+    if(!confirm('現在の入力データと実戦メモをリセットして、新しい実戦を開始しますか？\n保存済みの過去履歴は残ります。'))return; ids.forEach(id=>$(id).value=0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1]; memoLogs=[]; clearMemoForm(); $('playDate').value=todayLocal(); $('investmentCoins').value=0; $('returnCoins').value=0; renderPriorInputs(); refresh(); activateTab('setting');
+  }
+  function historyListText(){
+    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / ${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); return lines.join('\n');
+  }
+
   function renderPriorInputs(){
     $('priorInputs').innerHTML=priors.map((v,i)=>`<label>設定${i+1}<input type="number" min="0.001" step="0.1" value="${v}" data-prior="${i}"></label>`).join('');
     document.querySelectorAll('[data-prior]').forEach(el=>el.addEventListener('input',()=>{priors[Number(el.dataset.prior)]=Math.max(.001,Number(el.value)||1);refresh();}));
   }
-  function refresh(){validate();updateDerived();const r=calculate();renderBars(r.probs);renderEvidence();renderMemo();save();}
+  function refresh(){validate();updateDerived();const r=calculate();renderBars(r.probs);renderEvidence();renderMemo();renderHistory();save();}
 
   document.addEventListener('click',e=>{
     const btn=e.target.closest('[data-delta]'); if(btn){const id=btn.dataset.target,delta=Number(btn.dataset.delta);$(id).value=Math.max(0,n(id)+delta);refresh();}
@@ -639,10 +738,10 @@
   $('closeModal').onclick=()=>$('textModal').classList.remove('open'); $('textModal').addEventListener('click',e=>{if(e.target===$('textModal'))$('textModal').classList.remove('open');});
   $('copyModal').onclick=async()=>{try{await navigator.clipboard.writeText($('summaryText').value);}catch(e){$('summaryText').select();document.execCommand('copy');}}; $('selectAll').onclick=()=>{$('summaryText').focus();$('summaryText').select();};
   $('resetPriors').onclick=()=>{priors=[1,1,1,1,1,1];renderPriorInputs();refresh();}; $('recalc').onclick=refresh;
-  $('resetAll').onclick=()=>{if(!confirm('入力データと実戦メモをすべて削除しますか？'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];memoLogs=[];clearMemoForm();renderPriorInputs();refresh();};
+  $('resetAll').onclick=()=>{if(!confirm('現在の入力データと実戦メモを削除しますか？\n保存済みの過去履歴は残ります。'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];memoLogs=[];clearMemoForm();$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();};
   $('loadSample').onclick=()=>{
     const d={normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,itemFailTotal:4,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
-    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];memoLogs=[];renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
+    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];memoLogs=[];$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
   };
   $('exportJson').onclick=()=>{
     const blob=new Blob([JSON.stringify(snapshot(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sao2_playdata_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
@@ -664,6 +763,17 @@
     }
   });
 
+  ['playDate','investmentCoins','returnCoins'].forEach(id=>$(id)?.addEventListener('input',refresh));
+  $('saveHistory').onclick=saveCurrentToHistory;
+  $('newSession').onclick=clearCurrentSession;
+  $('copyHistory').onclick=async()=>{const t=historyListText();try{await navigator.clipboard.writeText(t);$('saveState').textContent='実戦履歴一覧をコピーしました';}catch(e){$('summaryText').value=t;$('textModal').classList.add('open');}};
+  $('clearHistory').onclick=()=>{if(!playHistory.length)return;if(!confirm('保存済みの実戦履歴をすべて削除しますか？\nこの操作は元に戻せません。'))return;playHistory=[];renderHistory();save();};
+  document.addEventListener('click',e=>{
+    const view=e.target.closest('[data-history-view]');if(view){const h=playHistory[Number(view.dataset.historyView)];if(h){$('summaryText').value=historyText(h);$('textModal').classList.add('open');}return;}
+    const restore=e.target.closest('[data-history-restore]');if(restore){restoreHistory(Number(restore.dataset.historyRestore));return;}
+    const del=e.target.closest('[data-history-delete]');if(del){const i=Number(del.dataset.historyDelete);if(confirm('この実戦履歴を削除しますか？')){playHistory.splice(i,1);renderHistory();save();}return;}
+  });
+
   function activateTab(name){
     document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.tab===name));
     document.querySelectorAll('.tab-panel').forEach(panel=>panel.classList.toggle('active',panel.id==='tab-'+name));
@@ -672,9 +782,10 @@
   }
   document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
 
+  if($('playDate'))$('playDate').value=todayLocal();
   load();renderPriorInputs();refresh();
   let savedTab='setting';try{savedTab=localStorage.getItem('sao2-active-tab')||'setting';}catch(e){}
-  if(!['setting','normal','ggo','memo'].includes(savedTab))savedTab='setting';
+  if(!['setting','normal','ggo','memo','history'].includes(savedTab))savedTab='setting';
   activateTab(savedTab);
 })();
 </script>
