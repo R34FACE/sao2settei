@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#0b1020" />
-<title>SAO2 判別カウンター</title>
+<title>SAO2 判別・実戦ログ</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -74,7 +74,7 @@
   .install-note{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(69,227,155,.08);border:1px solid rgba(69,227,155,.22);font-size:12px;color:#b8f5d9}
   .install-note.show{display:block}
 
-  .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}
+  .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}
   .tab-btn{min-height:40px;border:1px solid #2c3b58;border-radius:10px;background:#0c1424;color:#b8c8df;font-size:12px;font-weight:800}
   .tab-btn.active{background:linear-gradient(135deg,rgba(77,215,255,.20),rgba(124,92,255,.18));border-color:rgba(77,215,255,.55);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
   .tab-panel{display:none}.tab-panel.active{display:block}
@@ -86,6 +86,15 @@
   .statbox{background:#091120;border:1px solid var(--line);border-radius:12px;padding:10px}.statbox .k{font-size:10px;color:var(--muted)}.statbox .v{font-size:18px;font-weight:850;margin-top:2px}
   .linked-count{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;align-items:center}.linked-count button{height:40px;border-radius:10px;border:1px solid #2b3b59;background:#162139;color:#fff;font-size:20px;font-weight:800}.linked-value{height:40px;border-radius:10px;border:1px solid #2b3b59;background:#07101d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
   .legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.legend span{font-size:10px;border:1px solid #30405d;border-radius:999px;padding:4px 7px;color:#b8c9e1}
+  input[type=text], textarea.memo-text{width:100%;border-radius:10px;border:1px solid #2b3b59;background:#07101d;color:#fff;padding:9px 10px;outline:none}
+  input[type=text]{height:40px} textarea.memo-text{min-height:78px;resize:vertical;line-height:1.5}
+  input[type=text]:focus, textarea.memo-text:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(77,215,255,.10)}
+  .quick-row{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 2px}.quick-btn{border:1px solid #304261;background:#121d32;color:#dcecff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:750}
+  .quick-btn:active{transform:scale(.98)}
+  .memo-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0}.memo-count{font-size:12px;color:var(--muted)}
+  .memo-list{display:grid;gap:9px}.memo-entry{border:1px solid var(--line);border-radius:13px;background:#091120;padding:10px}.memo-entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.memo-g{font-size:18px;font-weight:850}.memo-time{font-size:10px;color:var(--muted);white-space:nowrap}.memo-tags{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.memo-tag{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid #33445f;color:#cfe2fb}.memo-tag.result{border-color:rgba(69,227,155,.35);color:#9af3cb;background:rgba(69,227,155,.06)}.memo-tag.lamp{border-color:rgba(255,200,87,.35);color:#ffe09a;background:rgba(255,200,87,.06)}
+  .memo-main{font-size:13px;font-weight:700;margin-top:5px}.memo-note{font-size:11px;color:#bdcbe0;margin-top:5px;white-space:pre-wrap}.memo-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.memo-actions button{min-height:32px;border-radius:9px;padding:5px 9px;font-size:10px;font-weight:750;border:1px solid #304261;background:#121d32;color:#dcecff}.memo-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}
+  .empty-memo{font-size:12px;color:var(--muted);text-align:center;border:1px dashed #2b3b59;border-radius:12px;padding:18px 10px}
   @media(max-width:430px){.tabs{top:62px}.mode-summary{grid-template-columns:1fr 1fr}}
 
 </style>
@@ -93,7 +102,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別カウンター</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">PWA / 端末保存</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">PWA / 端末保存</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -102,6 +111,7 @@
     <button class="tab-btn active" data-tab="setting">設定推測</button>
     <button class="tab-btn" data-tab="normal">通常モード</button>
     <button class="tab-btn" data-tab="ggo">GGOモード</button>
+    <button class="tab-btn" data-tab="memo">実戦メモ</button>
   </nav>
 
   <div class="tab-panel active" id="tab-setting">
@@ -157,6 +167,19 @@
         <div class="field"><div class="name">SC当選</div><div class="num-wrap"><button data-delta="-1" data-target="watermelonSC">−</button><input id="watermelonSC" type="number" min="0" value="0"><button data-delta="1" data-target="watermelonSC">＋</button></div></div>
       </div>
       <div class="calc" id="watermelonRate">当選率：―</div>
+    </details>
+
+    <details open>
+      <summary>共通ベル（参考記録）</summary>
+      <div class="grid">
+        <div class="field"><div class="name">通常時 共通ベル</div><div class="num-wrap"><button data-delta="-1" data-target="commonBellNormal">−</button><input id="commonBellNormal" type="number" min="0" value="0"><button data-delta="1" data-target="commonBellNormal">＋</button></div><div class="hint">右下がり斜めベルを記録</div></div>
+        <div class="field"><div class="name">AT中 総ゲーム数</div><div class="num-wrap"><button data-delta="-1" data-target="atGameCount">−</button><input id="atGameCount" type="number" min="0" value="0"><button data-delta="1" data-target="atGameCount">＋</button></div><div class="hint">AT中サンプルの分母用</div></div>
+        <div class="field"><div class="name">AT中 ナビなし右下がりベル</div><div class="num-wrap"><button data-delta="-1" data-target="commonBellAT">−</button><input id="commonBellAT" type="number" min="0" value="0"><button data-delta="1" data-target="commonBellAT">＋</button></div><div class="hint">押し順ナビありベルは数えない</div></div>
+      </div>
+      <div class="calc" id="commonBellNormalRate">通常時：―</div>
+      <div class="calc" id="commonBellATRate">AT中：―</div>
+      <div class="calc" id="commonBellAllRate">全状態参考：―</div>
+      <div class="small">共通ベルは設定差ありの可能性がありますが、正式な設定別解析値・通常時/AT中の公式カウント基準が未確定のため、現時点では設定期待度の計算には使用しません。通常時とAT中は分けて記録します。</div>
     </details>
 
     <details>
@@ -231,7 +254,7 @@
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">全データ削除</button></div>
-    <div class="footer-note">Ver.2：設定推測・通常モード・GGOモードを分離。設定差が未公表のモード示唆は記録のみとし、詩乃由来AT直撃だけ設定推測へ反映します。</div>
+    <div class="footer-note">Ver.3改：設定推測・通常モード・GGOモード・実戦メモに加え、共通ベル（通常時 / AT中ナビなし右下がりベル）を参考記録として追加。共通ベルは現在、設定計算には未使用です。</div>
   </section>
   </div>
 
@@ -308,6 +331,46 @@
       <div class="small" style="margin-top:10px">「50%クラス示唆」「濃厚示唆」は、実戦中に解析上それに該当するアイテム・演出を確認した時だけカウントするための記録欄です。設定別移行率が公表されるまでは設定期待度へ直接加点しません。</div>
     </section>
   </div>
+
+  <div class="tab-panel" id="tab-memo">
+    <section class="card">
+      <div class="mode-head">
+        <div><div class="mode-title">実戦メモ / タイムライン</div><div class="mode-sub">液晶ゲーム数ごとに演出・CZ・AT・ランプなどを時系列で記録</div></div>
+        <span class="mode-badge">設定計算とは独立</span>
+      </div>
+      <div class="notice"><strong>使い方：</strong>起きたことを1件ずつ追加します。メモ内容は設定推測カウンターへ自動加算しないため、二重集計の心配はありません。</div>
+
+      <div class="grid">
+        <div class="field"><div class="name">液晶ゲーム数</div><input id="memoGame" type="number" min="0" inputmode="numeric" placeholder="例：186"><div class="hint">その出来事が起きた液晶G数</div></div>
+        <div class="field"><div class="name">種別</div><select id="memoType">
+          <option value="メニュー画面">メニュー画面</option><option value="CZ">CZ</option><option value="AT">AT</option><option value="ボイス＋ランプ">ボイス＋ランプ</option><option value="GGO示唆">GGO示唆</option><option value="レア役">レア役</option><option value="前兆・ゾーン">前兆・ゾーン</option><option value="その他">その他</option>
+        </select></div>
+        <div class="field"><div class="name">内容・キャラ</div><input id="memoContent" type="text" placeholder="例：メニュー画面 シノン / 強チェリー"><div class="hint">キャラ名や演出名を自由入力</div></div>
+        <div class="field"><div class="name">結果</div><select id="memoResult">
+          <option value="">―</option><option value="CZ当選">CZ当選</option><option value="CZ失敗">CZ失敗</option><option value="AT当選">AT当選</option><option value="AT非当選">AT非当選</option><option value="AT直撃">AT直撃</option><option value="示唆確認">示唆確認</option><option value="前兆のみ">前兆のみ</option>
+        </select></div>
+        <div class="field"><div class="name">ランプ色</div><select id="memoLamp"><option value="">なし</option><option>白</option><option>青</option><option>黄</option><option>緑</option><option>赤</option><option>紫</option></select></div>
+        <div class="field"><div class="name">追加メモ</div><textarea class="memo-text" id="memoNote" placeholder="例：CZはAT非当選。終了後ボイス○○。次回要確認。"></textarea></div>
+      </div>
+
+      <div class="small" style="margin-top:10px">クイック入力</div>
+      <div class="quick-row">
+        <button class="quick-btn" data-memo-preset="menu">メニュー画面</button>
+        <button class="quick-btn" data-memo-preset="czwin">CZ→AT当選</button>
+        <button class="quick-btn" data-memo-preset="czlose">CZ→AT非当選</button>
+        <button class="quick-btn" data-memo-preset="yellow">黄ランプ</button>
+      </div>
+
+      <div class="actions"><button class="btn" id="addMemo">この出来事を追加</button><button class="btn secondary" id="cancelMemoEdit" style="display:none">編集をキャンセル</button></div>
+      <div class="small" style="margin-top:7px">追加時の実時刻も自動記録します。あとから編集・削除できます。</div>
+    </section>
+
+    <section class="card">
+      <div class="mode-head"><div><div class="mode-title">実戦履歴</div><div class="mode-sub">新しい記録を下へ追加</div></div><span class="mode-badge" id="memoCountBadge">0件</span></div>
+      <div class="memo-toolbar"><div class="memo-count" id="memoLastGame">最終記録：―</div><div class="actions" style="margin:0;display:flex"><button class="btn secondary" id="copyMemo" style="min-height:36px;padding:6px 10px;font-size:11px">ログだけコピー</button><button class="btn danger" id="clearMemo" style="min-height:36px;padding:6px 10px;font-size:11px">ログ削除</button></div></div>
+      <div class="memo-list" id="memoList"></div>
+    </section>
+  </div>
 </div>
 
 <div class="sticky-actions"><div class="inner"><button class="btn" id="copySummary">全データまとめをコピー</button><button class="btn secondary" id="scrollTop">期待度を見る</button><button class="btn secondary" id="openText">テキスト表示</button></div></div>
@@ -316,11 +379,11 @@
 
 <script>
 (() => {
-  const STORAGE_KEY = 'sao2-setting-tool-v2';
-  const LEGACY_STORAGE_KEY = 'sao2-setting-tool-v1';
+  const STORAGE_KEY = 'sao2-setting-tool-v3';
+  const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v2','sao2-setting-tool-v1'];
   const ids = [
     'normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
-    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','strongChanceTotal','strongChanceDefCZ',
+    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','commonBellNormal','atGameCount','commonBellAT','strongChanceTotal','strongChanceDefCZ',
     'defCZTotal','itemFailTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild',
     'lampWhite','lampBlue','lampYellow','lampGreen','lampRed','lampPurple',
     'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit'
@@ -340,6 +403,8 @@
   };
   const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70};
   let priors = [1,1,1,1,1,1];
+  let memoLogs = [];
+  let memoEditIndex = -1;
 
   const $ = id => document.getElementById(id);
   const n = id => Math.max(0, Number($(id)?.value || 0));
@@ -351,19 +416,21 @@
   const poiLL = (k,lambda) => lambda>0 ? k*Math.log(lambda)-lambda : 0;
 
   function snapshot(){
-    const data={}; ids.forEach(id=>data[id]=n(id)); checks.forEach(id=>data[id]=b(id)); data.priors=priors.slice(); return data;
+    const data={}; ids.forEach(id=>data[id]=n(id)); checks.forEach(id=>data[id]=b(id)); data.priors=priors.slice(); data.memoLogs=memoLogs; return data;
   }
   function save(){
     try{localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot()));$('saveState').textContent='保存済み '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});}catch(e){$('saveState').textContent='端末保存を利用できません';}
   }
   function load(){
     try{
-      const raw=localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+      let raw=localStorage.getItem(STORAGE_KEY);
+      if(!raw){for(const key of LEGACY_STORAGE_KEYS){raw=localStorage.getItem(key);if(raw)break;}}
       if(!raw)return;
       const d=JSON.parse(raw);
       ids.forEach(id=>{if(d[id]!==undefined && $(id))$(id).value=d[id]});
       checks.forEach(id=>{if(d[id]!==undefined)$(id).checked=!!d[id]});
       if(Array.isArray(d.priors)&&d.priors.length===6)priors=d.priors.map(x=>Math.max(.001,Number(x)||1));
+      if(Array.isArray(d.memoLogs)) memoLogs=d.memoLogs;
     }catch(e){}
   }
 
@@ -436,6 +503,14 @@
     const G=n('normalG'); const out=[];
     if(n('lowStrongTotal')){const k=n('lowStrongCZ')+n('lowStrongDirect'),tot=n('lowStrongTotal');out.push(ev('低確 強チェリー → CZ相当',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.lowStrong),'直撃を含めたCZ相当当選。設定6解析値33.0%。','good'));}
     if(n('watermelonTotal')){const k=n('watermelonSC'),tot=n('watermelonTotal');out.push(ev('低確 スイカ → SC',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.watermelonSC),'設定1 40.2% ～ 設定6 55.1%。','good'));}
+    if(n('commonBellNormal') || n('commonBellAT')){
+      const lines=[];
+      if(n('commonBellNormal') && G) lines.push(`通常時 ${n('commonBellNormal')}回 / ${G.toLocaleString()}G = ${fmtDen(n('commonBellNormal'),G)}`);
+      if(n('commonBellAT') && n('atGameCount')) lines.push(`AT中 ${n('commonBellAT')}回 / ${n('atGameCount').toLocaleString()}G = ${fmtDen(n('commonBellAT'),n('atGameCount'))}`);
+      const allBell=n('commonBellNormal')+n('commonBellAT'), allGame=G+n('atGameCount');
+      if(allBell && allGame) lines.push(`全状態参考 ${fmtDen(allBell,allGame)}`);
+      out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">共通ベル（参考記録）</div><span class="pill mid">計算未使用</span></div><div class="ev-rate">${lines.join(' / ') || '―'}</div><div class="ev-note">通常時とAT中ナビなし右下がりベルを分離して記録。正式解析値・公式カウント基準待ちのため、現時点では設定期待度に加点していません。</div></div>`);
+    }
     if(G){out.push(ev('詩乃モード由来 AT直撃',`${n('directAT')}/${G.toLocaleString()}G = ${fmtDen(n('directAT'),G)}`,bestFitPoi(n('directAT'),G,R.directDen),'例外契機を除いた直撃のみ。設定6解析値 約1/3,416。',n('directAT')?'good':'mid'));}
     if(G){out.push(ev('CZ初当たり',`${n('czCount')}/${G.toLocaleString()}G = ${fmtDen(n('czCount'),G)}`,bestFitPoi(n('czCount'),G,R.czDen),'設定1 約1/238 ～ 設定6 約1/192。全体値は相関を考慮して低めの重み。', 'mid'));}
     if(G){out.push(ev('AT初当たり',`${n('atCount')}/${G.toLocaleString()}G = ${fmtDen(n('atCount'),G)}`,bestFitPoi(n('atCount'),G,R.atDen),'設定1 約1/386 ～ 設定6 約1/270。全体値は相関を考慮して低めの重み。', 'mid'));}
@@ -453,6 +528,11 @@
     const htot=n('highStrongTotal'),hk=n('highStrongCZ')+n('highStrongDirect'); $('highStrongRate').innerHTML=`CZ相当当選率：<strong>${htot?`${hk}/${htot} = ${fmtPct(hk/htot)}`:'―'}</strong>`;
     const wtot=n('watermelonTotal'),wk=n('watermelonSC'); $('watermelonRate').innerHTML=`当選率：<strong>${wtot?`${wk}/${wtot} = ${fmtPct(wk/wtot)}`:'―'}</strong>`;
     const ftot=n('itemFailTotal'),fk=n('itemHit'); $('itemRate').innerHTML=`獲得率：<strong>${ftot?`${fk}/${ftot} = ${fmtPct(fk/ftot)}`:'―'}</strong>`;
+    const cbn=n('commonBellNormal'), atg=n('atGameCount'), cba=n('commonBellAT');
+    $('commonBellNormalRate').innerHTML=`通常時：<strong>${(cbn && G)?`${cbn}回 / ${G.toLocaleString()}G = ${fmtDen(cbn,G)}`:'―'}</strong>`;
+    $('commonBellATRate').innerHTML=`AT中：<strong>${(cba && atg)?`${cba}回 / ${atg.toLocaleString()}G = ${fmtDen(cba,atg)}`:'―'}</strong>`;
+    const allBell=cbn+cba, allGame=G+atg;
+    $('commonBellAllRate').innerHTML=`全状態参考：<strong>${(allBell && allGame)?`${allBell}回 / ${allGame.toLocaleString()}G = ${fmtDen(allBell,allGame)}`:'―'}</strong>`;
     const lamps=['lampWhite','lampBlue','lampYellow','lampGreen','lampRed','lampPurple'].reduce((a,id)=>a+n(id),0);
     if($('lampTotalView')) $('lampTotalView').textContent=lamps+'回';
     if($('lampPurpleView')) $('lampPurpleView').textContent=n('lampPurple')+'回';
@@ -474,6 +554,8 @@
     lines.push(`強チャンス目→確定CZ：${n('strongChanceDefCZ')}/${n('strongChanceTotal')}${n('strongChanceTotal')?' ('+fmtPct(n('strongChanceDefCZ')/n('strongChanceTotal'))+')':''}`);
     lines.push(`確定CZ総回数：${n('defCZTotal')}回`);
     lines.push(`CZ失敗時アイテム：${n('itemHit')}/${n('itemFailTotal')}${n('itemFailTotal')?' ('+fmtPct(n('itemHit')/n('itemFailTotal'))+')':''}`);
+    const cbAll=n('commonBellNormal')+n('commonBellAT'), gameAll=n('normalG')+n('atGameCount');
+    lines.push(`共通ベル：通常時 ${n('commonBellNormal')}${n('normalG')&&n('commonBellNormal')?' ('+fmtDen(n('commonBellNormal'),n('normalG'))+')':''} / AT中ナビなし右下がり ${n('commonBellAT')}${n('atGameCount')&&n('commonBellAT')?' ('+fmtDen(n('commonBellAT'),n('atGameCount'))+')':''}${cbAll&&gameAll?' / 全状態参考 '+fmtDen(cbAll,gameAll):''}`);
     lines.push('');
     lines.push('【通常モード示唆（ボイス＋ランプ）】');
     lines.push(`白${n('lampWhite')} / 青${n('lampBlue')} / 黄${n('lampYellow')} / 緑${n('lampGreen')} / 赤${n('lampRed')} / 紫${n('lampPurple')}`);
@@ -486,16 +568,65 @@
     lines.push('');
     lines.push(`AT終了画面：デフォ${n('endDefault')} / 奇数${n('endOdd')} / 偶数${n('endEven')} / 高設定${n('endHigh')} / 高設定強${n('endHighStrong')} / 幼少期${n('endChild')}`);
     const conf=[]; if(b('end2plus'))conf.push('終了画面2以上');if(b('end3plus'))conf.push('終了画面3以上');if(b('end4plus'))conf.push('終了画面4以上');if(b('end6'))conf.push('終了画面6濃厚');if(b('ed4plus'))conf.push('ED4以上');if(b('ed6'))conf.push('ED6濃厚');if(b('mr4plus'))conf.push('マザロザ4以上');if(b('mr6'))conf.push('マザロザ6濃厚'); if(conf.length) lines.push('確定・濃厚系：'+conf.join(' / '));
+    if(memoLogs.length){
+      lines.push('');lines.push('【実戦メモ】');
+      memoLogs.forEach((m,i)=>{
+        const head=`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'} ${m.type||'その他'}`;
+        const parts=[]; if(m.content)parts.push(m.content); if(m.result)parts.push(m.result); if(m.lamp)parts.push('ランプ'+m.lamp);
+        lines.push(head+(parts.length?'：'+parts.join(' / '):''));
+        if(m.note)lines.push('  '+m.note.replace(/\n/g,' / '));
+      });
+    }
     if(Math.max(...res.probs)>0){lines.push('');lines.push('【相対期待度】');res.probs.forEach((p,i)=>lines.push(`設定${i+1}：${(p*100).toFixed(1)}%`));lines.push(`→ 現在1位：設定${top+1}`);}
     lines.push('');lines.push('※公開解析値への相対尤度。真の設定確率ではありません。終了画面の定性示唆は数値判定に未使用。');
     return lines.join('\n');
+  }
+
+  const esc = v => String(v ?? '').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  function memoTextOnly(){
+    if(!memoLogs.length)return '実戦メモはまだありません。';
+    const lines=['【SAO2 実戦メモ】'];
+    memoLogs.forEach((m,i)=>{
+      const parts=[];if(m.content)parts.push(m.content);if(m.result)parts.push(m.result);if(m.lamp)parts.push('ランプ'+m.lamp);
+      lines.push(`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'} ${m.type||'その他'}${parts.length?'：'+parts.join(' / '):''}`);
+      if(m.note)lines.push('  '+m.note.replace(/\n/g,' / '));
+    });
+    return lines.join('\n');
+  }
+  function renderMemo(){
+    const list=$('memoList'); if(!list)return;
+    $('memoCountBadge').textContent=memoLogs.length+'件';
+    const last=[...memoLogs].reverse().find(m=>m.game!=='' && m.game!==null && m.game!==undefined);
+    $('memoLastGame').textContent=last?`最終記録：${last.game}G`:'最終記録：―';
+    if(!memoLogs.length){list.innerHTML='<div class="empty-memo">まだ記録がありません。<br>液晶G数と出来事を入れて追加してください。</div>';return;}
+    list.innerHTML=memoLogs.map((m,i)=>{
+      const tags=[m.type?`<span class="memo-tag">${esc(m.type)}</span>`:'',m.result?`<span class="memo-tag result">${esc(m.result)}</span>`:'',m.lamp?`<span class="memo-tag lamp">ランプ ${esc(m.lamp)}</span>`:''].join('');
+      return `<div class="memo-entry"><div class="memo-entry-head"><div><span class="memo-g">${m.game!==''?esc(m.game)+'G':'G数未入力'}</span> <span class="small">#${i+1}</span></div><div class="memo-time">${esc(m.time||'')}</div></div><div class="memo-tags">${tags}</div>${m.content?`<div class="memo-main">${esc(m.content)}</div>`:''}${m.note?`<div class="memo-note">${esc(m.note)}</div>`:''}<div class="memo-actions"><button data-memo-edit="${i}">編集</button><button class="del" data-memo-delete="${i}">削除</button></div></div>`;
+    }).join('');
+  }
+  function clearMemoForm(){
+    $('memoGame').value='';$('memoType').value='メニュー画面';$('memoContent').value='';$('memoResult').value='';$('memoLamp').value='';$('memoNote').value='';memoEditIndex=-1;$('addMemo').textContent='この出来事を追加';$('cancelMemoEdit').style.display='none';
+  }
+  function readMemoForm(){
+    const rawGame=$('memoGame').value.trim();
+    return {game:rawGame===''?'':Math.max(0,Number(rawGame)||0),type:$('memoType').value,content:$('memoContent').value.trim(),result:$('memoResult').value,lamp:$('memoLamp').value,note:$('memoNote').value.trim(),time:new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})};
+  }
+  function addOrUpdateMemo(){
+    const m=readMemoForm();
+    if(m.game==='' && !m.content && !m.result && !m.lamp && !m.note){alert('液晶G数かメモ内容を入力してください。');return;}
+    if(memoEditIndex>=0){m.time=memoLogs[memoEditIndex]?.time||m.time;memoLogs[memoEditIndex]=m;}else{memoLogs.push(m);}
+    save();renderMemo();clearMemoForm();
+    $('saveState').textContent='実戦メモを保存しました';
+  }
+  function editMemo(i){
+    const m=memoLogs[i];if(!m)return;memoEditIndex=i;$('memoGame').value=m.game;$('memoType').value=m.type||'その他';$('memoContent').value=m.content||'';$('memoResult').value=m.result||'';$('memoLamp').value=m.lamp||'';$('memoNote').value=m.note||'';$('addMemo').textContent='この記録を更新';$('cancelMemoEdit').style.display='block';activateTab('memo');setTimeout(()=>$('memoGame').focus(),250);
   }
 
   function renderPriorInputs(){
     $('priorInputs').innerHTML=priors.map((v,i)=>`<label>設定${i+1}<input type="number" min="0.001" step="0.1" value="${v}" data-prior="${i}"></label>`).join('');
     document.querySelectorAll('[data-prior]').forEach(el=>el.addEventListener('input',()=>{priors[Number(el.dataset.prior)]=Math.max(.001,Number(el.value)||1);refresh();}));
   }
-  function refresh(){validate();updateDerived();const r=calculate();renderBars(r.probs);renderEvidence();save();}
+  function refresh(){validate();updateDerived();const r=calculate();renderBars(r.probs);renderEvidence();renderMemo();save();}
 
   document.addEventListener('click',e=>{
     const btn=e.target.closest('[data-delta]'); if(btn){const id=btn.dataset.target,delta=Number(btn.dataset.delta);$(id).value=Math.max(0,n(id)+delta);refresh();}
@@ -508,14 +639,30 @@
   $('closeModal').onclick=()=>$('textModal').classList.remove('open'); $('textModal').addEventListener('click',e=>{if(e.target===$('textModal'))$('textModal').classList.remove('open');});
   $('copyModal').onclick=async()=>{try{await navigator.clipboard.writeText($('summaryText').value);}catch(e){$('summaryText').select();document.execCommand('copy');}}; $('selectAll').onclick=()=>{$('summaryText').focus();$('summaryText').select();};
   $('resetPriors').onclick=()=>{priors=[1,1,1,1,1,1];renderPriorInputs();refresh();}; $('recalc').onclick=refresh;
-  $('resetAll').onclick=()=>{if(!confirm('入力データをすべて削除しますか？'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];renderPriorInputs();refresh();};
+  $('resetAll').onclick=()=>{if(!confirm('入力データと実戦メモをすべて削除しますか？'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];memoLogs=[];clearMemoForm();renderPriorInputs();refresh();};
   $('loadSample').onclick=()=>{
     const d={normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,itemFailTotal:4,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
-    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
+    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];memoLogs=[];renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
   };
   $('exportJson').onclick=()=>{
     const blob=new Blob([JSON.stringify(snapshot(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sao2_playdata_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   };
+
+  $('addMemo').onclick=addOrUpdateMemo;
+  $('cancelMemoEdit').onclick=clearMemoForm;
+  $('copyMemo').onclick=async()=>{const text=memoTextOnly();try{await navigator.clipboard.writeText(text);$('saveState').textContent='実戦ログをコピーしました';}catch(e){$('summaryText').value=text;$('textModal').classList.add('open');}};
+  $('clearMemo').onclick=()=>{if(!memoLogs.length)return;if(!confirm('実戦メモだけをすべて削除しますか？'))return;memoLogs=[];clearMemoForm();renderMemo();save();};
+  document.addEventListener('click',e=>{
+    const edit=e.target.closest('[data-memo-edit]');if(edit){editMemo(Number(edit.dataset.memoEdit));return;}
+    const del=e.target.closest('[data-memo-delete]');if(del){const i=Number(del.dataset.memoDelete);if(confirm('この記録を削除しますか？')){memoLogs.splice(i,1);renderMemo();save();}return;}
+    const preset=e.target.closest('[data-memo-preset]');if(preset){
+      const v=preset.dataset.memoPreset;
+      if(v==='menu'){$('memoType').value='メニュー画面';$('memoResult').value='';$('memoContent').focus();}
+      if(v==='czwin'){$('memoType').value='CZ';$('memoResult').value='AT当選';}
+      if(v==='czlose'){$('memoType').value='CZ';$('memoResult').value='AT非当選';}
+      if(v==='yellow'){$('memoType').value='ボイス＋ランプ';$('memoLamp').value='黄';}
+    }
+  });
 
   function activateTab(name){
     document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.tab===name));
@@ -527,7 +674,7 @@
 
   load();renderPriorInputs();refresh();
   let savedTab='setting';try{savedTab=localStorage.getItem('sao2-active-tab')||'setting';}catch(e){}
-  if(!['setting','normal','ggo'].includes(savedTab))savedTab='setting';
+  if(!['setting','normal','ggo','memo'].includes(savedTab))savedTab='setting';
   activateTab(savedTab);
 })();
 </script>

@@ -1,7 +1,7 @@
 {
-  "name": "SAO2 判別カウンター",
+  "name": "SAO2 判別・実戦ログ",
   "short_name": "SAO2判別",
-  "description": "スマスロ ソードアート・オンラインⅡ 設定推測・通常モード・GGOモード記録ツール",
+  "description": "スマスロ SAO2の設定推測・通常/GGOモード記録・実戦タイムライン",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
