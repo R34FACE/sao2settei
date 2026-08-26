@@ -97,6 +97,18 @@
   .empty-memo{font-size:12px;color:var(--muted);text-align:center;border:1px dashed #2b3b59;border-radius:12px;padding:18px 10px}
   .history-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
   .history-list{display:grid;gap:10px}.history-entry{border:1px solid var(--line);border-radius:14px;background:#091120;padding:11px}.history-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.history-date{font-size:17px;font-weight:850}.history-sub{font-size:10px;color:var(--muted);margin-top:2px}.history-net{font-size:20px;font-weight:900;white-space:nowrap}.history-net.plus{color:#8bf0c2}.history-net.minus{color:#ff9ca5}.history-net.zero{color:#d7e3f4}.history-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.history-metric{background:#07101d;border:1px solid #22314a;border-radius:10px;padding:7px}.history-metric .k{font-size:9px;color:var(--muted)}.history-metric .v{font-size:13px;font-weight:800;margin-top:1px}.history-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px}.history-actions button{min-height:34px;border-radius:9px;padding:5px 7px;font-size:10px;font-weight:800;border:1px solid #304261;background:#121d32;color:#dcecff}.history-actions .restore{border-color:rgba(77,215,255,.35);color:#c8f5ff}.history-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}.net-preview{font-size:28px;font-weight:900;text-align:center;padding:8px 0}.net-preview.plus{color:#8bf0c2}.net-preview.minus{color:#ff9ca5}.net-preview.zero{color:#eaf3ff}
+  .detail-modal-box{max-width:760px;margin:2vh auto;background:#0d1526;border:1px solid #2d3d59;border-radius:16px;padding:14px}
+  .detail-hero{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;margin-bottom:10px}
+  .detail-date{font-size:20px;font-weight:900}.detail-est{font-size:11px;color:var(--muted);margin-top:3px}
+  .detail-net{font-size:24px;font-weight:900;text-align:right}.detail-net.plus{color:#8bf0c2}.detail-net.minus{color:#ff9ca5}.detail-net.zero{color:#eaf3ff}
+  .detail-section{margin-top:12px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#091120}
+  .detail-section-title{padding:8px 10px;font-size:12px;font-weight:900;color:#dff7ff;background:rgba(77,215,255,.07);border-bottom:1px solid var(--line)}
+  .detail-row{display:grid;grid-template-columns:minmax(118px,.9fr) minmax(0,1.6fr);gap:10px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.055);align-items:start}
+  .detail-row:first-of-type{border-top:0}.detail-k{font-size:11px;color:var(--muted)}.detail-v{font-size:12px;font-weight:800;text-align:right;word-break:break-word}
+  .detail-sub{font-size:10px;color:var(--muted);font-weight:500;margin-top:2px}
+  .detail-log{padding:8px 10px;border-top:1px solid rgba(255,255,255,.055)}.detail-log:first-of-type{border-top:0}
+  .detail-log-head{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:850}.detail-log-meta{font-size:11px;color:#d7e5f8;margin-top:3px}.detail-log-note{font-size:10px;color:var(--muted);margin-top:3px;white-space:pre-wrap}
+  @media(max-width:430px){.detail-row{grid-template-columns:1fr;gap:2px}.detail-v{text-align:left}.detail-hero{grid-template-columns:1fr}.detail-net{text-align:left}}
   @media(max-width:430px){.tabs{top:62px}.mode-summary{grid-template-columns:1fr 1fr}}
 
 </style>
@@ -104,7 +116,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.4 改2 / PWA</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.4 改3 / PWA</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -274,7 +286,7 @@
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.4改2：シューティングチャージを4種類別にカウントし、出現数・構成比を実戦ごと／保存履歴累計で確認できるように変更。SC中AT当選・トロフィー・CZ区間ログも引き続き保存します。</div>
+    <div class="footer-note">Ver.4改3：保存した実戦を「詳細を見る」から一覧表示できるように変更。入力画面へ復元しなくても、CZ・AT確率、レア役、SC種類、共通ベル、終了画面、GGO示唆、区間ログを表形式で確認できます。</div>
   </section>
   </div>
 
@@ -384,7 +396,7 @@
     </section>
 
     <section class="card">
-      <div class="mode-head"><div><div class="mode-title">過去の実戦</div><div class="mode-sub">保存時のデータを見返したり、現在データへ復元できます</div></div><span class="mode-badge" id="historyCountBadge">0件</span></div>
+      <div class="mode-head"><div><div class="mode-title">過去の実戦</div><div class="mode-sub">保存した日の入力データを一覧で見返せます</div></div><span class="mode-badge" id="historyCountBadge">0件</span></div>
       <div class="history-stats">
         <div class="statbox"><div class="k">保存実戦数</div><div class="v" id="historyCountStat">0件</div></div>
         <div class="statbox"><div class="k">累計差枚</div><div class="v" id="historyNetStat">±0枚</div></div>
@@ -409,6 +421,8 @@
 <div class="sticky-actions"><div class="inner"><button class="btn" id="copySummary">全データまとめをコピー</button><button class="btn secondary" id="scrollTop">期待度を見る</button><button class="btn secondary" id="openText">テキスト表示</button></div></div>
 
 <div class="modal" id="textModal"><div class="modal-box"><div class="title-row"><h2 style="margin:0;font-size:16px">実戦データまとめ</h2><button class="btn secondary" id="closeModal" style="min-height:36px;padding:6px 12px">閉じる</button></div><textarea id="summaryText" readonly></textarea><div class="actions"><button class="btn" id="copyModal">コピー</button><button class="btn secondary" id="selectAll">全選択</button></div></div></div>
+
+<div class="modal" id="historyDetailModal"><div class="detail-modal-box"><div class="title-row"><h2 style="margin:0;font-size:16px">保存実戦の詳細</h2><button class="btn secondary" id="closeHistoryDetail" style="min-height:36px;padding:6px 12px">閉じる</button></div><div id="historyDetailBody"></div><div class="actions"><button class="btn" id="copyHistoryDetail">この実戦をコピー</button><button class="btn secondary" id="closeHistoryDetailBottom">閉じる</button></div></div></div>
 
 <script>
 (() => {
@@ -738,6 +752,76 @@
     const ml=Array.isArray(d.memoLogs)?d.memoLogs:[]; const lc=getLampCounts(ml); lines.push(`ランプ集計：白${lc['白']} / 青${lc['青']} / 黄${lc['黄']} / 緑${lc['緑']} / 赤${lc['赤']} / 紫${lc['紫']}`); if(ml.length){lines.push('');lines.push('【CZ・AT区間ログ】');ml.forEach((m,i)=>{const parts=[];const mc=m.menuChar||m.content||'';if(mc)parts.push('メニュー '+mc);if(m.result)parts.push(m.result);if(m.lamp)parts.push('ランプ'+m.lamp);lines.push(`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'}${parts.length?'：'+parts.join(' / '):''}`);if(m.note)lines.push('  '+String(m.note).replace(/\n/g,' / '));});}
     return lines.join('\n');
   }
+  let openedHistoryIndex = -1;
+  const detailRow=(k,v,sub='')=>`<div class="detail-row"><div class="detail-k">${esc(k)}</div><div class="detail-v">${v}${sub?`<div class="detail-sub">${esc(sub)}</div>`:''}</div></div>`;
+  const detailSection=(title,rows)=>`<div class="detail-section"><div class="detail-section-title">${esc(title)}</div>${rows.join('')}</div>`;
+  function historyDetailHtml(entry){
+    const d=entry?.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id], G=hv('normalG');
+    const rate=(hits,total)=>hits&&total?`${hits}回　${fmtDen(hits,total)}`:`${hits}回`;
+    const ratio=(hits,total)=>total?`${hits}/${total}　${fmtPct(hits/total)}`:`${hits}/${total}`;
+    const net=Number(entry?.net||0), netCls=net>0?'plus':net<0?'minus':'zero';
+    const lowHit=hv('lowStrongCZ')+hv('lowStrongDirect'), highHit=hv('highStrongCZ')+hv('highStrongDirect');
+    const scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), oldSc=hv('shootingChargeTotal');
+    const scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldSc:0), scTotal=scK+scS+scW+scN+scU;
+    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=hv('atGameCount');
+    const ml=Array.isArray(d.memoLogs)?d.memoLogs:[], lc=getLampCounts(ml);
+    const conf=[]; if(hb('end2plus'))conf.push('設定2以上'); if(hb('end3plus'))conf.push('設定3以上'); if(hb('end4plus'))conf.push('設定4以上'); if(hb('end6'))conf.push('設定6濃厚'); if(hb('ed4plus'))conf.push('ED 設定4以上'); if(hb('ed6'))conf.push('ED 設定6濃厚'); if(hb('mr4plus'))conf.push('マザロザ 設定4以上'); if(hb('mr6'))conf.push('マザロザ 設定6濃厚');
+    const html=[];
+    html.push(`<div class="detail-hero"><div><div class="detail-date">${esc(entry?.date||'日付なし')}</div><div class="detail-est">保存時推測：${entry?.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}</div></div><div class="detail-net ${netCls}">${esc(fmtCoins(net))}</div></div>`);
+    html.push(detailSection('実戦結果',[
+      detailRow('通常ゲーム数',`${G.toLocaleString()}G`),
+      detailRow('投資 / 回収',`${Number(entry?.investment||0).toLocaleString()}枚 / ${Number(entry?.returns||0).toLocaleString()}枚`),
+      detailRow('差枚',esc(fmtCoins(net)))
+    ]));
+    html.push(detailSection('CZ・AT',[
+      detailRow('CZ',rate(hv('czCount'),G),`成功 ${hv('czSuccess')} / 失敗 ${hv('czFail')}`),
+      detailRow('AT初当たり',rate(hv('atCount'),G)),
+      detailRow('詩乃由来AT直撃',rate(hv('directAT'),G)),
+      detailRow('CZ失敗時アイテム',ratio(hv('itemHit'),hv('czFail')))
+    ]));
+    html.push(detailSection('設定推測用レア役',[
+      detailRow('低確 強チェリー',`${hv('lowStrongTotal')}回`,`CZ ${hv('lowStrongCZ')} / AT直撃 ${hv('lowStrongDirect')} / CZ相当 ${hv('lowStrongTotal')?fmtPct(lowHit/hv('lowStrongTotal')):'―'}`),
+      detailRow('高確 強チェリー',`${hv('highStrongTotal')}回`,`CZ ${hv('highStrongCZ')} / AT直撃 ${hv('highStrongDirect')} / CZ相当 ${hv('highStrongTotal')?fmtPct(highHit/hv('highStrongTotal')):'―'}`),
+      detailRow('低確スイカ→SC',ratio(hv('watermelonSC'),hv('watermelonTotal'))),
+      detailRow('強チャンス目→確定CZ',ratio(hv('strongChanceDefCZ'),hv('strongChanceTotal'))),
+      detailRow('確定CZ 総回数',`${hv('defCZTotal')}回`)
+    ]));
+    html.push(detailSection('シューティングチャージ',[
+      detailRow('SC合計',rate(scTotal,G),scU?`種類不明 ${scU}回を含む`:''),
+      detailRow('キリト射撃訓練',`${scK}回${scTotal?`　${fmtPct(scK/scTotal)}`:''}`),
+      detailRow('シノンビンタ',`${scS}回${scTotal?`　${fmtPct(scS/scTotal)}`:''}`),
+      detailRow('水鉄砲チャージ',`${scW}回${scTotal?`　${fmtPct(scW/scTotal)}`:''}`),
+      detailRow('NIGHT SPLASH',`${scN}回${scTotal?`　${fmtPct(scN/scTotal)}`:''}`),
+      ...(scU?[detailRow('種類不明',`${scU}回${scTotal?`　${fmtPct(scU/scTotal)}`:''}`)]:[]),
+      detailRow('SC中AT当選',ratio(hv('shootingChargeATHit'),scTotal))
+    ]));
+    html.push(detailSection('共通ベル',[
+      detailRow('通常時',rate(bellN,G)),
+      detailRow('AT中ナビなし右下がり',rate(bellAT,atG),atG?`AT中 ${atG.toLocaleString()}G`:'AT中G数未入力'),
+      detailRow('全状態参考',rate(bellN+bellAT,G+atG))
+    ]));
+    html.push(detailSection('AT終了画面・トロフィー',[
+      detailRow('終了画面',`デフォ ${hv('endDefault')} / 奇数 ${hv('endOdd')} / 偶数 ${hv('endEven')}`),
+      detailRow('高設定示唆',`弱 ${hv('endHigh')} / 強 ${hv('endHighStrong')} / 幼少期 ${hv('endChild')}`),
+      detailRow('確定・濃厚系',conf.length?esc(conf.join(' / ')):'なし'),
+      detailRow('コパンダトロフィー',`銅 ${hv('trophyBronze')} / 銀 ${hv('trophySilver')} / 金 ${hv('trophyGold')} / イナズマ ${hv('trophyLightning')} / 虹 ${hv('trophyRainbow')}`)
+    ]));
+    html.push(detailSection('GGOモード示唆',[
+      detailRow('詩乃',`50%示唆 ${hv('shino50')} / 濃厚 ${hv('shinoSure')} / 直撃 ${hv('directAT')}`),
+      detailRow('キリト',`50%クラス ${hv('ggoKirito50')} / 濃厚 ${hv('ggoKiritoSure')} / 恩恵確認 ${hv('ggoKiritoBenefit')}`),
+      detailRow('シノン',`50%クラス ${hv('ggoSinon50')} / 濃厚 ${hv('ggoSinonSure')} / 恩恵確認 ${hv('ggoSinonBenefit')}`),
+      detailRow('死銃',`50%クラス ${hv('ggoDeath50')} / 濃厚 ${hv('ggoDeathSure')} / 恩恵確認 ${hv('ggoDeathBenefit')}`)
+    ]));
+    html.push(detailSection('ランプ集計',[
+      detailRow('ボイス＋ランプ',`白 ${lc['白']} / 青 ${lc['青']} / 黄 ${lc['黄']} / 緑 ${lc['緑']} / 赤 ${lc['赤']} / 紫 ${lc['紫']}`)
+    ]));
+    const logs=ml.length?ml.map((m,i)=>{const mc=m.menuChar||m.content||'', meta=[]; if(mc)meta.push(`メニュー：${esc(mc)}`); if(m.result)meta.push(esc(m.result)); if(m.lamp)meta.push(`ランプ${esc(m.lamp)}`); return `<div class="detail-log"><div class="detail-log-head"><span>#${i+1}</span><span>${m.game!==''?esc(m.game)+'G':'G数未入力'}</span></div>${meta.length?`<div class="detail-log-meta">${meta.join(' / ')}</div>`:''}${m.note?`<div class="detail-log-note">${esc(m.note)}</div>`:''}</div>`;}).join(''):'<div class="detail-log"><div class="detail-log-note">区間ログなし</div></div>';
+    html.push(`<div class="detail-section"><div class="detail-section-title">CZ・AT区間ログ</div>${logs}</div>`);
+    return html.join('');
+  }
+  function openHistoryDetail(i){const h=playHistory[i];if(!h)return;openedHistoryIndex=i;$('historyDetailBody').innerHTML=historyDetailHtml(h);$('historyDetailModal').classList.add('open');}
+  function closeHistoryDetail(){openedHistoryIndex=-1;$('historyDetailModal').classList.remove('open');}
+
   function renderHistory(){
     if(!$('historyList'))return; $('historyCountBadge').textContent=playHistory.length+'件'; $('historyCountStat').textContent=playHistory.length+'件';
     const totalNet=playHistory.reduce((a,h)=>a+Number(h.net||0),0); $('historyNetStat').textContent=fmtCoins(totalNet); $('historyNetStat').style.color=totalNet>0?'#8bf0c2':totalNet<0?'#ff9ca5':'#f4f7fb';
@@ -750,7 +834,7 @@
     $('historyScNight').textContent=`${scAgg.n}回${scAggTotal?` (${fmtPct(scAgg.n/scAggTotal)})`:''}`;
     $('historyScTotal').innerHTML=`種類判明SC：<strong>${scAggTotal}回</strong>`;
     if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
-    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">通常G</div><div class="v">${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">CZ・AT区間ログ</div><div class="v">${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">全データ</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
+    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">通常G</div><div class="v">${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">CZ・AT区間ログ</div><div class="v">${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
   }
   function restoreHistory(i){
     const h=playHistory[i]; if(!h||!h.data)return; if(!confirm('現在の入力内容を、この過去実戦データで上書きしますか？\n履歴そのものは消えません。'))return; const d=h.data;
@@ -778,6 +862,8 @@
   $('copySummary').onclick=async()=>{const text=summary();try{await navigator.clipboard.writeText(text);$('saveState').textContent='全データまとめをコピーしました';}catch(e){$('summaryText').value=text;$('textModal').classList.add('open');}};
   $('openText').onclick=()=>{$('summaryText').value=summary();$('textModal').classList.add('open');};
   $('closeModal').onclick=()=>$('textModal').classList.remove('open'); $('textModal').addEventListener('click',e=>{if(e.target===$('textModal'))$('textModal').classList.remove('open');});
+  $('closeHistoryDetail').onclick=closeHistoryDetail; $('closeHistoryDetailBottom').onclick=closeHistoryDetail; $('historyDetailModal').addEventListener('click',e=>{if(e.target===$('historyDetailModal'))closeHistoryDetail();});
+  $('copyHistoryDetail').onclick=async()=>{if(openedHistoryIndex<0||!playHistory[openedHistoryIndex])return;const t=historyText(playHistory[openedHistoryIndex]);try{await navigator.clipboard.writeText(t);$('saveState').textContent='この実戦データをコピーしました';}catch(e){$('summaryText').value=t;$('textModal').classList.add('open');}};
   $('copyModal').onclick=async()=>{try{await navigator.clipboard.writeText($('summaryText').value);}catch(e){$('summaryText').select();document.execCommand('copy');}}; $('selectAll').onclick=()=>{$('summaryText').focus();$('summaryText').select();};
   $('resetPriors').onclick=()=>{priors=[1,1,1,1,1,1];renderPriorInputs();refresh();}; $('recalc').onclick=refresh;
   $('resetAll').onclick=()=>{if(!confirm('現在の入力データとCZ・AT区間ログを削除しますか？\n保存済みの過去履歴は残ります。'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];memoLogs=[];clearMemoForm();$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();};
@@ -811,7 +897,7 @@
   $('copyHistory').onclick=async()=>{const t=historyListText();try{await navigator.clipboard.writeText(t);$('saveState').textContent='実戦履歴一覧をコピーしました';}catch(e){$('summaryText').value=t;$('textModal').classList.add('open');}};
   $('clearHistory').onclick=()=>{if(!playHistory.length)return;if(!confirm('保存済みの実戦履歴をすべて削除しますか？\nこの操作は元に戻せません。'))return;playHistory=[];renderHistory();save();};
   document.addEventListener('click',e=>{
-    const view=e.target.closest('[data-history-view]');if(view){const h=playHistory[Number(view.dataset.historyView)];if(h){$('summaryText').value=historyText(h);$('textModal').classList.add('open');}return;}
+    const view=e.target.closest('[data-history-view]');if(view){openHistoryDetail(Number(view.dataset.historyView));return;}
     const restore=e.target.closest('[data-history-restore]');if(restore){restoreHistory(Number(restore.dataset.historyRestore));return;}
     const del=e.target.closest('[data-history-delete]');if(del){const i=Number(del.dataset.historyDelete);if(confirm('この実戦履歴を削除しますか？')){playHistory.splice(i,1);renderHistory();save();}return;}
   });
