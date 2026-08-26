@@ -116,7 +116,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.4 改3 / PWA</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.4 改4 / PWA</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -213,6 +213,21 @@
       <div class="small">共通ベルは設定差ありの可能性がありますが、正式な設定別解析値・通常時/AT中の公式カウント基準が未確定のため、現時点では設定期待度の計算には使用しません。通常時とAT中は分けて記録します。</div>
     </details>
 
+    <details open>
+      <summary>バレットカウンターMAX → CZ（参考統計）</summary>
+      <div class="grid three">
+        <div class="field"><div class="name">MAX到達回数</div><div class="num-wrap"><button data-delta="-1" data-target="bulletMaxTotal">−</button><input id="bulletMaxTotal" type="number" min="0" value="0"><button data-delta="1" data-target="bulletMaxTotal">＋</button></div><div class="hint">バレット7個到達でCZ抽選を受けた回数</div></div>
+        <div class="field"><div class="name">→ CZ当選</div><div class="num-wrap"><button data-delta="-1" data-target="bulletCZHit">−</button><input id="bulletCZHit" type="number" min="0" value="0"><button data-delta="1" data-target="bulletCZHit">＋</button></div></div>
+        <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="bulletDirectAT">−</button><input id="bulletDirectAT" type="number" min="0" value="0"><button data-delta="1" data-target="bulletDirectAT">＋</button></div><div class="hint">詩乃モード等でCZ当選がAT直撃に変換されたと考えられるケース</div></div>
+      </div>
+      <div class="mode-summary">
+        <div class="statbox"><div class="k">CZ相当当選</div><div class="v" id="bulletHitView">0 / 0</div></div>
+        <div class="statbox"><div class="k">非当選</div><div class="v" id="bulletMissView">0回</div></div>
+      </div>
+      <div class="calc" id="bulletRate">CZ相当当選率：―</div>
+      <div class="small">「CZ当選＋AT直撃」をCZ相当当選として集計します。現時点では設定別の具体的な解析値が未公表のため、設定期待度の計算には使用しません。AT直撃は基本データの「詩乃モード由来AT直撃」の内訳として別途数えてください。</div>
+    </details>
+
     <details>
       <summary>確定CZ・強チャンス目</summary>
       <div class="grid three">
@@ -286,7 +301,7 @@
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.4改3：保存した実戦を「詳細を見る」から一覧表示できるように変更。入力画面へ復元しなくても、CZ・AT確率、レア役、SC種類、共通ベル、終了画面、GGO示唆、区間ログを表形式で確認できます。</div>
+    <div class="footer-note">Ver.4改4：バレットカウンターMAXのCZ当選・AT直撃・非当選・CZ相当当選率を参考統計として追加。保存履歴の詳細にも残ります。設定期待度への加点はしていません。</div>
   </section>
   </div>
 
@@ -430,7 +445,7 @@
   const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v3','sao2-setting-tool-v2','sao2-setting-tool-v1'];
   const ids = [
     'normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
-    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','commonBellNormal','atGameCount','commonBellAT','strongChanceTotal','strongChanceDefCZ',
+    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceTotal','strongChanceDefCZ',
     'defCZTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild','trophyBronze','trophySilver','trophyGold','trophyLightning','trophyRainbow',
     'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit'
   ];
@@ -517,6 +532,7 @@
     const scTotal=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight')+n('shootingChargeUnknown');
     if(n('shootingChargeATHit')>scTotal) msgs.push('SC中AT当選回数がSC総回数を超えています。');
     if(scTotal>0 && n('watermelonSC')>scTotal) msgs.push('低確スイカ由来SCが記録済みSC総回数を超えています。SC種類のカウント漏れがないか確認してください。');
+    if(n('bulletCZHit')+n('bulletDirectAT')>n('bulletMaxTotal')) msgs.push('バレットMAXのCZ当選＋AT直撃がMAX到達回数を超えています。');
     const box=$('validation');
     if(msgs.length){box.style.display='block';box.textContent=msgs.join(' ');}else{box.style.display='none';box.textContent='';}
     return msgs.length===0;
@@ -577,6 +593,10 @@
       if(allBell && allGame) lines.push(`全状態参考 ${fmtDen(allBell,allGame)}`);
       out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">共通ベル（参考記録）</div><span class="pill mid">計算未使用</span></div><div class="ev-rate">${lines.join(' / ') || '―'}</div><div class="ev-note">通常時とAT中ナビなし右下がりベルを分離して記録。正式解析値・公式カウント基準待ちのため、現時点では設定期待度に加点していません。</div></div>`);
     }
+    if(n('bulletMaxTotal')){
+      const tot=n('bulletMaxTotal'), hit=n('bulletCZHit')+n('bulletDirectAT');
+      out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">バレットMAX → CZ相当（参考統計）</div><span class="pill mid">計算未使用</span></div><div class="ev-rate">${hit}/${tot} = ${fmtPct(hit/tot)}</div><div class="ev-note">CZ ${n('bulletCZHit')} / AT直撃 ${n('bulletDirectAT')} / 非当選 ${Math.max(0,tot-hit)}。設定別解析値が未公表のため現在は参考記録のみ。</div></div>`);
+    }
     if(G){out.push(ev('詩乃モード由来 AT直撃',`${n('directAT')}/${G.toLocaleString()}G = ${fmtDen(n('directAT'),G)}`,bestFitPoi(n('directAT'),G,R.directDen),'例外契機を除いた直撃のみ。設定6解析値 約1/3,416。',n('directAT')?'good':'mid'));}
     if(G){out.push(ev('CZ初当たり',`${n('czCount')}/${G.toLocaleString()}G = ${fmtDen(n('czCount'),G)}`,bestFitPoi(n('czCount'),G,R.czDen),'設定1 約1/238 ～ 設定6 約1/192。全体値は相関を考慮して低めの重み。', 'mid'));}
     if(G){out.push(ev('AT初当たり',`${n('atCount')}/${G.toLocaleString()}G = ${fmtDen(n('atCount'),G)}`,bestFitPoi(n('atCount'),G,R.atDen),'設定1 約1/386 ～ 設定6 約1/270。全体値は相関を考慮して低めの重み。', 'mid'));}
@@ -610,6 +630,10 @@
     $('commonBellATRate').innerHTML=`AT中：<strong>${(cba && atg)?`${cba}回 / ${atg.toLocaleString()}G = ${fmtDen(cba,atg)}`:'―'}</strong>`;
     const allBell=cbn+cba, allGame=G+atg;
     $('commonBellAllRate').innerHTML=`全状態参考：<strong>${(allBell && allGame)?`${allBell}回 / ${allGame.toLocaleString()}G = ${fmtDen(allBell,allGame)}`:'―'}</strong>`;
+    const btot=n('bulletMaxTotal'), bhit=n('bulletCZHit')+n('bulletDirectAT'), bmiss=Math.max(0,btot-bhit);
+    $('bulletHitView').textContent=`${bhit} / ${btot}`;
+    $('bulletMissView').textContent=`${bmiss}回`;
+    $('bulletRate').innerHTML=`CZ相当当選率：<strong>${btot?`${bhit}/${btot} = ${fmtPct(bhit/btot)}`:'―'}</strong>`;
     if($('directATMirror')) $('directATMirror').textContent=n('directAT');
     if($('lowStrongDirectMirror')) $('lowStrongDirectMirror').textContent=n('lowStrongDirect');
     if($('netCoinsPreview')){
@@ -638,6 +662,8 @@
     lines.push(`SC合計：${scTotal}回${scTotal&&G?' ('+fmtDen(scTotal,G)+')':''} / SC中AT当選 ${n('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(n('shootingChargeATHit')/scTotal)+')':''}`);
     const cbAll=n('commonBellNormal')+n('commonBellAT'), gameAll=n('normalG')+n('atGameCount');
     lines.push(`共通ベル：通常時 ${n('commonBellNormal')}${n('normalG')&&n('commonBellNormal')?' ('+fmtDen(n('commonBellNormal'),n('normalG'))+')':''} / AT中ナビなし右下がり ${n('commonBellAT')}${n('atGameCount')&&n('commonBellAT')?' ('+fmtDen(n('commonBellAT'),n('atGameCount'))+')':''}${cbAll&&gameAll?' / 全状態参考 '+fmtDen(cbAll,gameAll):''}`);
+    const bulletHit=n('bulletCZHit')+n('bulletDirectAT'), bulletMiss=Math.max(0,n('bulletMaxTotal')-bulletHit);
+    lines.push(`バレットMAX：${n('bulletMaxTotal')}回 → CZ ${n('bulletCZHit')} / AT直撃 ${n('bulletDirectAT')} / 非当選 ${bulletMiss} / CZ相当 ${bulletHit}${n('bulletMaxTotal')?' ('+fmtPct(bulletHit/n('bulletMaxTotal'))+')':''}`);
     const lampCounts=getLampCounts(memoLogs);
     lines.push('');
     lines.push('【ランプ集計（CZ・AT区間ログから）】');
@@ -746,6 +772,7 @@
     lines.push(`シューティングチャージ種類：キリト射撃訓練${scK} / シノンビンタ${scS} / 水鉄砲チャージ${scW} / NIGHT SPLASH${scN}${scU?` / 種類不明${scU}`:''}`);
     lines.push(`SC合計：${scTotal}回${scTotal&&hv('normalG')?' ('+fmtDen(scTotal,hv('normalG'))+')':''} / SC中AT当選${hv('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(hv('shootingChargeATHit')/scTotal)+')':''}`);
     const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=hv('atGameCount'); lines.push(`共通ベル：通常${bellN}${bellN&&hv('normalG')?' ('+fmtDen(bellN,hv('normalG'))+')':''} / AT中${bellAT}${bellAT&&atG?' ('+fmtDen(bellAT,atG)+')':''}`);
+    const bulletHit=hv('bulletCZHit')+hv('bulletDirectAT'), bulletMiss=Math.max(0,hv('bulletMaxTotal')-bulletHit); lines.push(`バレットMAX：${hv('bulletMaxTotal')} → CZ${hv('bulletCZHit')} / AT直撃${hv('bulletDirectAT')} / 非当選${bulletMiss}${hv('bulletMaxTotal')?` / CZ相当${fmtPct(bulletHit/hv('bulletMaxTotal'))}`:''}`);
     lines.push(`終了画面：デフォ${hv('endDefault')} / 奇数${hv('endOdd')} / 偶数${hv('endEven')} / 高設定${hv('endHigh')} / 高設定強${hv('endHighStrong')} / 幼少期${hv('endChild')}`);
     lines.push(`トロフィー：銅${hv('trophyBronze')} / 銀${hv('trophySilver')} / 金${hv('trophyGold')} / イナズマ${hv('trophyLightning')} / 虹${hv('trophyRainbow')}`);
     lines.push(`GGO詩乃：50%示唆${hv('shino50')} / 濃厚${hv('shinoSure')} / 直撃${hv('directAT')}`);
@@ -799,6 +826,14 @@
       detailRow('通常時',rate(bellN,G)),
       detailRow('AT中ナビなし右下がり',rate(bellAT,atG),atG?`AT中 ${atG.toLocaleString()}G`:'AT中G数未入力'),
       detailRow('全状態参考',rate(bellN+bellAT,G+atG))
+    ]));
+    const bulletHit=hv('bulletCZHit')+hv('bulletDirectAT'), bulletMiss=Math.max(0,hv('bulletMaxTotal')-bulletHit);
+    html.push(detailSection('バレットカウンターMAX',[
+      detailRow('MAX到達',`${hv('bulletMaxTotal')}回`),
+      detailRow('→ CZ当選',`${hv('bulletCZHit')}回`),
+      detailRow('→ AT直撃',`${hv('bulletDirectAT')}回`),
+      detailRow('非当選',`${bulletMiss}回`),
+      detailRow('CZ相当当選率',hv('bulletMaxTotal')?`${bulletHit}/${hv('bulletMaxTotal')}　${fmtPct(bulletHit/hv('bulletMaxTotal'))}`:'―','設定期待度には未反映')
     ]));
     html.push(detailSection('AT終了画面・トロフィー',[
       detailRow('終了画面',`デフォ ${hv('endDefault')} / 奇数 ${hv('endOdd')} / 偶数 ${hv('endEven')}`),

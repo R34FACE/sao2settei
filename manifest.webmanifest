@@ -1,7 +1,7 @@
 {
-  "name": "SAO2 判別・実戦ログ Ver.4改2",
+  "name": "SAO2 判別・実戦ログ Ver.4改4",
   "short_name": "SAO2判別",
-  "description": "スマスロ SAO2の設定推測・GGOモード記録・共通ベル・SC種類統計・CZ/AT区間ログ・過去実戦履歴",
+  "description": "スマスロ SAO2の設定推測・GGOモード記録・共通ベル・バレットMAX統計・SC種類統計・CZ/AT区間ログ・過去実戦履歴",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
