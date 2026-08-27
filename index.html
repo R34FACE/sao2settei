@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#0b1020" />
+<meta name="theme-color" content="#56532e" />
 <title>SAO2 判別・実戦ログ</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
@@ -13,96 +13,96 @@
 <meta name="apple-mobile-web-app-title" content="SAO2判別">
 <style>
   :root{
-    --bg:#070b14;--panel:#10182a;--panel2:#0d1424;--line:#24314a;--text:#f4f7fb;--muted:#9fb0c9;
-    --accent:#4dd7ff;--accent2:#7c5cff;--good:#45e39b;--warn:#ffc857;--bad:#ff6b78;--shadow:0 12px 28px rgba(0,0,0,.28);
+    --bg:#242312;--panel:#34321d;--panel2:#2b2917;--line:#6d6840;--text:#f3edd2;--muted:#cbc39d;
+    --accent:#d4c36b;--accent2:#9e8341;--good:#b7d572;--warn:#f0c96c;--bad:#ff8b96;--shadow:0 12px 28px rgba(0,0,0,.34);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background:linear-gradient(180deg,#050812,#0a1020 28%,#070b14);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
+  body{margin:0;position:relative;overflow-x:hidden;background:radial-gradient(circle at top,#777244 0,#484529 18%,#2d2a17 52%,#1f1d10 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
   button,input,select{font:inherit}
   button{touch-action:manipulation}
-  .app{max-width:760px;margin:0 auto;padding:12px 12px 96px}
-  .hero{position:sticky;top:0;z-index:20;margin:-12px -12px 12px;padding:12px 12px 10px;background:rgba(7,11,20,.94);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)}
+  .app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:12px 12px 96px}
+  .hero{position:sticky;top:0;z-index:20;margin:-12px -12px 12px;padding:12px 12px 10px;background:rgba(41,38,21,.94);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,245,210,.10)}
   .title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
   h1{font-size:19px;margin:0;letter-spacing:.02em}
-  .tag{font-size:11px;color:#bfefff;border:1px solid rgba(77,215,255,.35);padding:4px 7px;border-radius:999px;background:rgba(77,215,255,.08)}
+  .tag{font-size:11px;color:#f3ebbc;border:1px solid rgba(212,195,107,.42);padding:4px 7px;border-radius:999px;background:rgba(212,195,107,.10)}
   .save-state{font-size:11px;color:var(--muted);margin-top:4px}
   .card{background:linear-gradient(180deg,rgba(16,24,42,.98),rgba(13,20,36,.98));border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
-  .card h2{font-size:16px;margin:0 0 10px}.card h3{font-size:14px;margin:14px 0 8px;color:#dce7f7}
+  .card h2{font-size:16px;margin:0 0 10px}.card h3{font-size:14px;margin:14px 0 8px;color:#ece3bf}
   .best{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
   .best .label{font-size:12px;color:var(--muted)}
   .best .value{font-size:31px;font-weight:800;letter-spacing:.02em}
   .best .sub{font-size:12px;color:var(--muted);text-align:right}
   .bars{display:grid;gap:7px}
   .bar-row{display:grid;grid-template-columns:44px 1fr 55px;align-items:center;gap:8px;font-size:12px}
-  .bar-track{height:13px;border-radius:999px;background:#07101f;border:1px solid rgba(255,255,255,.07);overflow:hidden}
+  .bar-track{height:13px;border-radius:999px;background:#262413;border:1px solid rgba(255,255,255,.07);overflow:hidden}
   .bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent2),var(--accent));min-width:0;transition:width .25s ease}
-  .bar-row.top .bar-fill{background:linear-gradient(90deg,#2fd38f,#72f0b8)}
+  .bar-row.top .bar-fill{background:linear-gradient(90deg,#2fd38f,#bccd72)}
   .bar-pct{text-align:right;font-variant-numeric:tabular-nums}
-  .notice{font-size:12px;color:#c7d4e8;background:rgba(77,215,255,.06);border:1px solid rgba(77,215,255,.16);border-radius:12px;padding:10px;margin-top:10px}
-  .notice.warn{background:rgba(255,200,87,.08);border-color:rgba(255,200,87,.26);color:#ffe6a6}
+  .notice{font-size:12px;color:#c7d4e8;background:rgba(212,195,107,.06);border:1px solid rgba(212,195,107,.16);border-radius:12px;padding:10px;margin-top:10px}
+  .notice.warn{background:rgba(240,201,108,.08);border-color:rgba(240,201,108,.26);color:#f4e0a6}
   details{border-top:1px solid rgba(255,255,255,.08);padding-top:10px;margin-top:10px}
   details:first-of-type{border-top:0;padding-top:0;margin-top:0}
   summary{cursor:pointer;list-style:none;font-weight:700;font-size:15px;padding:4px 0 8px;display:flex;justify-content:space-between;align-items:center}
   summary::-webkit-details-marker{display:none} summary:after{content:'＋';font-size:18px;color:var(--accent)} details[open] summary:after{content:'−'}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid.one{grid-template-columns:1fr}.grid.three{grid-template-columns:repeat(3,1fr)}
   @media(max-width:430px){.grid,.grid.three{grid-template-columns:1fr}.hero{padding-top:max(12px,env(safe-area-inset-top))}}
-  .field{background:#0a1221;border:1px solid var(--line);border-radius:12px;padding:10px}
+  .field{background:#312f1b;border:1px solid var(--line);border-radius:12px;padding:10px}
   .field .name{font-size:12px;color:#dbe7f8;margin-bottom:5px}.field .hint{font-size:10px;color:var(--muted);margin-top:5px}
   .num-wrap{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;align-items:center}.num-wrap.wide{grid-template-columns:50px 1fr 50px}
-  .num-wrap button{height:40px;border-radius:10px;border:1px solid #2b3b59;background:#162139;color:#fff;font-size:20px;font-weight:800}
+  .num-wrap button{height:40px;border-radius:10px;border:1px solid #706940;background:#4a4426;color:#fff;font-size:20px;font-weight:800}
   .num-wrap button:active{transform:scale(.98)}
-  input[type=number]{width:100%;height:40px;border-radius:10px;border:1px solid #2b3b59;background:#07101d;color:#fff;text-align:center;font-weight:700;font-size:16px;outline:none}
-  input[type=number]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(77,215,255,.10)}
-  select{width:100%;height:40px;border-radius:10px;border:1px solid #2b3b59;background:#07101d;color:#fff;padding:0 10px}
-  .calc{font-size:12px;margin-top:6px;color:#bfefff}.calc strong{color:#fff}
-  .evidence{display:grid;gap:8px}.ev{border:1px solid var(--line);border-radius:12px;padding:10px;background:#091120}.ev-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.ev-title{font-size:12px;font-weight:700}.ev-rate{font-size:13px;font-weight:800}.ev-note{font-size:11px;color:var(--muted);margin-top:3px}.pill{font-size:10px;border-radius:999px;padding:3px 7px;border:1px solid #33445f;color:#cfe2fb;white-space:nowrap}.pill.good{border-color:rgba(69,227,155,.35);color:#8bf0c2;background:rgba(69,227,155,.07)}.pill.bad{border-color:rgba(255,107,120,.35);color:#ff9ca5;background:rgba(255,107,120,.07)}.pill.mid{border-color:rgba(255,200,87,.35);color:#ffdc8b;background:rgba(255,200,87,.07)}
+  input[type=number]{width:100%;height:40px;border-radius:10px;border:1px solid #706940;background:#262413;color:#fff;text-align:center;font-weight:700;font-size:16px;outline:none}
+  input[type=number]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,195,107,.10)}
+  select{width:100%;height:40px;border-radius:10px;border:1px solid #706940;background:#262413;color:#fff;padding:0 10px}
+  .calc{font-size:12px;margin-top:6px;color:#efe7b0}.calc strong{color:#fff}
+  .evidence{display:grid;gap:8px}.ev{border:1px solid var(--line);border-radius:12px;padding:10px;background:#2d2b18}.ev-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.ev-title{font-size:12px;font-weight:700}.ev-rate{font-size:13px;font-weight:800}.ev-note{font-size:11px;color:var(--muted);margin-top:3px}.pill{font-size:10px;border-radius:999px;padding:3px 7px;border:1px solid #766d43;color:#efe7cd;white-space:nowrap}.pill.good{border-color:rgba(183,213,114,.35);color:#d9ec9a;background:rgba(183,213,114,.07)}.pill.bad{border-color:rgba(255,107,120,.35);color:#ff9faa;background:rgba(255,107,120,.07)}.pill.mid{border-color:rgba(240,201,108,.35);color:#ffdc8b;background:rgba(240,201,108,.07)}
   .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.actions.three{grid-template-columns:repeat(3,1fr)}
-  .btn{border:0;border-radius:12px;min-height:44px;padding:10px 12px;font-weight:800;color:#08111d;background:linear-gradient(135deg,#54d9ff,#72f0b8)}
-  .btn.secondary{color:#eaf3ff;background:#162139;border:1px solid #304261}.btn.danger{color:#ffd4d8;background:#2a1219;border:1px solid #61303a}
+  .btn{border:0;border-radius:12px;min-height:44px;padding:10px 12px;font-weight:800;color:#08111d;background:linear-gradient(135deg,#d7c56d,#bccd72)}
+  .btn.secondary{color:#f4edd6;background:#4a4426;border:1px solid #7e7546}.btn.danger{color:#ffd4d8;background:#2a1219;border:1px solid #61303a}
   .btn:active{transform:translateY(1px)}
   .small{font-size:11px;color:var(--muted)}
-  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid var(--line);border-radius:11px;background:#091120;font-size:12px}.check input{width:19px;height:19px;accent-color:var(--accent)}
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid var(--line);border-radius:11px;background:#2d2b18;font-size:12px}.check input{width:19px;height:19px;accent-color:var(--accent)}
   .priors{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.priors label{font-size:10px;color:var(--muted);text-align:center}.priors input{height:36px;font-size:13px}
-  .footer-note{font-size:10px;color:#7f91ac;margin:14px 2px}
+  .footer-note{font-size:10px;color:#a9a177;margin:14px 2px}
   .sticky-actions{position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(7,11,20,.96);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08);padding:8px max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
   .sticky-actions .inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:7px}.sticky-actions .btn{min-height:42px;padding:7px;font-size:12px}
-  .modal{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);padding:16px;overflow:auto}.modal.open{display:block}.modal-box{max-width:720px;margin:4vh auto;background:#0d1526;border:1px solid #2d3d59;border-radius:16px;padding:14px}.modal textarea{width:100%;min-height:340px;background:#050b15;color:#eaf4ff;border:1px solid #2c3c58;border-radius:12px;padding:12px;font-size:12px;line-height:1.6}
+  .modal{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);padding:16px;overflow:auto}.modal.open{display:block}.modal-box{max-width:720px;margin:4vh auto;background:#2c2918;border:1px solid #6f6740;border-radius:16px;padding:14px}.modal textarea{width:100%;min-height:340px;background:#1a190f;color:#f4edd6;border:1px solid #2c3c58;border-radius:12px;padding:12px;font-size:12px;line-height:1.6}
 
-  .install-btn{display:none;border:1px solid rgba(77,215,255,.42);background:rgba(77,215,255,.10);color:#dff8ff;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;white-space:nowrap}
+  .install-btn{display:none;border:1px solid rgba(212,195,107,.42);background:rgba(212,195,107,.10);color:#dff8ff;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;white-space:nowrap}
   .install-btn.show{display:inline-flex;align-items:center;gap:5px}
-  .install-note{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(69,227,155,.08);border:1px solid rgba(69,227,155,.22);font-size:12px;color:#b8f5d9}
+  .install-note{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(183,213,114,.08);border:1px solid rgba(183,213,114,.22);font-size:12px;color:#d9ec9a}
   .install-note.show{display:block}
 
   .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}
-  .tab-btn{min-height:40px;border:1px solid #2c3b58;border-radius:10px;background:#0c1424;color:#b8c8df;font-size:12px;font-weight:800}
-  .tab-btn.active{background:linear-gradient(135deg,rgba(77,215,255,.20),rgba(124,92,255,.18));border-color:rgba(77,215,255,.55);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+  .tab-btn{min-height:40px;border:1px solid #2c3b58;border-radius:10px;background:#332f1b;color:#d8d0ad;font-size:12px;font-weight:800}
+  .tab-btn.active{background:linear-gradient(135deg,rgba(212,195,107,.20),rgba(124,92,255,.18));border-color:rgba(212,195,107,.55);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
   .tab-panel{display:none}.tab-panel.active{display:block}
   .mode-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
   .mode-title{font-size:18px;font-weight:850}.mode-sub{font-size:11px;color:var(--muted);margin-top:3px}
-  .mode-badge{font-size:10px;border:1px solid rgba(255,200,87,.35);color:#ffe091;background:rgba(255,200,87,.07);padding:5px 8px;border-radius:999px;white-space:nowrap}
-  .mode-badge.calc{border-color:rgba(69,227,155,.35);color:#9af3cb;background:rgba(69,227,155,.07)}
+  .mode-badge{font-size:10px;border:1px solid rgba(240,201,108,.35);color:#f0dc94;background:rgba(240,201,108,.07);padding:5px 8px;border-radius:999px;white-space:nowrap}
+  .mode-badge.calc{border-color:rgba(183,213,114,.35);color:#d9ec9a;background:rgba(183,213,114,.07)}
   .mode-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
-  .statbox{background:#091120;border:1px solid var(--line);border-radius:12px;padding:10px}.statbox .k{font-size:10px;color:var(--muted)}.statbox .v{font-size:18px;font-weight:850;margin-top:2px}
-  .linked-count{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;align-items:center}.linked-count button{height:40px;border-radius:10px;border:1px solid #2b3b59;background:#162139;color:#fff;font-size:20px;font-weight:800}.linked-value{height:40px;border-radius:10px;border:1px solid #2b3b59;background:#07101d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
-  .legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.legend span{font-size:10px;border:1px solid #30405d;border-radius:999px;padding:4px 7px;color:#b8c9e1}
-  input[type=text], input[type=date], textarea.memo-text{width:100%;border-radius:10px;border:1px solid #2b3b59;background:#07101d;color:#fff;padding:9px 10px;outline:none}
+  .statbox{background:#2d2b18;border:1px solid var(--line);border-radius:12px;padding:10px}.statbox .k{font-size:10px;color:var(--muted)}.statbox .v{font-size:18px;font-weight:850;margin-top:2px}
+  .linked-count{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;align-items:center}.linked-count button{height:40px;border-radius:10px;border:1px solid #706940;background:#4a4426;color:#fff;font-size:20px;font-weight:800}.linked-value{height:40px;border-radius:10px;border:1px solid #706940;background:#262413;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+  .legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.legend span{font-size:10px;border:1px solid #30405d;border-radius:999px;padding:4px 7px;color:#d8d0ad}
+  input[type=text], input[type=date], textarea.memo-text{width:100%;border-radius:10px;border:1px solid #706940;background:#262413;color:#fff;padding:9px 10px;outline:none}
   input[type=text], input[type=date]{height:40px} textarea.memo-text{min-height:78px;resize:vertical;line-height:1.5}
-  input[type=text]:focus, input[type=date]:focus, textarea.memo-text:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(77,215,255,.10)}
-  .quick-row{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 2px}.quick-btn{border:1px solid #304261;background:#121d32;color:#dcecff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:750}
+  input[type=text]:focus, input[type=date]:focus, textarea.memo-text:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,195,107,.10)}
+  .quick-row{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 2px}.quick-btn{border:1px solid #7e7546;background:#3a3620;color:#ece3bf;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:750}
   .quick-btn:active{transform:scale(.98)}
   .memo-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0}.memo-count{font-size:12px;color:var(--muted)}
-  .memo-list{display:grid;gap:9px}.memo-entry{border:1px solid var(--line);border-radius:13px;background:#091120;padding:10px}.memo-entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.memo-g{font-size:18px;font-weight:850}.memo-time{font-size:10px;color:var(--muted);white-space:nowrap}.memo-tags{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.memo-tag{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid #33445f;color:#cfe2fb}.memo-tag.result{border-color:rgba(69,227,155,.35);color:#9af3cb;background:rgba(69,227,155,.06)}.memo-tag.lamp{border-color:rgba(255,200,87,.35);color:#ffe09a;background:rgba(255,200,87,.06)}
-  .memo-main{font-size:13px;font-weight:700;margin-top:5px}.memo-note{font-size:11px;color:#bdcbe0;margin-top:5px;white-space:pre-wrap}.memo-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.memo-actions button{min-height:32px;border-radius:9px;padding:5px 9px;font-size:10px;font-weight:750;border:1px solid #304261;background:#121d32;color:#dcecff}.memo-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}
-  .empty-memo{font-size:12px;color:var(--muted);text-align:center;border:1px dashed #2b3b59;border-radius:12px;padding:18px 10px}
+  .memo-list{display:grid;gap:9px}.memo-entry{border:1px solid var(--line);border-radius:13px;background:#2d2b18;padding:10px}.memo-entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.memo-g{font-size:18px;font-weight:850}.memo-time{font-size:10px;color:var(--muted);white-space:nowrap}.memo-tags{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.memo-tag{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid #766d43;color:#efe7cd}.memo-tag.result{border-color:rgba(183,213,114,.35);color:#d9ec9a;background:rgba(183,213,114,.06)}.memo-tag.lamp{border-color:rgba(240,201,108,.35);color:#f0dc94;background:rgba(240,201,108,.06)}
+  .memo-main{font-size:13px;font-weight:700;margin-top:5px}.memo-note{font-size:11px;color:#ded7b7;margin-top:5px;white-space:pre-wrap}.memo-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.memo-actions button{min-height:32px;border-radius:9px;padding:5px 9px;font-size:10px;font-weight:750;border:1px solid #7e7546;background:#3a3620;color:#ece3bf}.memo-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}
+  .empty-memo{font-size:12px;color:var(--muted);text-align:center;border:1px dashed #706940;border-radius:12px;padding:18px 10px}
   .history-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
-  .history-list{display:grid;gap:10px}.history-entry{border:1px solid var(--line);border-radius:14px;background:#091120;padding:11px}.history-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.history-date{font-size:17px;font-weight:850}.history-sub{font-size:10px;color:var(--muted);margin-top:2px}.history-net{font-size:20px;font-weight:900;white-space:nowrap}.history-net.plus{color:#8bf0c2}.history-net.minus{color:#ff9ca5}.history-net.zero{color:#d7e3f4}.history-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.history-metric{background:#07101d;border:1px solid #22314a;border-radius:10px;padding:7px}.history-metric .k{font-size:9px;color:var(--muted)}.history-metric .v{font-size:13px;font-weight:800;margin-top:1px}.history-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px}.history-actions button{min-height:34px;border-radius:9px;padding:5px 7px;font-size:10px;font-weight:800;border:1px solid #304261;background:#121d32;color:#dcecff}.history-actions .restore{border-color:rgba(77,215,255,.35);color:#c8f5ff}.history-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}.net-preview{font-size:28px;font-weight:900;text-align:center;padding:8px 0}.net-preview.plus{color:#8bf0c2}.net-preview.minus{color:#ff9ca5}.net-preview.zero{color:#eaf3ff}
-  .detail-modal-box{max-width:760px;margin:2vh auto;background:#0d1526;border:1px solid #2d3d59;border-radius:16px;padding:14px}
+  .history-list{display:grid;gap:10px}.history-entry{border:1px solid var(--line);border-radius:14px;background:#2d2b18;padding:11px}.history-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.history-date{font-size:17px;font-weight:850}.history-sub{font-size:10px;color:var(--muted);margin-top:2px}.history-net{font-size:20px;font-weight:900;white-space:nowrap}.history-net.plus{color:#d9ec9a}.history-net.minus{color:#ff9faa}.history-net.zero{color:#d7e3f4}.history-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.history-metric{background:#262413;border:1px solid #5b5531;border-radius:10px;padding:7px}.history-metric .k{font-size:9px;color:var(--muted)}.history-metric .v{font-size:13px;font-weight:800;margin-top:1px}.history-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px}.history-actions button{min-height:34px;border-radius:9px;padding:5px 7px;font-size:10px;font-weight:800;border:1px solid #7e7546;background:#3a3620;color:#ece3bf}.history-actions .restore{border-color:rgba(212,195,107,.35);color:#f3e7a5}.history-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}.net-preview{font-size:28px;font-weight:900;text-align:center;padding:8px 0}.net-preview.plus{color:#d9ec9a}.net-preview.minus{color:#ff9faa}.net-preview.zero{color:#f4edd6}
+  .detail-modal-box{max-width:760px;margin:2vh auto;background:#2c2918;border:1px solid #6f6740;border-radius:16px;padding:14px}
   .detail-hero{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;margin-bottom:10px}
   .detail-date{font-size:20px;font-weight:900}.detail-est{font-size:11px;color:var(--muted);margin-top:3px}
-  .detail-net{font-size:24px;font-weight:900;text-align:right}.detail-net.plus{color:#8bf0c2}.detail-net.minus{color:#ff9ca5}.detail-net.zero{color:#eaf3ff}
-  .detail-section{margin-top:12px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#091120}
-  .detail-section-title{padding:8px 10px;font-size:12px;font-weight:900;color:#dff7ff;background:rgba(77,215,255,.07);border-bottom:1px solid var(--line)}
+  .detail-net{font-size:24px;font-weight:900;text-align:right}.detail-net.plus{color:#d9ec9a}.detail-net.minus{color:#ff9faa}.detail-net.zero{color:#f4edd6}
+  .detail-section{margin-top:12px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#2d2b18}
+  .detail-section-title{padding:8px 10px;font-size:12px;font-weight:900;color:#f3e7a5;background:rgba(212,195,107,.07);border-bottom:1px solid var(--line)}
   .detail-row{display:grid;grid-template-columns:minmax(118px,.9fr) minmax(0,1.6fr);gap:10px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.055);align-items:start}
   .detail-row:first-of-type{border-top:0}.detail-k{font-size:11px;color:var(--muted)}.detail-v{font-size:12px;font-weight:800;text-align:right;word-break:break-word}
   .detail-sub{font-size:10px;color:var(--muted);font-weight:500;margin-top:2px}
@@ -111,12 +111,29 @@
   @media(max-width:430px){.detail-row{grid-template-columns:1fr;gap:2px}.detail-v{text-align:left}.detail-hero{grid-template-columns:1fr}.detail-net{text-align:left}}
   @media(max-width:430px){.tabs{top:62px}.mode-summary{grid-template-columns:1fr 1fr}}
 
+  body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none}
+  body::before{z-index:0;opacity:.58;background:
+    radial-gradient(circle at 5% 27%, rgba(5,5,5,.95) 0 8px, rgba(225,210,135,.20) 9px 18px, transparent 19px),
+    radial-gradient(circle at 14% 86%, rgba(5,5,5,.95) 0 7px, rgba(225,210,135,.18) 8px 17px, transparent 18px),
+    radial-gradient(circle at 52% 10%, rgba(5,5,5,.95) 0 8px, rgba(225,210,135,.20) 9px 18px, transparent 19px),
+    radial-gradient(circle at 73% 81%, rgba(5,5,5,.95) 0 8px, rgba(225,210,135,.18) 9px 18px, transparent 19px),
+    radial-gradient(circle at 94% 18%, rgba(5,5,5,.95) 0 7px, rgba(225,210,135,.18) 8px 16px, transparent 17px),
+    radial-gradient(circle at 89% 67%, rgba(5,5,5,.95) 0 7px, rgba(225,210,135,.18) 8px 16px, transparent 17px),
+    linear-gradient(34deg, transparent 0 94%, rgba(166,112,42,.95) 94.3% 96.3%, rgba(94,58,18,.95) 96.4% 100%),
+    linear-gradient(212deg, transparent 0 93%, rgba(166,112,42,.95) 93.2% 95.2%, rgba(94,58,18,.95) 95.3% 100%),
+    linear-gradient(154deg, transparent 0 95%, rgba(166,112,42,.92) 95.2% 97.0%, rgba(94,58,18,.95) 97.1% 100%);background-size:100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,320px 160px,320px 160px,320px 160px;background-position:center,center,center,center,center,center,right 4% top 12%,left 2% bottom 8%,right -3% bottom 2%;background-repeat:no-repeat}
+  body::after{z-index:0;opacity:.22;background:
+    radial-gradient(circle at 50% -10%, rgba(255,255,255,.22), transparent 36%),
+    radial-gradient(circle at 50% 120%, rgba(0,0,0,.34), transparent 45%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 1px, transparent 1px 120px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.015) 0 1px, transparent 1px 120px)}
+
 </style>
 </head>
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.4 改4 / PWA</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.2 / GGOカーキ</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -144,7 +161,8 @@
     <details open>
       <summary>基本データ</summary>
       <div class="grid">
-        <div class="field"><div class="name">通常ゲーム数</div><div class="num-wrap wide"><button data-delta="-100" data-target="normalG">−100</button><input id="normalG" type="number" min="0" value="0"><button data-delta="100" data-target="normalG">+100</button></div></div>
+        <div class="field"><div class="name">総ゲーム数</div><div class="num-wrap wide"><button data-delta="-100" data-target="totalG">−100</button><input id="totalG" type="number" min="0" value="0"><button data-delta="100" data-target="totalG">+100</button></div><div class="hint">通常時＋AT中。強チャンス目Bなど全状態の出現率に使用</div></div>
+        <div class="field"><div class="name">通常ゲーム数</div><div class="num-wrap wide"><button data-delta="-100" data-target="normalG">−100</button><input id="normalG" type="number" min="0" value="0"><button data-delta="100" data-target="normalG">+100</button></div><div class="hint">CZ・AT初当たり、通常時小役などの分母に使用</div></div>
         <div class="field"><div class="name">CZ回数</div><div class="num-wrap"><button data-delta="-1" data-target="czCount">−</button><input id="czCount" type="number" min="0" value="0"><button data-delta="1" data-target="czCount">＋</button></div><div class="calc" id="czRate">―</div></div>
         <div class="field"><div class="name">CZ成功</div><div class="num-wrap"><button data-delta="-1" data-target="czSuccess">−</button><input id="czSuccess" type="number" min="0" value="0"><button data-delta="1" data-target="czSuccess">＋</button></div></div>
         <div class="field"><div class="name">CZ失敗</div><div class="num-wrap"><button data-delta="-1" data-target="czFail">−</button><input id="czFail" type="number" min="0" value="0"><button data-delta="1" data-target="czFail">＋</button></div><div class="hint">下のAT強化アイテム獲得率の分母にも使用</div></div>
@@ -200,11 +218,21 @@
       <div class="small">統計の主目的は4種類の出現数と構成比です。種類別データは実戦履歴にも保存され、履歴タブで累計を確認できます。設定推測には使用しません。</div>
     </details>
 
+    <details>
+      <summary>スナイパーチャンス突破率（参考統計）</summary>
+      <div class="grid">
+        <div class="field"><div class="name">スナイパーチャンス回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperChanceTotal">−</button><input id="sniperChanceTotal" type="number" min="0" value="0"><button data-delta="1" data-target="sniperChanceTotal">＋</button></div><div class="hint">AT中に突入したスナイパーチャンス総数</div></div>
+        <div class="field"><div class="name">突破回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperChanceSuccess">−</button><input id="sniperChanceSuccess" type="number" min="0" value="0"><button data-delta="1" data-target="sniperChanceSuccess">＋</button></div><div class="hint">次セット移行・突破として数えたい回数</div></div>
+      </div>
+      <div class="calc" id="sniperChanceRate">突破率：―</div>
+      <div class="small">現時点では設定期待度の計算には使用しません。AT中挙動の自分用統計として保存します。</div>
+    </details>
+
     <details open>
       <summary>共通ベル（参考記録）</summary>
       <div class="grid">
         <div class="field"><div class="name">通常時 共通ベル</div><div class="num-wrap"><button data-delta="-1" data-target="commonBellNormal">−</button><input id="commonBellNormal" type="number" min="0" value="0"><button data-delta="1" data-target="commonBellNormal">＋</button></div><div class="hint">右下がり斜めベルを記録</div></div>
-        <div class="field"><div class="name">AT中 総ゲーム数</div><div class="num-wrap"><button data-delta="-1" data-target="atGameCount">−</button><input id="atGameCount" type="number" min="0" value="0"><button data-delta="1" data-target="atGameCount">＋</button></div><div class="hint">AT中サンプルの分母用</div></div>
+        <div class="field"><div class="name">ATゲーム数（自動）</div><input id="atGameCount" type="number" min="0" value="0" readonly><div class="hint">総ゲーム数 − 通常ゲーム数で自動計算</div></div>
         <div class="field"><div class="name">AT中 ナビなし右下がりベル</div><div class="num-wrap"><button data-delta="-1" data-target="commonBellAT">−</button><input id="commonBellAT" type="number" min="0" value="0"><button data-delta="1" data-target="commonBellAT">＋</button></div><div class="hint">押し順ナビありベルは数えない</div></div>
       </div>
       <div class="calc" id="commonBellNormalRate">通常時：―</div>
@@ -229,10 +257,11 @@
     </details>
 
     <details>
-      <summary>確定CZ・強チャンス目</summary>
+      <summary>確定CZ・強チャンス目A/B</summary>
       <div class="grid three">
-        <div class="field"><div class="name">強チャンス目</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceTotal">−</button><input id="strongChanceTotal" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceTotal">＋</button></div></div>
-        <div class="field"><div class="name">強チャンス目→確定CZ</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceDefCZ">−</button><input id="strongChanceDefCZ" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceDefCZ">＋</button></div></div>
+        <div class="field"><div class="name">強チャンス目A</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceA">−</button><input id="strongChanceA" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceA">＋</button></div><div class="hint">確定CZ当選率のA+B合算分母に使用</div></div>
+        <div class="field"><div class="name">強チャンス目B</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceTotal">−</button><input id="strongChanceTotal" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceTotal">＋</button></div><div class="calc" id="strongChanceRate">B出現率：―</div><div class="hint">総ゲーム数を分母にB単独の出現率を計算</div></div>
+        <div class="field"><div class="name">A/B→確定CZ</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceDefCZ">−</button><input id="strongChanceDefCZ" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceDefCZ">＋</button></div><div class="calc" id="strongChanceDefRate">A+B合算当選率：―</div></div>
         <div class="field"><div class="name">確定CZ 総回数</div><div class="num-wrap"><button data-delta="-1" data-target="defCZTotal">−</button><input id="defCZTotal" type="number" min="0" value="0"><button data-delta="1" data-target="defCZTotal">＋</button></div></div>
       </div>
     </details>
@@ -294,14 +323,14 @@
       <div class="priors" id="priorInputs"></div>
       <div class="actions"><button class="btn secondary" id="resetPriors">倍率を均等に戻す</button><button class="btn secondary" id="recalc">再計算</button></div>
       <h3>計算方式</h3>
-      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、強チャンス目→確定CZ、CZ失敗時アイテム。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>
+      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、強チャンス目A/B合算→確定CZ、CZ失敗時アイテム。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>
     </details>
   </section>
 
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.4改4：バレットカウンターMAXのCZ当選・AT直撃・非当選・CZ相当当選率を参考統計として追加。保存履歴の詳細にも残ります。設定期待度への加点はしていません。</div>
+    <div class="footer-note">Ver.5.2：強チャンス目A・Bを分離。強チャンス目B出現率は総G基準、確定CZ当選率はA+B合算を分母に計算します。</div>
   </section>
   </div>
 
@@ -365,7 +394,7 @@
       <div class="grid">
         <div class="field"><div class="name">液晶ゲーム数</div><input id="memoGame" type="number" min="0" inputmode="numeric" placeholder="例：186"><div class="hint">CZ当選・天井到達・SC中AT当選など、区切りになった液晶G数</div></div>
         <div class="field"><div class="name">メニュー画面キャラ</div><select id="memoMenuChar">
-          <option value="">未確認 / なし</option><option>キリト</option><option>シノン</option><option>菊岡誠二郎</option><option>アスナ・リズベット・リーファ・シリカ</option><option>安岐ナツキ</option><option>2人</option><option>司会者</option><option>ゼクシード</option><option>ダイン</option><option>ペイルライダー</option><option>ヤミカゼ</option><option>銃士X（マスケティア・イクス）</option><option>デス・ガン</option><option>その他</option>
+          <option value="">未確認 / なし</option><option>キリト</option><option>シノン</option><option>菊岡誠二郎</option><option>アスナ・リズベット・リーファ・シリカ</option><option>安岐ナツキ</option><option>シノン・シュピーゲル</option><option>司会者</option><option>ゼクシード</option><option>ダイン</option><option>ペイルライダー</option><option>闇風</option><option>銃士X（マスケティア・イクス）</option><option>デス・ガン</option><option>その他</option>
         </select><div class="hint">CZ区間中に確認したメニュー画面を選択</div></div>
         <div class="field"><div class="name">結果</div><select id="memoResult">
           <option value="">―</option><option value="CZ→AT当選">CZ→AT当選</option><option value="CZ→AT非当選">CZ→AT非当選</option><option value="G数天井AT当選">G数天井AT当選</option><option value="G数天井AT非当選">G数天井AT非当選</option><option value="シューティングチャージ中AT当選">シューティングチャージ中AT当選</option><option value="AT直撃">AT直撃</option>
@@ -444,8 +473,8 @@
   const STORAGE_KEY = 'sao2-setting-tool-v4';
   const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v3','sao2-setting-tool-v2','sao2-setting-tool-v1'];
   const ids = [
-    'normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
-    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceTotal','strongChanceDefCZ',
+    'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
+    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','sniperChanceTotal','sniperChanceSuccess','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceA','strongChanceTotal','strongChanceDefCZ',
     'defCZTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild','trophyBronze','trophySilver','trophyGold','trophyLightning','trophyRainbow',
     'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit'
   ];
@@ -503,6 +532,7 @@
       const hasScTypes=['shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown'].some(id=>Number(d[id]||0)>0);
       if(!hasScTypes && Number(d.shootingChargeTotal||0)>0 && $('shootingChargeUnknown')) $('shootingChargeUnknown').value=Number(d.shootingChargeTotal||0);
       if(Array.isArray(d.memoLogs)) memoLogs=d.memoLogs;
+      if(d.totalG===undefined && $('totalG')) { const legacyNormal=Math.max(0,Number(d.normalG||0)); const legacyAT=Math.max(0,Number(d.atGameCount||0)); $('totalG').value=legacyNormal+legacyAT; }
       if(Array.isArray(d.playHistory)) playHistory=d.playHistory;
       if(d.currentMeta){
         if($('playDate')) $('playDate').value=d.currentMeta.date||todayLocal();
@@ -523,11 +553,12 @@
 
   function validate(){
     const msgs=[];
+    if(n('totalG')>0 && n('normalG')>n('totalG')) msgs.push('通常ゲーム数が総ゲーム数を超えています。');
     if(n('czSuccess')+n('czFail')>n('czCount')) msgs.push('CZ成功＋失敗がCZ回数を超えています。');
     if(n('lowStrongCZ')+n('lowStrongDirect')>n('lowStrongTotal')) msgs.push('低確強チェリーのCZ＋直撃が成立回数を超えています。');
     if(n('highStrongCZ')+n('highStrongDirect')>n('highStrongTotal')) msgs.push('高確強チェリーのCZ＋直撃が成立回数を超えています。');
     if(n('watermelonSC')>n('watermelonTotal')) msgs.push('スイカ→SC当選がスイカ回数を超えています。');
-    if(n('strongChanceDefCZ')>n('strongChanceTotal')) msgs.push('強チャンス目→確定CZが強チャンス目回数を超えています。');
+    if(n('strongChanceDefCZ')>n('strongChanceA')+n('strongChanceTotal')) msgs.push('強チャンス目A/B→確定CZが強チャンス目A+B合算回数を超えています。');
     if(n('itemHit')>n('czFail')) msgs.push('AT強化アイテム獲得がCZ失敗回数を超えています。');
     const scTotal=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight')+n('shootingChargeUnknown');
     if(n('shootingChargeATHit')>scTotal) msgs.push('SC中AT当選回数がSC総回数を超えています。');
@@ -543,7 +574,7 @@
     const lowN=n('lowStrongTotal'), lowK=n('lowStrongCZ')+n('lowStrongDirect');
     const highN=n('highStrongTotal'), highK=n('highStrongCZ')+n('highStrongDirect');
     const wmN=n('watermelonTotal'), wmK=n('watermelonSC');
-    const scN=n('strongChanceTotal'), scK=n('strongChanceDefCZ');
+    const scN=n('strongChanceA')+n('strongChanceTotal'), scK=n('strongChanceDefCZ');
     const itemN=n('czFail'), itemK=n('itemHit');
     const minSet=hardMinSetting();
     const scores=S.map((set,idx)=>{
@@ -603,7 +634,9 @@
     if(n('czFail')){const k=n('itemHit'),tot=n('czFail');out.push(ev('CZ失敗時 AT強化アイテム',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.item),'設定1 20.3% ～ 設定6 30.1%。','mid'));}
     const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scAll=scKnown+n('shootingChargeUnknown');
     if(scAll){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">シューティングチャージ種類統計</div><span class="pill mid">参考記録</span></div><div class="ev-rate">キリト${n('shootingChargeKirito')} / シノン${n('shootingChargeSinon')} / 水鉄砲${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 不明${n('shootingChargeUnknown')}`:''}</div><div class="ev-note">種類判明${scKnown}回${scKnown?`：キリト${fmtPct(n('shootingChargeKirito')/scKnown)}・シノン${fmtPct(n('shootingChargeSinon')/scKnown)}・水鉄砲${fmtPct(n('shootingChargeWater')/scKnown)}・NIGHT SPLASH${fmtPct(n('shootingChargeNight')/scKnown)}`:''}。設定期待度の計算には未使用です。</div></div>`);}
-    if(n('strongChanceTotal')){const k=n('strongChanceDefCZ'),tot=n('strongChanceTotal');out.push(ev('強チャンス目 → 確定CZ',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.strongChanceDef),'設定1 0.4% ～ 設定6 5.1%。','good'));}
+    if(n('sniperChanceTotal')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">スナイパーチャンス突破率</div><span class="pill mid">参考記録</span></div><div class="ev-rate">${n('sniperChanceSuccess')}/${n('sniperChanceTotal')} = ${fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))}</div><div class="ev-note">AT中のスナイパーチャンス総数と突破数を保存します。現時点では設定期待度の計算には使用しません。</div></div>`);}
+    if(n('strongChanceTotal') && n('totalG')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">強チャンス目B 出現率</div><span class="pill mid">総G基準</span></div><div class="ev-rate">${n('strongChanceTotal')}回 / ${n('totalG').toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),n('totalG'))}</div><div class="ev-note">総ゲーム数を分母にした実戦出現率です。</div></div>`);}
+    if(n('strongChanceA')+n('strongChanceTotal')){const k=n('strongChanceDefCZ'),tot=n('strongChanceA')+n('strongChanceTotal');out.push(ev('強チャンス目A/B → 確定CZ',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.strongChanceDef),'強チャンス目A・B合算を分母。設定1 0.4% ～ 設定6 5.1%。','good'));}
     if(G){out.push(ev('確定CZ 総出現',`${n('defCZTotal')}/${G.toLocaleString()}G = ${fmtDen(n('defCZTotal'),G)}`,bestFitPoi(n('defCZTotal'),G,R.defCZDen),'設定1 約1/20,178 ～ 設定6 約1/7,077。強チャンス目経由と相関するため低めの重み。','mid'));}
     const qual=[]; if(n('endOdd'))qual.push(`奇数示唆${n('endOdd')}`);if(n('endEven'))qual.push(`偶数示唆${n('endEven')}`);if(n('endHigh'))qual.push(`高設定示唆${n('endHigh')}`);if(n('endHighStrong'))qual.push(`高設定示唆強${n('endHighStrong')}`);if(n('endChild'))qual.push(`幼少期${n('endChild')}`);
     if(qual.length) out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">AT終了画面（定性評価）</div><span class="pill mid">数値判定外</span></div><div class="ev-rate">${qual.join(' / ')}</div><div class="ev-note">設定別出現率が未公表のため、メモには残しますが相対期待度には直接加点していません。</div></div>`);
@@ -611,7 +644,10 @@
   }
 
   function updateDerived(){
-    const G=n('normalG'); $('czRate').textContent=n('czCount')&&G?`出現率：${fmtDen(n('czCount'),G)}`:'出現率：―'; $('atRate').textContent=n('atCount')&&G?`出現率：${fmtDen(n('atCount'),G)}`:'出現率：―';
+    const total=n('totalG'), G=n('normalG'), autoAT=Math.max(0,total-G); if($('atGameCount')) $('atGameCount').value=autoAT;
+    $('czRate').textContent=n('czCount')&&G?`出現率：${fmtDen(n('czCount'),G)}`:'出現率：―'; $('atRate').textContent=n('atCount')&&G?`出現率：${fmtDen(n('atCount'),G)}`:'出現率：―';
+    $('strongChanceRate').innerHTML=`B出現率：<strong>${(n('strongChanceTotal')&&total)?`${n('strongChanceTotal')}回 / ${total.toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),total)}`:'―'}</strong>`;
+    const scAB=n('strongChanceA')+n('strongChanceTotal'); $('strongChanceDefRate').innerHTML=`A+B合算当選率：<strong>${scAB?`${n('strongChanceDefCZ')}/${scAB} = ${fmtPct(n('strongChanceDefCZ')/scAB)}`:'―'}</strong>`;
     const ltot=n('lowStrongTotal'),lk=n('lowStrongCZ')+n('lowStrongDirect'); $('lowStrongRate').innerHTML=`CZ相当当選率：<strong>${ltot?`${lk}/${ltot} = ${fmtPct(lk/ltot)}`:'―'}</strong>`;
     const htot=n('highStrongTotal'),hk=n('highStrongCZ')+n('highStrongDirect'); $('highStrongRate').innerHTML=`CZ相当当選率：<strong>${htot?`${hk}/${htot} = ${fmtPct(hk/htot)}`:'―'}</strong>`;
     const wtot=n('watermelonTotal'),wk=n('watermelonSC'); $('watermelonRate').innerHTML=`当選率：<strong>${wtot?`${wk}/${wtot} = ${fmtPct(wk/wtot)}`:'―'}</strong>`;
@@ -625,6 +661,7 @@
     $('scNightPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scN/scKnown):'―'}</strong>`;
     $('shootingChargeRate').innerHTML=`参考・SC出現率：<strong>${(sct&&G)?`${sct}回 / ${G.toLocaleString()}G = ${fmtDen(sct,G)}`:'―'}</strong>`;
     $('shootingChargeATHitRate').innerHTML=`SC中AT当選率：<strong>${sct?`${sch}/${sct} = ${fmtPct(sch/sct)}`:'―'}</strong>`;
+    const spt=n('sniperChanceTotal'), sps=n('sniperChanceSuccess'); $('sniperChanceRate').innerHTML=`突破率：<strong>${spt?`${sps}/${spt} = ${fmtPct(sps/spt)}`:'―'}</strong>`;
     const cbn=n('commonBellNormal'), atg=n('atGameCount'), cba=n('commonBellAT');
     $('commonBellNormalRate').innerHTML=`通常時：<strong>${(cbn && G)?`${cbn}回 / ${G.toLocaleString()}G = ${fmtDen(cbn,G)}`:'―'}</strong>`;
     $('commonBellATRate').innerHTML=`AT中：<strong>${(cba && atg)?`${cba}回 / ${atg.toLocaleString()}G = ${fmtDen(cba,atg)}`:'―'}</strong>`;
@@ -646,7 +683,8 @@
     lines.push('【スマスロ ソードアート・オンラインⅡ 実戦データ】');
     const meta=currentMeta(), net=meta.returns-meta.investment;
     lines.push(`実戦日：${meta.date||'―'} / 投資 ${meta.investment.toLocaleString()}枚 / 回収 ${meta.returns.toLocaleString()}枚 / 差枚 ${fmtCoins(net)}`);
-    lines.push(`通常ゲーム数：${G.toLocaleString()}G`);
+    const totalG=n('totalG'), autoATG=Math.max(0,totalG-G);
+    lines.push(`総ゲーム数：${totalG.toLocaleString()}G / 通常ゲーム数：${G.toLocaleString()}G / ATゲーム数：${autoATG.toLocaleString()}G`);
     lines.push(`CZ：${n('czCount')}回 ${n('czCount')&&G?'('+fmtDen(n('czCount'),G)+')':''} / 成功${n('czSuccess')}・失敗${n('czFail')}`);
     lines.push(`AT初当たり：${n('atCount')}回 ${n('atCount')&&G?'('+fmtDen(n('atCount'),G)+')':''}`);
     lines.push(`詩乃モード由来AT直撃：${n('directAT')}回 ${n('directAT')&&G?'('+fmtDen(n('directAT'),G)+')':''}`);
@@ -654,12 +692,13 @@
     lines.push(`低確 強チェリー：${n('lowStrongTotal')}回 → CZ ${n('lowStrongCZ')} / AT直撃 ${n('lowStrongDirect')} / CZ相当 ${lowK}${n('lowStrongTotal')?' ('+fmtPct(lowK/n('lowStrongTotal'))+')':''}`);
     if(n('highStrongTotal')) lines.push(`高確 強チェリー：${n('highStrongTotal')}回 → CZ ${n('highStrongCZ')} / AT直撃 ${n('highStrongDirect')} / CZ相当 ${highK} (${fmtPct(highK/n('highStrongTotal'))})`);
     lines.push(`低確 スイカ→SC：${n('watermelonSC')}/${n('watermelonTotal')}${n('watermelonTotal')?' ('+fmtPct(n('watermelonSC')/n('watermelonTotal'))+')':''}`);
-    lines.push(`強チャンス目→確定CZ：${n('strongChanceDefCZ')}/${n('strongChanceTotal')}${n('strongChanceTotal')?' ('+fmtPct(n('strongChanceDefCZ')/n('strongChanceTotal'))+')':''}`);
+    const scABTotal=n('strongChanceA')+n('strongChanceTotal'); lines.push(`強チャンス目：A ${n('strongChanceA')}回 / B ${n('strongChanceTotal')}回${n('strongChanceTotal')&&n('totalG')?' (B '+fmtDen(n('strongChanceTotal'),n('totalG'))+')':''} / A+B→確定CZ ${n('strongChanceDefCZ')}/${scABTotal}${scABTotal?' ('+fmtPct(n('strongChanceDefCZ')/scABTotal)+')':''}`);
     lines.push(`確定CZ総回数：${n('defCZTotal')}回`);
     lines.push(`CZ失敗時アイテム：${n('itemHit')}/${n('czFail')}${n('czFail')?' ('+fmtPct(n('itemHit')/n('czFail'))+')':''}`);
     const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scTotal=scKnown+n('shootingChargeUnknown');
     lines.push(`シューティングチャージ種類：キリト射撃訓練${n('shootingChargeKirito')} / シノンビンタ${n('shootingChargeSinon')} / 水鉄砲チャージ${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 種類不明${n('shootingChargeUnknown')}`:''}`);
     lines.push(`SC合計：${scTotal}回${scTotal&&G?' ('+fmtDen(scTotal,G)+')':''} / SC中AT当選 ${n('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(n('shootingChargeATHit')/scTotal)+')':''}`);
+    lines.push(`スナイパーチャンス：${n('sniperChanceSuccess')}/${n('sniperChanceTotal')}${n('sniperChanceTotal')?' ('+fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))+')':''}`);
     const cbAll=n('commonBellNormal')+n('commonBellAT'), gameAll=n('normalG')+n('atGameCount');
     lines.push(`共通ベル：通常時 ${n('commonBellNormal')}${n('normalG')&&n('commonBellNormal')?' ('+fmtDen(n('commonBellNormal'),n('normalG'))+')':''} / AT中ナビなし右下がり ${n('commonBellAT')}${n('atGameCount')&&n('commonBellAT')?' ('+fmtDen(n('commonBellAT'),n('atGameCount'))+')':''}${cbAll&&gameAll?' / 全状態参考 '+fmtDen(cbAll,gameAll):''}`);
     const bulletHit=n('bulletCZHit')+n('bulletDirectAT'), bulletMiss=Math.max(0,n('bulletMaxTotal')-bulletHit);
@@ -672,7 +711,7 @@
     lines.push('【GGOモード示唆】');
     lines.push(`詩乃：50%示唆${n('shino50')} / 濃厚${n('shinoSure')} / AT直撃${n('directAT')}`);
     lines.push(`キリト：50%クラス${n('ggoKirito50')} / 濃厚${n('ggoKiritoSure')} / 恩恵確認${n('ggoKiritoBenefit')}`);
-    lines.push(`シノン：50%クラス${n('ggoSinon50')} / 濃厚${n('ggoSinonSure')} / AT中SC高確確認${n('ggoSinonBenefit')}`);
+    lines.push(`シノン：50%クラス${n('ggoSinon50')} / 濃厚${n('ggoSinonSure')} / AT中スナイパーチャンス高確確認${n('ggoSinonBenefit')}`);
     lines.push(`死銃：50%クラス${n('ggoDeath50')} / 濃厚${n('ggoDeathSure')} / 恩恵確認${n('ggoDeathBenefit')}`);
     lines.push('');
     lines.push(`AT終了画面：デフォ${n('endDefault')} / 奇数${n('endOdd')} / 偶数${n('endEven')} / 高設定${n('endHigh')} / 高設定強${n('endHighStrong')} / 幼少期${n('endChild')}`);
@@ -756,22 +795,24 @@
   }
   function saveCurrentToHistory(){
     const meta=currentMeta();
-    if(!n('normalG') && !memoLogs.length && !n('czCount') && !n('atCount')){alert('保存する実戦データがありません。');return;}
+    if(!n('totalG') && !n('normalG') && !memoLogs.length && !n('czCount') && !n('atCount')){alert('保存する実戦データがありません。');return;}
     const r=calculate(), mx=Math.max(...r.probs), top=r.probs.indexOf(mx);
-    const entry={id:'h'+Date.now()+'_'+Math.random().toString(36).slice(2,7),date:meta.date||todayLocal(),investment:meta.investment,returns:meta.returns,net:meta.returns-meta.investment,savedAt:new Date().toISOString(),normalG:n('normalG'),bestSetting:mx>0?top+1:null,bestPct:mx>0?mx*100:0,data:sessionSnapshot()};
+    const entry={id:'h'+Date.now()+'_'+Math.random().toString(36).slice(2,7),date:meta.date||todayLocal(),investment:meta.investment,returns:meta.returns,net:meta.returns-meta.investment,savedAt:new Date().toISOString(),totalG:n('totalG'),normalG:n('normalG'),bestSetting:mx>0?top+1:null,bestPct:mx>0?mx*100:0,data:sessionSnapshot()};
     playHistory.unshift(entry); save(); renderHistory(); $('saveState').textContent='実戦履歴に保存しました';
   }
   function historyText(entry){
     const d=entry.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id]; const lines=[]; const lowK=hv('lowStrongCZ')+hv('lowStrongDirect');
     lines.push('【SAO2 過去実戦】'); lines.push(`実戦日：${entry.date||'―'}`); lines.push(`投資：${Number(entry.investment||0).toLocaleString()}枚 / 回収：${Number(entry.returns||0).toLocaleString()}枚 / 差枚：${fmtCoins(entry.net||0)}`);
-    lines.push(`通常ゲーム数：${hv('normalG').toLocaleString()}G`); lines.push(`保存時設定推測：${entry.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}`);
+    const histTotal=hv('totalG') || (hv('normalG')+hv('atGameCount')); const histAT=Math.max(0,histTotal-hv('normalG'));
+    lines.push(`総ゲーム数：${histTotal.toLocaleString()}G / 通常ゲーム数：${hv('normalG').toLocaleString()}G / ATゲーム数：${histAT.toLocaleString()}G`); lines.push(`保存時設定推測：${entry.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}`);
     lines.push(`CZ：${hv('czCount')} / 成功${hv('czSuccess')}・失敗${hv('czFail')} / AT初当たり：${hv('atCount')} / 詩乃直撃：${hv('directAT')}`);
     lines.push(`低確強チェ：${hv('lowStrongTotal')} → CZ${hv('lowStrongCZ')} / 直撃${hv('lowStrongDirect')}${hv('lowStrongTotal')?` / CZ相当${fmtPct(lowK/hv('lowStrongTotal'))}`:''}`);
     lines.push(`低確スイカ→シューティングチャージ：${hv('watermelonSC')}/${hv('watermelonTotal')}${hv('watermelonTotal')?` (${fmtPct(hv('watermelonSC')/hv('watermelonTotal'))})`:''}`);
+    const histScAB=hv('strongChanceA')+hv('strongChanceTotal'); lines.push(`強チャンス目：A ${hv('strongChanceA')}回 / B ${hv('strongChanceTotal')}回${hv('strongChanceTotal')&&histTotal?` (B ${fmtDen(hv('strongChanceTotal'),histTotal)})`:''} / A+B→確定CZ ${hv('strongChanceDefCZ')}/${histScAB}${histScAB?` (${fmtPct(hv('strongChanceDefCZ')/histScAB)})`:''}`);
     const oldScTotal=hv('shootingChargeTotal'), scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldScTotal:0), scKnown=scK+scS+scW+scN, scTotal=scKnown+scU;
     lines.push(`シューティングチャージ種類：キリト射撃訓練${scK} / シノンビンタ${scS} / 水鉄砲チャージ${scW} / NIGHT SPLASH${scN}${scU?` / 種類不明${scU}`:''}`);
     lines.push(`SC合計：${scTotal}回${scTotal&&hv('normalG')?' ('+fmtDen(scTotal,hv('normalG'))+')':''} / SC中AT当選${hv('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(hv('shootingChargeATHit')/scTotal)+')':''}`);
-    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=hv('atGameCount'); lines.push(`共通ベル：通常${bellN}${bellN&&hv('normalG')?' ('+fmtDen(bellN,hv('normalG'))+')':''} / AT中${bellAT}${bellAT&&atG?' ('+fmtDen(bellAT,atG)+')':''}`);
+    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=histAT; lines.push(`共通ベル：通常${bellN}${bellN&&hv('normalG')?' ('+fmtDen(bellN,hv('normalG'))+')':''} / AT中${bellAT}${bellAT&&atG?' ('+fmtDen(bellAT,atG)+')':''}`);
     const bulletHit=hv('bulletCZHit')+hv('bulletDirectAT'), bulletMiss=Math.max(0,hv('bulletMaxTotal')-bulletHit); lines.push(`バレットMAX：${hv('bulletMaxTotal')} → CZ${hv('bulletCZHit')} / AT直撃${hv('bulletDirectAT')} / 非当選${bulletMiss}${hv('bulletMaxTotal')?` / CZ相当${fmtPct(bulletHit/hv('bulletMaxTotal'))}`:''}`);
     lines.push(`終了画面：デフォ${hv('endDefault')} / 奇数${hv('endOdd')} / 偶数${hv('endEven')} / 高設定${hv('endHigh')} / 高設定強${hv('endHighStrong')} / 幼少期${hv('endChild')}`);
     lines.push(`トロフィー：銅${hv('trophyBronze')} / 銀${hv('trophySilver')} / 金${hv('trophyGold')} / イナズマ${hv('trophyLightning')} / 虹${hv('trophyRainbow')}`);
@@ -783,20 +824,22 @@
   const detailRow=(k,v,sub='')=>`<div class="detail-row"><div class="detail-k">${esc(k)}</div><div class="detail-v">${v}${sub?`<div class="detail-sub">${esc(sub)}</div>`:''}</div></div>`;
   const detailSection=(title,rows)=>`<div class="detail-section"><div class="detail-section-title">${esc(title)}</div>${rows.join('')}</div>`;
   function historyDetailHtml(entry){
-    const d=entry?.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id], G=hv('normalG');
+    const d=entry?.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id], G=hv('normalG'), totalG=hv('totalG')||(G+hv('atGameCount')), autoATG=Math.max(0,totalG-G);
     const rate=(hits,total)=>hits&&total?`${hits}回　${fmtDen(hits,total)}`:`${hits}回`;
     const ratio=(hits,total)=>total?`${hits}/${total}　${fmtPct(hits/total)}`:`${hits}/${total}`;
     const net=Number(entry?.net||0), netCls=net>0?'plus':net<0?'minus':'zero';
     const lowHit=hv('lowStrongCZ')+hv('lowStrongDirect'), highHit=hv('highStrongCZ')+hv('highStrongDirect');
     const scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), oldSc=hv('shootingChargeTotal');
     const scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldSc:0), scTotal=scK+scS+scW+scN+scU;
-    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=hv('atGameCount');
+    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=autoATG;
     const ml=Array.isArray(d.memoLogs)?d.memoLogs:[], lc=getLampCounts(ml);
     const conf=[]; if(hb('end2plus'))conf.push('設定2以上'); if(hb('end3plus'))conf.push('設定3以上'); if(hb('end4plus'))conf.push('設定4以上'); if(hb('end6'))conf.push('設定6濃厚'); if(hb('ed4plus'))conf.push('ED 設定4以上'); if(hb('ed6'))conf.push('ED 設定6濃厚'); if(hb('mr4plus'))conf.push('マザロザ 設定4以上'); if(hb('mr6'))conf.push('マザロザ 設定6濃厚');
     const html=[];
     html.push(`<div class="detail-hero"><div><div class="detail-date">${esc(entry?.date||'日付なし')}</div><div class="detail-est">保存時推測：${entry?.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}</div></div><div class="detail-net ${netCls}">${esc(fmtCoins(net))}</div></div>`);
     html.push(detailSection('実戦結果',[
+      detailRow('総ゲーム数',`${totalG.toLocaleString()}G`),
       detailRow('通常ゲーム数',`${G.toLocaleString()}G`),
+      detailRow('ATゲーム数',`${autoATG.toLocaleString()}G`,'総G − 通常G'),
       detailRow('投資 / 回収',`${Number(entry?.investment||0).toLocaleString()}枚 / ${Number(entry?.returns||0).toLocaleString()}枚`),
       detailRow('差枚',esc(fmtCoins(net)))
     ]));
@@ -810,7 +853,9 @@
       detailRow('低確 強チェリー',`${hv('lowStrongTotal')}回`,`CZ ${hv('lowStrongCZ')} / AT直撃 ${hv('lowStrongDirect')} / CZ相当 ${hv('lowStrongTotal')?fmtPct(lowHit/hv('lowStrongTotal')):'―'}`),
       detailRow('高確 強チェリー',`${hv('highStrongTotal')}回`,`CZ ${hv('highStrongCZ')} / AT直撃 ${hv('highStrongDirect')} / CZ相当 ${hv('highStrongTotal')?fmtPct(highHit/hv('highStrongTotal')):'―'}`),
       detailRow('低確スイカ→SC',ratio(hv('watermelonSC'),hv('watermelonTotal'))),
-      detailRow('強チャンス目→確定CZ',ratio(hv('strongChanceDefCZ'),hv('strongChanceTotal'))),
+      detailRow('強チャンス目A',`${hv('strongChanceA')}回`),
+      detailRow('強チャンス目B 出現率',rate(hv('strongChanceTotal'),totalG)),
+      detailRow('強チャンス目A/B→確定CZ',ratio(hv('strongChanceDefCZ'),hv('strongChanceA')+hv('strongChanceTotal'))),
       detailRow('確定CZ 総回数',`${hv('defCZTotal')}回`)
     ]));
     html.push(detailSection('シューティングチャージ',[
@@ -820,7 +865,8 @@
       detailRow('水鉄砲チャージ',`${scW}回${scTotal?`　${fmtPct(scW/scTotal)}`:''}`),
       detailRow('NIGHT SPLASH',`${scN}回${scTotal?`　${fmtPct(scN/scTotal)}`:''}`),
       ...(scU?[detailRow('種類不明',`${scU}回${scTotal?`　${fmtPct(scU/scTotal)}`:''}`)]:[]),
-      detailRow('SC中AT当選',ratio(hv('shootingChargeATHit'),scTotal))
+      detailRow('SC中AT当選',ratio(hv('shootingChargeATHit'),scTotal)),
+      detailRow('スナイパーチャンス突破',ratio(hv('sniperChanceSuccess'),hv('sniperChanceTotal')))
     ]));
     html.push(detailSection('共通ベル',[
       detailRow('通常時',rate(bellN,G)),
@@ -859,7 +905,7 @@
 
   function renderHistory(){
     if(!$('historyList'))return; $('historyCountBadge').textContent=playHistory.length+'件'; $('historyCountStat').textContent=playHistory.length+'件';
-    const totalNet=playHistory.reduce((a,h)=>a+Number(h.net||0),0); $('historyNetStat').textContent=fmtCoins(totalNet); $('historyNetStat').style.color=totalNet>0?'#8bf0c2':totalNet<0?'#ff9ca5':'#f4f7fb';
+    const totalNet=playHistory.reduce((a,h)=>a+Number(h.net||0),0); $('historyNetStat').textContent=fmtCoins(totalNet); $('historyNetStat').style.color=totalNet>0?'#d9ec9a':totalNet<0?'#ff9faa':'#f4f7fb';
     const scAgg={k:0,s:0,w:0,n:0};
     playHistory.forEach(h=>{const d=h.data||{};scAgg.k+=Number(d.shootingChargeKirito||0);scAgg.s+=Number(d.shootingChargeSinon||0);scAgg.w+=Number(d.shootingChargeWater||0);scAgg.n+=Number(d.shootingChargeNight||0);});
     const scAggTotal=scAgg.k+scAgg.s+scAgg.w+scAgg.n;
@@ -869,7 +915,7 @@
     $('historyScNight').textContent=`${scAgg.n}回${scAggTotal?` (${fmtPct(scAgg.n/scAggTotal)})`:''}`;
     $('historyScTotal').innerHTML=`種類判明SC：<strong>${scAggTotal}回</strong>`;
     if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
-    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">通常G</div><div class="v">${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">CZ・AT区間ログ</div><div class="v">${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
+    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">総G / 通常G</div><div class="v">${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()} / ${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">CZ・AT区間ログ</div><div class="v">${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
   }
   function restoreHistory(i){
     const h=playHistory[i]; if(!h||!h.data)return; if(!confirm('現在の入力内容を、この過去実戦データで上書きしますか？\n履歴そのものは消えません。'))return; const d=h.data;
@@ -880,7 +926,7 @@
     if(!confirm('現在の入力データとCZ・AT区間ログをリセットして、新しい実戦を開始しますか？\n保存済みの過去履歴は残ります。'))return; ids.forEach(id=>$(id).value=0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1]; memoLogs=[]; clearMemoForm(); $('playDate').value=todayLocal(); $('investmentCoins').value=0; $('returnCoins').value=0; renderPriorInputs(); refresh(); activateTab('setting');
   }
   function historyListText(){
-    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / ${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); return lines.join('\n');
+    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / 総${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()}G・通常${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); return lines.join('\n');
   }
 
   function renderPriorInputs(){
@@ -903,7 +949,7 @@
   $('resetPriors').onclick=()=>{priors=[1,1,1,1,1,1];renderPriorInputs();refresh();}; $('recalc').onclick=refresh;
   $('resetAll').onclick=()=>{if(!confirm('現在の入力データとCZ・AT区間ログを削除しますか？\n保存済みの過去履歴は残ります。'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];memoLogs=[];clearMemoForm();$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();};
   $('loadSample').onclick=()=>{
-    const d={normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,shootingChargeUnknown:12,shootingChargeATHit:0,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
+    const d={totalG:4603,normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,shootingChargeUnknown:12,shootingChargeATHit:0,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
     ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];memoLogs=[];$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
   };
   $('exportJson').onclick=()=>{
