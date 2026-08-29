@@ -74,7 +74,7 @@
   .install-note{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(183,213,114,.08);border:1px solid rgba(183,213,114,.22);font-size:12px;color:#d9ec9a}
   .install-note.show{display:block}
 
-  .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}
+  .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}.tabs .tab-btn{grid-column:span 2}.tabs .tab-btn:nth-child(n+4){grid-column:span 3}
   .tab-btn{min-height:40px;border:1px solid #2c3b58;border-radius:10px;background:#332f1b;color:#d8d0ad;font-size:12px;font-weight:800}
   .tab-btn.active{background:linear-gradient(135deg,rgba(212,195,107,.20),rgba(124,92,255,.18));border-color:rgba(212,195,107,.55);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
   .tab-panel{display:none}.tab-panel.active{display:block}
@@ -95,6 +95,8 @@
   .memo-list{display:grid;gap:9px}.memo-entry{border:1px solid var(--line);border-radius:13px;background:#2d2b18;padding:10px}.memo-entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.memo-g{font-size:18px;font-weight:850}.memo-time{font-size:10px;color:var(--muted);white-space:nowrap}.memo-tags{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.memo-tag{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid #766d43;color:#efe7cd}.memo-tag.result{border-color:rgba(183,213,114,.35);color:#d9ec9a;background:rgba(183,213,114,.06)}.memo-tag.lamp{border-color:rgba(240,201,108,.35);color:#f0dc94;background:rgba(240,201,108,.06)}
   .memo-main{font-size:13px;font-weight:700;margin-top:5px}.memo-note{font-size:11px;color:#ded7b7;margin-top:5px;white-space:pre-wrap}.memo-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.memo-actions button{min-height:32px;border-radius:9px;padding:5px 9px;font-size:10px;font-weight:750;border:1px solid #7e7546;background:#3a3620;color:#ece3bf}.memo-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}
   .empty-memo{font-size:12px;color:var(--muted);text-align:center;border:1px dashed #706940;border-radius:12px;padding:18px 10px}
+  .event-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}.event-quick button{min-height:52px;border-radius:12px;border:1px solid rgba(212,195,107,.44);background:rgba(55,51,28,.72);color:#fff;font-weight:850;font-size:13px}.event-quick button:disabled{opacity:.35}.event-session-line{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.event-status{font-size:12px;color:#efe7b8}.event-status strong{color:#fff}.event-form{display:none;margin-top:10px;border:1px solid rgba(212,195,107,.24);border-radius:14px;padding:11px;background:rgba(32,30,17,.74)}.event-form.open{display:block}.event-form-title{font-weight:850;margin-bottom:9px}.event-form-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.event-mini-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.event-mini-actions button{border:1px solid #706940;background:#3a3620;color:#ece3bf;border-radius:9px;padding:7px 9px;font-size:11px;font-weight:750}.event-log{display:grid;gap:7px}.event-log-item{border:1px solid rgba(255,245,210,.10);border-radius:11px;padding:9px;background:rgba(45,43,24,.30)}.event-log-item.cancelled{opacity:.62;border-style:dashed}.event-log-head{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted)}.event-log-main{font-size:13px;font-weight:780;margin-top:3px}.event-log-actions{display:flex;justify-content:flex-end;margin-top:7px}.event-log-actions button{border:1px solid #706940;background:#3a3620;color:#ece3bf;border-radius:8px;padding:5px 9px;font-size:10px;font-weight:750}.event-log-actions .cancel{border-color:#61303a;background:#2a1219;color:#ffd4d8}.event-derived{display:grid;gap:7px}.event-derived-item{border-left:3px solid #b7d572;padding:7px 9px;background:rgba(183,213,114,.06);font-size:12px}.event-error{display:none;color:#ffd1d5;border:1px solid #61303a;background:#2a1219;border-radius:10px;padding:9px;margin-top:8px;font-size:12px}.event-error.show{display:block}
+  @media(max-width:430px){.event-quick{grid-template-columns:1fr 1fr}}
   .history-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
   .history-list{display:grid;gap:10px}.history-entry{border:1px solid var(--line);border-radius:14px;background:#2d2b18;padding:11px}.history-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.history-date{font-size:17px;font-weight:850}.history-sub{font-size:10px;color:var(--muted);margin-top:2px}.history-net{font-size:20px;font-weight:900;white-space:nowrap}.history-net.plus{color:#d9ec9a}.history-net.minus{color:#ff9faa}.history-net.zero{color:#d7e3f4}.history-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.history-metric{background:#262413;border:1px solid #5b5531;border-radius:10px;padding:7px}.history-metric .k{font-size:9px;color:var(--muted)}.history-metric .v{font-size:13px;font-weight:800;margin-top:1px}.history-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px}.history-actions button{min-height:34px;border-radius:9px;padding:5px 7px;font-size:10px;font-weight:800;border:1px solid #7e7546;background:#3a3620;color:#ece3bf}.history-actions .restore{border-color:rgba(212,195,107,.35);color:#f3e7a5}.history-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}.net-preview{font-size:28px;font-weight:900;text-align:center;padding:8px 0}.net-preview.plus{color:#d9ec9a}.net-preview.minus{color:#ff9faa}.net-preview.zero{color:#f4edd6}
   .detail-modal-box{max-width:760px;margin:2vh auto;background:#2c2918;border:1px solid #6f6740;border-radius:16px;padding:14px}
@@ -110,6 +112,7 @@
   .detail-log-head{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:850}.detail-log-meta{font-size:11px;color:#d7e5f8;margin-top:3px}.detail-log-note{font-size:10px;color:var(--muted);margin-top:3px;white-space:pre-wrap}
   @media(max-width:430px){.detail-row{grid-template-columns:1fr;gap:2px}.detail-v{text-align:left}.detail-hero{grid-template-columns:1fr}.detail-net{text-align:left}}
   @media(max-width:430px){.tabs{top:62px}.mode-summary{grid-template-columns:1fr 1fr}}
+  @media(min-width:600px){.tabs{grid-template-columns:repeat(5,1fr)}.tabs .tab-btn,.tabs .tab-btn:nth-child(n+4){grid-column:span 1}}
 
   body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none}
   body::before{
@@ -143,7 +146,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.6 / GGOカーキ</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.7.3 / Event Hybrid</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -153,6 +156,7 @@
     <button class="tab-btn" data-tab="ggo">GGOモード</button>
     <button class="tab-btn" data-tab="memo">CZ・AT履歴</button>
     <button class="tab-btn" data-tab="history">履歴</button>
+    <button class="tab-btn" data-tab="event">イベント</button>
   </nav>
 
   <div class="tab-panel active" id="tab-setting">
@@ -342,7 +346,7 @@
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.5.6：入力欄・カード・一覧パネルの透過をさらに強化。背景の銃弾イラストと弾痕が、UIの下からもっと見えるように再調整。</div>
+    <div class="footer-note">Ver.5.7.3：構造変更イベントの安全な取消／復元と、時系列矛盾時の解析上限を追加。</div>
   </section>
   </div>
 
@@ -471,6 +475,37 @@
       <div class="history-list" id="historyList"></div>
       <div class="actions"><button class="btn secondary" id="copyHistory">履歴一覧をコピー</button><button class="btn danger" id="clearHistory">履歴を全削除</button></div>
     </section>
+  </div>
+
+  <div class="tab-panel" id="tab-event">
+    <section class="card">
+      <div class="mode-head"><div><div class="mode-title">実測イベント記録</div><div class="mode-sub">現行カウンターとは独立したhybrid記録</div></div><span class="mode-badge calc">Ver.5.7</span></div>
+      <div class="notice">ここで保存したイベントは設定推測・CZ総数・AT初当たりへ自動反映しません。ユーザーが実機で確認した値だけを、新しい独立領域へ保存します。</div>
+      <div class="event-session-line"><div class="event-status" id="evSessionStatus">実戦イベント：未開始</div><div class="event-mini-actions"><button id="evStartSession">実戦開始</button><button id="evPauseSession">一時中断</button><button id="evResumeSession">再開</button><button id="evEndSession">実戦終了</button></div></div>
+      <div class="grid" style="margin-top:9px"><div class="field"><div class="name">開始時液晶G（任意）</div><input id="evSessionStartGame" type="number" min="0" inputmode="numeric" placeholder="確認できた場合のみ"></div><div class="field"><div class="name">最終液晶G（実戦終了時・任意）</div><input id="evSessionEndGame" type="number" min="0" inputmode="numeric" placeholder="確認できた場合のみ"></div></div>
+      <div class="event-error" id="evError"></div>
+    </section>
+
+    <section class="card">
+      <div class="event-quick"><button data-ev-form="menu">メニュー</button><button data-ev-form="sc">SC</button><button data-ev-form="cz">CZ</button><button data-ev-form="direct">AT直撃</button></div>
+      <div class="event-mini-actions"><button data-ev-form="atend">AT終了</button><button data-ev-form="bullet">バレット非当選</button><button data-ev-form="override">ゾーン修正</button><button data-ev-form="note">メモ</button></div>
+
+      <div class="event-form" id="evFormMenu"><div class="event-form-title">メニュー画面確認</div><div class="grid"><div class="field"><div class="name">液晶G</div><input id="evMenuGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">キャラクター</div><select id="evMenuCharacter"><option value="">選択</option><option value="kirito">キリト</option><option value="sinon">シノン</option><option value="kikuoka">菊岡誠二郎</option><option value="asuna_group">アスナ・リズベット・リーファ・シリカ</option><option value="natsuki">安岐ナツキ</option><option value="sinon_spiegel">シノン・シュピーゲル</option><option value="host">司会者</option><option value="zexceed">ゼクシード</option><option value="dyne">ダイン</option><option value="pale_rider">ペイルライダー</option><option value="yamikaze">闇風</option><option value="musketeer_x">銃士X（マスケティア・イクス）</option><option value="death_gun">デス・ガン</option><option value="other">その他</option></select></div></div><div class="event-form-actions"><button class="btn" id="evSaveMenu">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormSc"><div class="event-form-title">シューティングチャージ</div><div class="grid"><div class="field"><div class="name">開始時液晶G</div><input id="evScStart" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">表示加算G</div><input id="evScAdded" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">終了時液晶G（確認時のみ）</div><input id="evScEnd" type="number" min="0" inputmode="numeric" placeholder="未確認なら空欄"></div><div class="field"><div class="name">SC種類</div><select id="evScType"><option value="unknown">不明</option><option value="kirito_training">キリト射撃訓練</option><option value="sinon_slap">シノンビンタ</option><option value="water_gun">水鉄砲チャージ</option><option value="night_splash">NIGHT SPLASH</option></select></div><label class="check"><input type="checkbox" id="evScAtHit">SC中AT当選</label></div><div class="event-form-actions"><button class="btn" id="evSaveSc">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormCz"><div class="event-form-title">CZ確認</div><div class="grid"><div class="field"><div class="name">CZ確認時の液晶G</div><input id="evCzGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">結果</div><select id="evCzOutcome"><option value="success">成功</option><option value="fail">失敗</option></select></div><div class="field"><div class="name">確認できた契機</div><select id="evCzTrigger"><option value="game_zone">ゾーン</option><option value="game_ceiling">G数天井</option><option value="rare_role">レア役</option><option value="strong_chance">強チャンス目</option><option value="bullet">バレットMAX</option><option value="other">その他</option><option value="unknown">不明</option></select></div><div class="field"><label class="check"><input type="checkbox" id="evCzCeiling">ゲーム数天井CZ</label><label class="check"><input type="checkbox" id="evCzDefinite">確定CZ</label><label class="check"><input type="checkbox" id="evCzItem">失敗時アイテム獲得</label></div></div><div class="event-form-actions"><button class="btn" id="evSaveCz">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormDirect"><div class="event-form-title">AT直撃</div><div class="grid"><div class="field"><div class="name">確認時の液晶G</div><input id="evDirectGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">確認できた契機</div><select id="evDirectTrigger"><option value="bullet">バレットMAX</option><option value="sc">SC中</option><option value="rare_role">レア役</option><option value="other">その他</option><option value="unknown">不明</option></select></div><div class="field"><div class="name">詩乃モードとの関係</div><select id="evDirectShino"><option value="unknown">不明</option><option value="confirmed">詩乃由来と確認</option><option value="not_shino">詩乃由来ではない</option></select></div></div><div class="event-form-actions"><button class="btn" id="evSaveDirect">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormAtend"><div class="event-form-title">AT終了</div><div class="field"><div class="name">AT終了後の液晶G（任意）</div><input id="evAtEndGame" type="number" min="0" inputmode="numeric"></div><div class="event-form-actions"><button class="btn" id="evSaveAtEnd">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+      <div class="event-form" id="evFormBullet"><div class="event-form-title">バレットMAX非当選</div><div class="field"><div class="name">確認時液晶G（任意）</div><input id="evBulletGame" type="number" min="0" inputmode="numeric"></div><div class="event-form-actions"><button class="btn" id="evSaveBullet">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+      <div class="event-form" id="evFormOverride"><div class="event-form-title">自動ゾーン判定の手動修正</div><div class="grid"><div class="field"><div class="name">対象CZ</div><select id="evOverrideTarget"></select></div><div class="field"><div class="name">採用ゾーン</div><select id="evOverrideZone"><option value="zone_250">250Gゾーン</option><option value="zone_350">350Gゾーン</option><option value="unknown">不明</option></select></div></div><div class="event-form-actions"><button class="btn" id="evSaveOverride">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+      <div class="event-form" id="evFormNote"><div class="event-form-title">観測メモ</div><div class="grid"><div class="field"><div class="name">液晶G（任意）</div><input id="evNoteGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">内容</div><textarea id="evNoteText" class="memo-text"></textarea></div></div><div class="event-form-actions"><button class="btn" id="evSaveNote">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+    </section>
+
+    <section class="card"><div class="mode-head"><div><div class="mode-title">派生ゾーン解析</div><div class="mode-sub">原本からいつでも再生成可能</div></div><span class="mode-badge" id="evRuleBadge">Rule 1</span></div><div class="actions"><button class="btn secondary" id="evRebuildDerived">派生データを再生成</button><button class="btn secondary" id="evDropRebuild">キャッシュ削除→再生成</button></div><div class="event-derived" id="evDerivedList" style="margin-top:10px"></div></section>
+    <section class="card"><div class="mode-head"><div><div class="mode-title">イベント履歴</div><div class="mode-sub">sessions・segments・eventsが正本</div></div><span class="mode-badge" id="evCountBadge">0件</span></div><div class="event-log" id="evLog"></div></section>
   </div>
 </div>
 
@@ -1008,8 +1043,316 @@
   if($('playDate'))$('playDate').value=todayLocal();
   load();renderPriorInputs();refresh();
   let savedTab='setting';try{savedTab=localStorage.getItem('sao2-active-tab')||'setting';}catch(e){}
-  if(!['setting','ggo','memo','history'].includes(savedTab))savedTab='setting';
+  if(!['setting','ggo','memo','history','event'].includes(savedTab))savedTab='setting';
   activateTab(savedTab);
+})();
+</script>
+
+<script>
+(() => {
+  'use strict';
+  const EVENT_STORAGE_KEY='sao2-event-store-v1';
+  const EVENT_SCHEMA_VERSION=1;
+  const ZONE_RULE_VERSION=1;
+  // Rule 1 contains only zones explicitly fixed for the initial research example.
+  // Adding or changing zones requires a new ruleVersion and full derived rebuild.
+  const ZONE_MASTER={ruleVersion:ZONE_RULE_VERSION,zones:[
+    {zoneId:'zone_250',label:'250Gゾーン',anchorGame:250,status:'project_confirmed'},
+    {zoneId:'zone_350',label:'350Gゾーン',anchorGame:350,status:'project_confirmed'}
+  ]};
+  const EVENT_TYPES=new Set(['menu_observation','sc','cz','direct_at','at_end','bullet_max','zone_override','note']);
+  const clone=v=>JSON.parse(JSON.stringify(v));
+  const iso=()=>new Date().toISOString();
+  const isNum=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0;
+  const nullableGame=v=>v===''||v===null||v===undefined?null:Math.max(0,Number(v));
+  function uid(prefix){
+    const random=(globalThis.crypto&&typeof globalThis.crypto.randomUUID==='function')?globalThis.crypto.randomUUID().replace(/-/g,''):Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+    return `${prefix}_${Date.now().toString(36)}_${random}`;
+  }
+  function blankStore(){return {schemaVersion:EVENT_SCHEMA_VERSION,createdAt:iso(),updatedAt:iso(),nextSequence:1,activeSessionId:null,sessions:[],segments:[],events:[],derivedCaches:{}};}
+  function validateStore(s){
+    const errors=[];
+    if(!s||typeof s!=='object'||Array.isArray(s))return ['イベントストアがオブジェクトではありません。'];
+    if(s.schemaVersion!==EVENT_SCHEMA_VERSION)errors.push('未対応のイベントストア形式です。');
+    ['sessions','segments','events'].forEach(k=>{if(!Array.isArray(s[k]))errors.push(`${k}が配列ではありません。`);});
+    if(errors.length)return errors;
+    const checkUnique=(arr,key,label)=>{const seen=new Set();arr.forEach(x=>{const v=x&&x[key];if(!v)errors.push(`${label}のIDがありません。`);else if(seen.has(v))errors.push(`${label} IDが重複しています：${v}`);else seen.add(v);});return seen;};
+    const sessionIds=checkUnique(s.sessions,'sessionId','session');
+    const segmentIds=checkUnique(s.segments,'segmentId','segment');
+    const segmentById=new Map(s.segments.map(x=>[x.segmentId,x]));
+    checkUnique(s.events,'eventId','event');
+    const openBySession=new Map();
+    s.segments.forEach(x=>{
+      if(!sessionIds.has(x.sessionId))errors.push(`segmentのsession参照が不正です：${x.segmentId}`);
+      if(x.status==='open')openBySession.set(x.sessionId,(openBySession.get(x.sessionId)||0)+1);
+      const start=x.start;
+      if(!start||typeof start!=='object'||Array.isArray(start))errors.push(`segment.startが不正です：${x.segmentId}`);
+      else if(Object.prototype.hasOwnProperty.call(start,'startDisplayGame')){
+        if(start.startDisplayGame!==null&&!isNum(start.startDisplayGame))errors.push(`segment.startDisplayGameが不正です：${x.segmentId}`);
+        if(!['user_observed','machine_reset_rule','unknown'].includes(start.startGameSource))errors.push(`segment.startGameSourceが不正です：${x.segmentId}`);
+        if(start.startGameSource==='machine_reset_rule'&&(start.startDisplayGame!==0||start.reason!=='after_cz_reset'))errors.push(`machine_reset_ruleのsegment開始条件が不正です：${x.segmentId}`);
+      }else if(start.observedDisplayGame!==null&&!isNum(start.observedDisplayGame))errors.push(`旧形式segment.start.observedDisplayGameが不正です：${x.segmentId}`);
+    });
+    openBySession.forEach((count,sessionId)=>{if(count>1)errors.push(`同一sessionにopen segmentが複数あります：${sessionId}`);});
+    const sequences=new Set();let maxSequence=0;
+    const requiredString=(e,key)=>{if(typeof e.observed[key]!=='string'||!e.observed[key])errors.push(`${e.eventType}.${key}が不正です：${e.eventId}`);};
+    const requiredGame=(e,key)=>{if(!isNum(e.observed[key]))errors.push(`${e.eventType}.${key}が不正です：${e.eventId}`);};
+    const nullableObservedGame=(e,key)=>{const v=e.observed[key];if(v!==null&&!isNum(v))errors.push(`${e.eventType}.${key}が不正です：${e.eventId}`);};
+    const enumValue=(e,key,values)=>{if(!values.includes(e.observed[key]))errors.push(`${e.eventType}.${key}が未対応値です：${e.eventId}`);};
+    s.events.forEach(x=>{
+      if(!EVENT_TYPES.has(x.eventType))errors.push(`未対応eventTypeです：${x.eventType}`);
+      if(!sessionIds.has(x.sessionId))errors.push(`eventのsession参照が不正です：${x.eventId}`);
+      if(x.segmentId!==null&&!segmentIds.has(x.segmentId))errors.push(`eventのsegment参照が不正です：${x.eventId}`);
+      if(x.segmentId!==null&&segmentById.has(x.segmentId)&&segmentById.get(x.segmentId).sessionId!==x.sessionId)errors.push(`eventとsegmentのsessionが一致しません：${x.eventId}`);
+      if(!Number.isInteger(x.sequence)||x.sequence<1)errors.push(`event sequenceが不正です：${x.eventId}`);
+      else{if(sequences.has(x.sequence))errors.push(`event sequenceが重複しています：${x.sequence}`);sequences.add(x.sequence);maxSequence=Math.max(maxSequence,x.sequence);}
+      if(!x.observed||typeof x.observed!=='object'||Array.isArray(x.observed))errors.push(`observedが不正です：${x.eventId}`);
+      if(!x.observed||typeof x.observed!=='object'||Array.isArray(x.observed))return;
+      if(x.eventType==='menu_observation'){requiredGame(x,'displayGame');requiredString(x,'characterId');requiredString(x,'characterLabel');}
+      if(x.eventType==='sc'){requiredGame(x,'startDisplayGame');requiredGame(x,'displayedAddedGames');nullableObservedGame(x,'endDisplayGame');enumValue(x,'scType',['unknown','kirito_training','sinon_slap','water_gun','night_splash']);if(typeof x.observed.atHit!=='boolean')errors.push(`sc.atHitが不正です：${x.eventId}`);}
+      if(x.eventType==='cz'){requiredGame(x,'displayGame');enumValue(x,'outcome',['success','fail','unknown']);enumValue(x,'triggerType',['game_zone','game_ceiling','rare_role','strong_chance','bullet','other','unknown']);['isGameCeiling','isDefiniteCZ','atStarted','bulletMaxObserved'].forEach(k=>{if(typeof x.observed[k]!=='boolean')errors.push(`cz.${k}が不正です：${x.eventId}`);});}
+      if(x.eventType==='direct_at'){requiredGame(x,'displayGame');enumValue(x,'triggerType',['bullet','sc','rare_role','other','unknown']);enumValue(x,'shinoRelation',['confirmed','not_shino','unknown']);if(typeof x.observed.bulletMaxObserved!=='boolean')errors.push(`direct_at.bulletMaxObservedが不正です：${x.eventId}`);}
+      if(x.eventType==='at_end')nullableObservedGame(x,'displayGame');
+      if(x.eventType==='bullet_max'){nullableObservedGame(x,'displayGame');enumValue(x,'result',['no_hit']);}
+      if(x.eventType==='zone_override'){requiredString(x,'targetEventId');enumValue(x,'selectedZoneId',['zone_250','zone_350','unknown']);if(!s.events.some(e=>e.eventId===x.observed.targetEventId&&e.eventType==='cz'))errors.push(`zone_overrideの対象CZがありません：${x.eventId}`);}
+      if(x.eventType==='note'){nullableObservedGame(x,'displayGame');requiredString(x,'text');}
+    });
+    if(!Number.isInteger(s.nextSequence)||s.nextSequence<=maxSequence)errors.push('nextSequenceが既存event sequenceの最大値以下です。');
+    if(s.activeSessionId!==null&&!sessionIds.has(s.activeSessionId))errors.push('activeSessionIdの参照が不正です。');
+    return errors;
+  }
+  function fingerprint(s){return [ZONE_RULE_VERSION,...s.sessions.map(x=>`${x.sessionId}:${x.updatedAt||x.createdAt||''}`),...s.segments.map(x=>`${x.segmentId}:${x.updatedAt||x.createdAt||''}:${x.status}`),...s.events.map(x=>`${x.eventId}:${x.updatedAt||x.createdAt||''}:${x.deletedAt||''}`)].join('|');}
+  function eventDisplayGame(e){return e&&e.observed&&isNum(e.observed.displayGame)?e.observed.displayGame:null;}
+  function segmentStartGame(seg){
+    const start=seg&&seg.start;
+    if(start&&isNum(start.startDisplayGame))return start.startDisplayGame;
+    // Ver.5.7 / 5.7.1で保存済みのsegmentを移行せず、そのまま解析できる互換読取。
+    return start&&isNum(start.observedDisplayGame)?start.observedDisplayGame:null;
+  }
+  function latestMenu(events,limitGame,limitSequence){
+    return events.filter(e=>e.eventType==='menu_observation'&&eventDisplayGame(e)!==null&&eventDisplayGame(e)<=limitGame&&e.sequence<limitSequence).sort((a,b)=>eventDisplayGame(b)-eventDisplayGame(a)||b.sequence-a.sequence)[0]||null;
+  }
+  function deriveStore(s,zoneMaster=ZONE_MASTER){
+    const activeEvents=s.events.filter(e=>!e.deletedAt).sort((a,b)=>a.sequence-b.sequence);
+    const eventAssignments=[]; const exposureMap=new Map();
+    const overrides=new Map();
+    activeEvents.filter(e=>e.eventType==='zone_override').forEach(e=>overrides.set(e.observed.targetEventId,e));
+    for(const seg of s.segments){
+      const evs=activeEvents.filter(e=>e.segmentId===seg.segmentId&&e.eventType!=='zone_override').sort((a,b)=>a.sequence-b.sequence);
+      let cursor=segmentStartGame(seg);
+      const natural=[]; const jumps=[]; let pathUncertain=cursor===null,temporalConflict=false;
+      for(const e of evs){
+        if(e.eventType==='sc'){
+          const start=isNum(e.observed.startDisplayGame)?e.observed.startDisplayGame:null;
+          const observedEnd=isNum(e.observed.endDisplayGame)?e.observed.endDisplayGame:null;
+          const calculatedEnd=start!==null&&isNum(e.observed.displayedAddedGames)?start+e.observed.displayedAddedGames:null;
+          const end=observedEnd!==null?observedEnd:calculatedEnd;
+          if(cursor!==null&&start!==null&&start>=cursor)natural.push({from:cursor,to:start,sourceEventId:e.eventId});
+          else if(start!==null&&cursor===null)pathUncertain=true;
+          else if(start!==null&&cursor!==null&&start<cursor){pathUncertain=true;temporalConflict=true;}
+          if(start!==null&&end!==null&&end>=start)jumps.push({from:start,to:end,sourceEventId:e.eventId,endSource:observedEnd!==null?'observed':'calculated'});
+          else{pathUncertain=true;if(start!==null&&end!==null&&end<start)temporalConflict=true;}
+          cursor=end!==null&&start!==null&&end>=start?end:null;
+          continue;
+        }
+        if(!['cz','direct_at'].includes(e.eventType))continue;
+        const g=eventDisplayGame(e);
+        if(g!==null){
+          if(cursor!==null&&g>=cursor)natural.push({from:cursor,to:g,sourceEventId:e.eventId});
+          else if(cursor!==null&&g<cursor){pathUncertain=true;temporalConflict=true;}
+          if(cursor===null||g>=cursor)cursor=g;
+        }
+      }
+      const segmentBoundaryId=seg.end&&seg.end.boundaryEventId||null;
+      const segmentBoundaryActive=!segmentBoundaryId||activeEvents.some(e=>e.eventId===segmentBoundaryId);
+      const segmentEndGame=segmentBoundaryActive&&isNum(seg.end&&seg.end.observedDisplayGame)?seg.end.observedDisplayGame:null;
+      if(segmentEndGame!==null){
+        if(cursor!==null&&segmentEndGame>=cursor)natural.push({from:cursor,to:segmentEndGame,sourceEventId:seg.end&&seg.end.boundaryEventId||null});
+        else if(cursor!==null&&segmentEndGame<cursor){pathUncertain=true;temporalConflict=true;}
+        else pathUncertain=true;
+      }
+      const reached=new Set(),skipped=new Set();
+      for(const z of zoneMaster.zones){
+        if(natural.some(r=>r.from<=z.anchorGame&&z.anchorGame<=r.to))reached.add(z.zoneId);
+        if(!reached.has(z.zoneId)&&jumps.some(j=>j.from<z.anchorGame&&z.anchorGame<=j.to))skipped.add(z.zoneId);
+      }
+      const czEvents=evs.filter(e=>e.eventType==='cz');
+      for(const cz of czEvents){
+        const g=eventDisplayGame(cz); let autoZoneId=null; let reason='not_zone_trigger';
+        const naturalCandidates=g===null||temporalConflict?[]:zoneMaster.zones.filter(z=>z.anchorGame<=g&&reached.has(z.zoneId)).sort((a,b)=>a.anchorGame-b.anchorGame);
+        const lastNaturallyReachedZoneId=naturalCandidates.length?naturalCandidates[naturalCandidates.length-1].zoneId:null;
+        if(temporalConflict)reason='temporal_conflict';
+        else if(cz.observed.triggerType==='game_zone'&&g!==null){
+          if(naturalCandidates.length){autoZoneId=lastNaturallyReachedZoneId;reason='latest_effectively_reached_zone';}
+          else reason=pathUncertain?'insufficient_path_data':'no_effectively_reached_zone';
+        }
+        const override=overrides.get(cz.eventId)||null;
+        const manualZoneId=override?override.observed.selectedZoneId:null;
+        const finalZoneId=manualZoneId||autoZoneId;
+        const menu=g===null?null:latestMenu(evs,g,cz.sequence);
+        const skippedZoneIds=temporalConflict||g===null?[]:zoneMaster.zones.filter(z=>z.anchorGame<=g&&skipped.has(z.zoneId)).map(z=>z.zoneId);
+        eventAssignments.push({eventId:cz.eventId,sessionId:cz.sessionId,segmentId:cz.segmentId,observedDisplayGame:g,autoZoneId,manualZoneId,finalZoneId,lastNaturallyReachedZoneId,skippedZoneIds,representativeCharacterId:menu?menu.observed.characterId:null,representativeCharacterLabel:menu?menu.observed.characterLabel:null,sourceMenuEventId:menu?menu.eventId:null,reason,pathUncertain,temporalConflict,ruleVersion:zoneMaster.ruleVersion});
+      }
+      const segmentMax=Math.max(-1,...evs.map(eventDisplayGame).filter(v=>v!==null),segmentEndGame===null?-1:segmentEndGame);
+      const temporalUpperBound=segmentEndGame!==null?segmentEndGame:Math.max(-1,...evs.filter(e=>['cz','direct_at'].includes(e.eventType)).map(eventDisplayGame).filter(v=>v!==null));
+      for(const z of zoneMaster.zones){
+        // 時系列が壊れた場合、信頼できるCZ/AT直撃またはsegment終点より未来のゾーンは確定記録しない。
+        if(temporalConflict&&(temporalUpperBound<0||z.anchorGame>temporalUpperBound))continue;
+        let state=null;
+        if(temporalConflict&&segmentMax>=z.anchorGame)state='unknown';
+        else if(reached.has(z.zoneId))state='reached_miss';
+        else if(skipped.has(z.zoneId))state='skipped_by_sc';
+        else if(segmentMax>=z.anchorGame&&pathUncertain)state='unknown';
+        if(!state)continue;
+        const assignment=eventAssignments.find(a=>a.segmentId===seg.segmentId&&a.finalZoneId===z.zoneId);
+        if(assignment&&!assignment.temporalConflict&&activeEvents.find(e=>e.eventId===assignment.eventId)?.observed.triggerType==='game_zone')state='hit';
+        const menuForZone=assignment&&state==='hit'&&assignment.sourceMenuEventId?activeEvents.find(e=>e.eventId===assignment.sourceMenuEventId):latestMenu(evs,z.anchorGame,Number.MAX_SAFE_INTEGER);
+        const key=`${zoneMaster.ruleVersion}:${seg.sessionId}:${seg.segmentId}:${z.zoneId}`;
+        exposureMap.set(key,{exposureKey:key,ruleVersion:zoneMaster.ruleVersion,sessionId:seg.sessionId,segmentId:seg.segmentId,zoneId:z.zoneId,state,characterId:menuForZone?menuForZone.observed.characterId:null,characterLabel:menuForZone?menuForZone.observed.characterLabel:null,sourceMenuEventId:menuForZone?menuForZone.eventId:null,sourceEventIds:evs.map(e=>e.eventId),generatedAt:iso()});
+      }
+    }
+    const zoneExposures=[...exposureMap.values()];
+    const aggregateMap=new Map();
+    zoneExposures.forEach(x=>{const k=`${x.characterId||'unknown'}:${x.zoneId}`,a=aggregateMap.get(k)||{characterId:x.characterId||'unknown',characterLabel:x.characterLabel||'未確認',zoneId:x.zoneId,hit:0,reachedMiss:0,validReach:0,skipped:0,unknown:0};if(x.state==='hit')a.hit++;if(x.state==='reached_miss')a.reachedMiss++;if(x.state==='skipped_by_sc')a.skipped++;if(x.state==='unknown')a.unknown++;a.validReach=a.hit+a.reachedMiss;aggregateMap.set(k,a);});
+    const eventCounts={czTotal:0,czSuccess:0,czFail:0,atInitial:0,definiteCZ:0,bulletCZ:0,bulletDirectAT:0,bulletNoHit:0};
+    activeEvents.forEach(e=>{if(e.eventType==='cz'){eventCounts.czTotal++;if(e.observed.outcome==='success'){eventCounts.czSuccess++;eventCounts.atInitial++;}if(e.observed.outcome==='fail')eventCounts.czFail++;if(e.observed.isDefiniteCZ)eventCounts.definiteCZ++;if(e.observed.triggerType==='bullet')eventCounts.bulletCZ++;}if(e.eventType==='direct_at'){eventCounts.atInitial++;if(e.observed.triggerType==='bullet')eventCounts.bulletDirectAT++;}if(e.eventType==='sc'&&e.observed.atHit)eventCounts.atInitial++;if(e.eventType==='bullet_max'&&e.observed.result==='no_hit')eventCounts.bulletNoHit++;});
+    return {ruleVersion:zoneMaster.ruleVersion,sourceFingerprint:fingerprint(s),generatedAt:iso(),eventAssignments,zoneExposures,characterZoneAggregates:[...aggregateMap.values()],eventCounts};
+  }
+
+  function isStructuralEvent(e){return !!e&&(e.eventType==='cz'||e.eventType==='direct_at'||e.eventType==='at_end'||(e.eventType==='sc'&&e.observed&&e.observed.atHit===true));}
+  function assertNoActiveFollowingEvents(s,target){if(s.events.some(e=>e.sessionId===target.sessionId&&!e.deletedAt&&e.sequence>target.sequence))throw new Error('後続イベントがあるため取消できません');}
+  function structuralSegment(s,target){const seg=s.segments.find(x=>x.segmentId===target.segmentId&&x.sessionId===target.sessionId);if(!seg)throw new Error('対象イベントのsegmentがありません。');return seg;}
+  function removeGeneratedSegment(s,sessionId,reason){
+    const matches=s.segments.filter(x=>x.sessionId===sessionId&&x.status==='open'&&x.start&&x.start.reason===reason);
+    if(matches.length!==1)throw new Error('構造を安全に巻き戻せないため取消できません。');
+    const seg=matches[0];
+    if(s.events.some(e=>e.segmentId===seg.segmentId&&!e.deletedAt))throw new Error('後続イベントがあるため取消できません');
+    s.segments=s.segments.filter(x=>x.segmentId!==seg.segmentId);
+  }
+  function cancelEventSafely(s,eventId,at=iso()){
+    const target=s.events.find(x=>x.eventId===eventId);if(!target)throw new Error('対象イベントがありません。');if(target.deletedAt)throw new Error('対象イベントは取消済みです。');
+    if(!isStructuralEvent(target)){target.deletedAt=at;target.updatedAt=at;return;}
+    assertNoActiveFollowingEvents(s,target);
+    const session=s.sessions.find(x=>x.sessionId===target.sessionId);if(!session)throw new Error('対象sessionがありません。');
+    if(target.eventType==='at_end'){
+      if(session.phase!=='normal')throw new Error('構造を安全に巻き戻せないため取消できません。');
+      removeGeneratedSegment(s,target.sessionId,'after_at_end');session.phase='at';
+    }else{
+      const seg=structuralSegment(s,target);
+      if(!seg.end||seg.end.boundaryEventId!==target.eventId)throw new Error('構造を安全に巻き戻せないため取消できません。');
+      if(target.eventType==='cz'&&target.observed.outcome==='fail')removeGeneratedSegment(s,target.sessionId,'after_cz_reset');
+      const expectedPhase=target.eventType==='cz'?(target.observed.outcome==='fail'?'normal':target.observed.outcome==='success'?'at':'pending'):'at';
+      if(session.phase!==expectedPhase)throw new Error('構造を安全に巻き戻せないため取消できません。');
+      seg.status='open';seg.end=null;seg.updatedAt=at;session.phase='normal';
+    }
+    target.deletedAt=at;target.updatedAt=at;session.updatedAt=at;
+  }
+  function restoreEventSafely(s,eventId,at=iso()){
+    const target=s.events.find(x=>x.eventId===eventId);if(!target)throw new Error('対象イベントがありません。');if(!target.deletedAt)throw new Error('対象イベントは取消されていません。');
+    if(!isStructuralEvent(target)){target.deletedAt=null;target.updatedAt=at;return;}
+    if(s.events.some(e=>e.sessionId===target.sessionId&&!e.deletedAt&&e.sequence>target.sequence))throw new Error('後続イベントがあるため復元できません');
+    const session=s.sessions.find(x=>x.sessionId===target.sessionId);if(!session)throw new Error('対象sessionがありません。');
+    if(target.eventType==='at_end'){
+      if(session.phase!=='at'||s.segments.some(x=>x.sessionId===target.sessionId&&x.status==='open'))throw new Error('構造整合性を保証できないため復元できません。');
+      const game=target.observed.displayGame;createSegment(s,session,'after_at_end',game,game===null?'unknown':'user_observed');session.phase='normal';
+    }else{
+      const seg=structuralSegment(s,target);
+      if(seg.status!=='open'||seg.end!==null)throw new Error('構造整合性を保証できないため復元できません。');
+      closeSegment(seg,target.eventType==='sc'?'sc_at':target.eventType,target.eventId,target.eventType==='sc'?(isNum(target.observed.endDisplayGame)?target.observed.endDisplayGame:target.observed.startDisplayGame):target.observed.displayGame);
+      if(target.eventType==='cz'&&target.observed.outcome==='fail'){createSegment(s,session,'after_cz_reset',0,'machine_reset_rule');session.phase='normal';}
+      else if(target.eventType==='cz'&&target.observed.outcome==='unknown')session.phase='pending';
+      else session.phase='at';
+    }
+    target.deletedAt=null;target.updatedAt=at;session.updatedAt=at;
+  }
+
+  const API={EVENT_STORAGE_KEY,EVENT_SCHEMA_VERSION,ZONE_RULE_VERSION,ZONE_MASTER,blankStore,validateStore,deriveStore,fingerprint,isStructuralEvent,cancelEventSafely,restoreEventSafely};
+  globalThis.SAO2EventV57Core=API;
+  if(typeof document==='undefined'||typeof localStorage==='undefined')return;
+
+  const $=id=>document.getElementById(id);
+  let store=null,blocked=false;
+  function showError(msg){const el=$('evError');if(!el)return;el.textContent=msg||'';el.classList.toggle('show',!!msg);}
+  function loadStore(){
+    try{
+      const raw=localStorage.getItem(EVENT_STORAGE_KEY);
+      if(!raw){store=blankStore();return;}
+      const parsed=JSON.parse(raw),errors=validateStore(parsed);
+      if(errors.length){blocked=true;store=parsed;showError('イベント保存データを読み込めません。既存データは変更していません。'+errors.join(' '));return;}
+      store=parsed;
+    }catch(e){blocked=true;store=null;showError('イベント保存データのJSONを読み込めません。既存データは削除・初期化していません。');}
+  }
+  function writeCandidate(candidate){
+    const errors=validateStore(candidate);if(errors.length)throw new Error(errors.join(' '));
+    candidate.updatedAt=iso();
+    localStorage.setItem(EVENT_STORAGE_KEY,JSON.stringify(candidate));
+  }
+  function commit(mutator,message){
+    if(blocked||!store){showError('保存を停止しています。既存イベントデータを保護するため上書きしません。');return false;}
+    const candidate=clone(store);
+    try{mutator(candidate);candidate.derivedCaches={zoneAnalysis:deriveStore(candidate,ZONE_MASTER)};writeCandidate(candidate);store=candidate;showError('');renderAll();if(message&&$('saveState'))$('saveState').textContent=message;return true;}
+    catch(e){showError('イベント保存に失敗しました。既存データは保持されています。'+e.message);return false;}
+  }
+  function activeSession(s=store){return s&&s.sessions.find(x=>x.sessionId===s.activeSessionId)||null;}
+  function openSegment(s=store,sessionId=s&&s.activeSessionId){return s&&s.segments.find(x=>x.sessionId===sessionId&&x.status==='open')||null;}
+  function createSegment(s,session,reason,startDisplayGame=null,startGameSource='unknown'){const t=iso(),seg={segmentId:uid('segment'),sessionId:session.sessionId,sequence:s.segments.filter(x=>x.sessionId===session.sessionId).length+1,status:'open',start:{reason,startDisplayGame,startGameSource,startedAt:t},end:null,createdAt:t,updatedAt:t};s.segments.push(seg);return seg;}
+  function closeSegment(seg,reason,eventId,game,status='closed'){seg.status=status;seg.end={reason,boundaryEventId:eventId||null,observedDisplayGame:game,endedAt:iso()};seg.updatedAt=iso();}
+  function addEvent(s,session,segment,eventType,observed){const e={eventId:uid('event'),sessionId:session.sessionId,segmentId:segment?segment.segmentId:null,sequence:s.nextSequence++,eventType,observed,createdAt:iso(),updatedAt:iso(),deletedAt:null,source:{inputMethod:'quick_input',legacyImported:false,legacyReference:null}};s.events.push(e);return e;}
+  function requireNormal(){const session=activeSession(),seg=openSegment();if(!session||session.status!=='active'||session.phase!=='normal'||!seg){showError('通常時の実戦イベントを開始してから入力してください。');return null;}return {session,seg};}
+  function requireAT(){const session=activeSession();if(!session||session.status!=='active'||session.phase!=='at'){showError('AT中状態ではありません。');return null;}return session;}
+  function rebuildDerived(write=true){
+    if(!store||blocked)return null;
+    const derived=deriveStore(store,ZONE_MASTER);
+    if(write){const candidate=clone(store);candidate.derivedCaches={zoneAnalysis:derived};try{writeCandidate(candidate);store=candidate;}catch(e){showError('派生キャッシュの保存に失敗しました。原本は変更していません。'+e.message);return null;}}
+    else store.derivedCaches={zoneAnalysis:derived};
+    return derived;
+  }
+  function ensureDerived(){const d=store&&store.derivedCaches&&store.derivedCaches.zoneAnalysis;if(!d||d.ruleVersion!==ZONE_RULE_VERSION||d.sourceFingerprint!==fingerprint(store))return rebuildDerived(true);return d;}
+  function textEvent(e){const o=e.observed||{},g=isNum(o.displayGame)?`${o.displayGame}G `:'';if(e.eventType==='menu_observation')return `${g}メニュー：${o.characterLabel}`;if(e.eventType==='sc')return `SC ${o.startDisplayGame}G ＋${o.displayedAddedGames}G → ${isNum(o.endDisplayGame)?o.endDisplayGame+'G（実測）':'未確認'}${o.atHit?' / AT当選':''}`;if(e.eventType==='cz')return `${g}CZ ${o.outcome==='success'?'成功':o.outcome==='fail'?'失敗':'結果不明'} / ${o.triggerType}${o.isGameCeiling?' / 天井':''}${o.isDefiniteCZ?' / 確定CZ':''}`;if(e.eventType==='direct_at')return `${g}AT直撃 / ${o.triggerType}`;if(e.eventType==='at_end')return `AT終了${isNum(o.displayGame)?' / '+o.displayGame+'G':''}`;if(e.eventType==='bullet_max')return `${g}バレットMAX 非当選`;if(e.eventType==='zone_override')return `ゾーン修正：${o.targetEventId} → ${o.selectedZoneId}`;return `${g}${o.text||'メモ'}`;}
+  function renderAll(){
+    if(blocked){$('evSessionStatus').textContent='イベント保存：保護停止中';document.querySelectorAll('#tab-event button').forEach(b=>b.disabled=true);return;}
+    if(!store)return;
+    const session=activeSession(),seg=openSegment();
+    $('evSessionStatus').innerHTML=session?`実戦イベント：<strong>${session.status==='paused'?'一時中断':session.phase==='at'?'AT中':session.status==='closed'?'終了':'通常時'}</strong>${seg?` / 区間${seg.sequence}`:''}`:'実戦イベント：未開始';
+    $('evPauseSession').disabled=!session||session.status!=='active';$('evResumeSession').disabled=!session||session.status!=='paused';$('evEndSession').disabled=!session||session.status==='closed';$('evStartSession').disabled=!!session&&session.status!=='closed';
+    document.querySelectorAll('[data-ev-form="menu"],[data-ev-form="sc"],[data-ev-form="cz"],[data-ev-form="direct"],[data-ev-form="bullet"],[data-ev-form="note"]').forEach(b=>b.disabled=!session||session.status!=='active'||session.phase!=='normal'||!seg);
+    document.querySelector('[data-ev-form="atend"]').disabled=!session||session.status!=='active'||session.phase!=='at';
+    const currentEvents=store.events.filter(e=>(!session||e.sessionId===session.sessionId)).sort((a,b)=>b.sequence-a.sequence),activeCount=currentEvents.filter(e=>!e.deletedAt).length;$('evCountBadge').textContent=activeCount+'件';$('evLog').innerHTML=currentEvents.length?currentEvents.map(e=>`<div class="event-log-item ${e.deletedAt?'cancelled':''}"><div class="event-log-head"><span>${e.eventType}${e.deletedAt?'（取消済み）':''}</span><span>${new Date(e.createdAt).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}</span></div><div class="event-log-main">${textEvent(e).replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]))}</div><div class="event-log-actions">${e.deletedAt?`<button data-ev-restore="${e.eventId}">復元</button>`:`<button class="cancel" data-ev-cancel="${e.eventId}">取消</button>`}</div></div>`).join(''):'<div class="empty-memo">新しい実戦イベントはまだありません。</div>';
+    const czs=store.events.filter(e=>!e.deletedAt&&e.eventType==='cz'&&(!session||e.sessionId===session.sessionId));$('evOverrideTarget').innerHTML=czs.length?czs.map(e=>`<option value="${e.eventId}">${eventDisplayGame(e)??'G不明'}G / ${e.observed.outcome}</option>`).join(''):'<option value="">対象CZなし</option>';
+    const d=ensureDerived();$('evRuleBadge').textContent='Rule '+ZONE_RULE_VERSION;
+    if(!d){$('evDerivedList').innerHTML='<div class="empty-memo">派生解析を生成できません。</div>';return;}
+    const assignments=d.eventAssignments.filter(a=>!session||a.sessionId===session.sessionId);$('evDerivedList').innerHTML=assignments.length?assignments.map(a=>`<div class="event-derived-item">${a.observedDisplayGame??'G不明'}G CZ：${a.finalZoneId||'unknown'} / 代表キャラ ${a.representativeCharacterLabel||'未確認'} / skipped ${a.skippedZoneIds.length?a.skippedZoneIds.join(', '):'なし'}<br><span class="small">${a.reason}</span></div>`).join(''):'<div class="empty-memo">CZイベントを保存すると派生判定を表示します。</div>';
+  }
+  function openForm(name){document.querySelectorAll('.event-form').forEach(x=>x.classList.remove('open'));const id='evForm'+name.charAt(0).toUpperCase()+name.slice(1);$(id)?.classList.add('open');}
+  function closeForms(){document.querySelectorAll('.event-form').forEach(x=>x.classList.remove('open'));}
+  function val(id){return $(id).value;}
+  function numRequired(id,label){const v=nullableGame(val(id));if(v===null||!Number.isFinite(v))throw new Error(label+'を入力してください。');return v;}
+
+  function bindUI(){
+    document.querySelectorAll('[data-ev-form]').forEach(b=>b.addEventListener('click',()=>openForm(b.dataset.evForm)));document.querySelectorAll('[data-ev-close]').forEach(b=>b.addEventListener('click',closeForms));
+    $('evStartSession').onclick=()=>commit(s=>{const current=activeSession(s);if(current&&current.status!=='closed')throw new Error('進行中の実戦があります。');const t=iso(),session={sessionId:uid('session'),historyId:null,playDate:new Date().toLocaleDateString('sv-SE'),status:'active',phase:'normal',startedAt:t,endedAt:null,createdAt:t,updatedAt:t};s.sessions.push(session);s.activeSessionId=session.sessionId;const startGame=nullableGame(val('evSessionStartGame'));createSegment(s,session,'session_start',startGame,startGame===null?'unknown':'user_observed');},'イベント実戦を開始しました');
+    $('evPauseSession').onclick=()=>commit(s=>{const x=activeSession(s);if(!x||x.status!=='active')throw new Error('中断できる実戦がありません。');x.status='paused';x.updatedAt=iso();},'イベント実戦を一時中断しました');
+    $('evResumeSession').onclick=()=>commit(s=>{const x=activeSession(s);if(!x||x.status!=='paused')throw new Error('再開できる実戦がありません。');x.status='active';x.updatedAt=iso();},'イベント実戦を再開しました');
+    $('evEndSession').onclick=()=>commit(s=>{const x=activeSession(s);if(!x||x.status==='closed')throw new Error('終了できる実戦がありません。');const seg=openSegment(s,x.sessionId);if(seg)closeSegment(seg,'session_end',null,nullableGame(val('evSessionEndGame')),'incomplete');x.status='closed';x.phase='ended';x.endedAt=iso();x.updatedAt=iso();s.activeSessionId=null;},'イベント実戦を終了しました');
+    $('evSaveMenu').onclick=()=>{const c=requireNormal();if(!c)return;let game;try{game=numRequired('evMenuGame','液晶G');}catch(e){showError(e.message);return;}const sel=$('evMenuCharacter');if(!sel.value){showError('キャラクターを選択してください。');return;}commit(s=>{const x=activeSession(s),seg=openSegment(s);addEvent(s,x,seg,'menu_observation',{displayGame:game,characterId:sel.value,characterLabel:sel.options[sel.selectedIndex].text});},'メニュー画面をイベント保存しました')&&closeForms();};
+    $('evSaveSc').onclick=()=>{const c=requireNormal();if(!c)return;let start,added;try{start=numRequired('evScStart','SC開始時液晶G');added=numRequired('evScAdded','表示加算G');}catch(e){showError(e.message);return;}const end=nullableGame(val('evScEnd')),atHit=$('evScAtHit').checked;commit(s=>{const x=activeSession(s),seg=openSegment(s),e=addEvent(s,x,seg,'sc',{scType:val('evScType'),startDisplayGame:start,displayedAddedGames:added,endDisplayGame:end,atHit,note:''});if(atHit){closeSegment(seg,'sc_at',e.eventId,end!==null?end:start);x.phase='at';x.updatedAt=iso();}},'SCをイベント保存しました')&&closeForms();};
+    $('evSaveCz').onclick=()=>{const c=requireNormal();if(!c)return;let game;try{game=numRequired('evCzGame','CZ確認時液晶G');}catch(e){showError(e.message);return;}const outcome=val('evCzOutcome'),trigger=val('evCzTrigger');commit(s=>{const x=activeSession(s),seg=openSegment(s),isCeiling=$('evCzCeiling').checked||trigger==='game_ceiling',e=addEvent(s,x,seg,'cz',{displayGame:game,outcome,triggerType:trigger,isGameCeiling:isCeiling,isDefiniteCZ:$('evCzDefinite').checked,atStarted:outcome==='success',bulletMaxObserved:trigger==='bullet',itemObtainedOnFailure:outcome==='fail'?$('evCzItem').checked:null,note:''});closeSegment(seg,'cz',e.eventId,game);if(outcome==='success')x.phase='at';else if(outcome==='fail'){x.phase='normal';createSegment(s,x,'after_cz_reset',0,'machine_reset_rule');}else x.phase='pending';x.updatedAt=iso();},'CZをイベント保存しました')&&closeForms();};
+    $('evSaveDirect').onclick=()=>{const c=requireNormal();if(!c)return;let game;try{game=numRequired('evDirectGame','確認時液晶G');}catch(e){showError(e.message);return;}commit(s=>{const x=activeSession(s),seg=openSegment(s),trigger=val('evDirectTrigger'),e=addEvent(s,x,seg,'direct_at',{displayGame:game,triggerType:trigger,shinoRelation:val('evDirectShino'),bulletMaxObserved:trigger==='bullet',note:''});closeSegment(seg,'direct_at',e.eventId,game);x.phase='at';x.updatedAt=iso();},'AT直撃をイベント保存しました')&&closeForms();};
+    $('evSaveAtEnd').onclick=()=>{const x=requireAT();if(!x)return;const game=nullableGame(val('evAtEndGame'));commit(s=>{const session=activeSession(s),e=addEvent(s,session,null,'at_end',{displayGame:game,note:''});session.phase='normal';session.updatedAt=iso();createSegment(s,session,'after_at_end',game,game===null?'unknown':'user_observed');},'AT終了をイベント保存しました')&&closeForms();};
+    $('evSaveBullet').onclick=()=>{const c=requireNormal();if(!c)return;commit(s=>{addEvent(s,activeSession(s),openSegment(s),'bullet_max',{displayGame:nullableGame(val('evBulletGame')),result:'no_hit'});},'バレットMAX非当選を保存しました')&&closeForms();};
+    $('evSaveOverride').onclick=()=>{const target=val('evOverrideTarget');if(!target){showError('対象CZがありません。');return;}const targetEvent=store.events.find(e=>e.eventId===target);commit(s=>{const session=s.sessions.find(x=>x.sessionId===targetEvent.sessionId),seg=s.segments.find(x=>x.segmentId===targetEvent.segmentId);addEvent(s,session,seg,'zone_override',{targetEventId:target,selectedZoneId:val('evOverrideZone'),reason:'user_confirmed'});},'ゾーン修正を保存しました')&&closeForms();};
+    $('evSaveNote').onclick=()=>{const c=requireNormal();if(!c)return;const text=val('evNoteText').trim();if(!text){showError('メモ内容を入力してください。');return;}commit(s=>{addEvent(s,activeSession(s),openSegment(s),'note',{displayGame:nullableGame(val('evNoteGame')),text});},'観測メモを保存しました')&&closeForms();};
+    $('evRebuildDerived').onclick=()=>{rebuildDerived(true);renderAll();};
+    $('evDropRebuild').onclick=()=>{if(!store||blocked)return;const candidate=clone(store);candidate.derivedCaches={};try{writeCandidate(candidate);store=candidate;rebuildDerived(true);renderAll();showError('');}catch(e){showError('派生キャッシュ再生成に失敗しました。原本は保持されています。'+e.message);}};
+    $('evLog').addEventListener('click',e=>{
+      const cancel=e.target.closest('[data-ev-cancel]');
+      if(cancel){const eventId=cancel.dataset.evCancel;if(confirm('このイベントを取り消しますか？構造変更イベントは安全な場合だけ巻き戻します。'))commit(s=>cancelEventSafely(s,eventId),'イベントを取り消しました');return;}
+      const restore=e.target.closest('[data-ev-restore]');
+      if(restore){const eventId=restore.dataset.evRestore;commit(s=>restoreEventSafely(s,eventId),'イベントを復元しました');}
+    });
+  }
+  function init(){loadStore();if(!store&&!blocked)store=blankStore();bindUI();if(store&&!blocked)ensureDerived();renderAll();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 
