@@ -1,0 +1,1405 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#56532e" />
+<title>SAO2 判別・実戦ログ</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SAO2判別">
+<style>
+  :root{
+    --bg:#242312;--panel:#34321d;--panel2:#2b2917;--line:#6d6840;--text:#f3edd2;--muted:#cbc39d;
+    --accent:#d4c36b;--accent2:#9e8341;--good:#b7d572;--warn:#f0c96c;--bad:#ff8b96;--shadow:0 12px 28px rgba(0,0,0,.34);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;position:relative;overflow-x:hidden;background:radial-gradient(circle at top,#777244 0,#484529 18%,#2d2a17 52%,#1f1d10 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
+  button,input,select{font:inherit}
+  button{touch-action:manipulation}
+  .app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:12px 12px 96px}
+  .hero{position:sticky;top:0;z-index:20;margin:-12px -12px 12px;padding:12px 12px 10px;background:rgba(41,38,21,.46);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,245,210,.10)}
+  .title-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  h1{font-size:19px;margin:0;letter-spacing:.02em}
+  .tag{font-size:11px;color:#f3ebbc;border:1px solid rgba(212,195,107,.42);padding:4px 7px;border-radius:999px;background:rgba(212,195,107,.10)}
+  .save-state{font-size:11px;color:var(--muted);margin-top:4px}
+  .card{background:linear-gradient(180deg,rgba(52,50,29,.30),rgba(43,41,23,.22));border:1px solid rgba(255,245,210,.10);border-radius:16px;padding:14px;margin:12px 0;box-shadow:var(--shadow);backdrop-filter:blur(4px)}
+  .card h2{font-size:16px;margin:0 0 10px}.card h3{font-size:14px;margin:14px 0 8px;color:#ece3bf}
+  .best{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .best .label{font-size:12px;color:var(--muted)}
+  .best .value{font-size:31px;font-weight:800;letter-spacing:.02em}
+  .best .sub{font-size:12px;color:var(--muted);text-align:right}
+  .bars{display:grid;gap:7px}
+  .bar-row{display:grid;grid-template-columns:44px 1fr 55px;align-items:center;gap:8px;font-size:12px}
+  .bar-track{height:13px;border-radius:999px;background:rgba(31,29,16,.20);border:1px solid rgba(255,255,255,.07);overflow:hidden}
+  .bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent2),var(--accent));min-width:0;transition:width .25s ease}
+  .bar-row.top .bar-fill{background:linear-gradient(90deg,#2fd38f,#bccd72)}
+  .bar-pct{text-align:right;font-variant-numeric:tabular-nums}
+  .notice{font-size:12px;color:#ece3bf;background:rgba(212,195,107,.06);border:1px solid rgba(212,195,107,.14);border-radius:12px;padding:10px;margin-top:10px;backdrop-filter:blur(3px)}
+  .notice.warn{background:rgba(240,201,108,.08);border-color:rgba(240,201,108,.26);color:#f4e0a6}
+  details{border-top:1px solid rgba(255,255,255,.08);padding-top:10px;margin-top:10px}
+  details:first-of-type{border-top:0;padding-top:0;margin-top:0}
+  summary{cursor:pointer;list-style:none;font-weight:700;font-size:15px;padding:4px 0 8px;display:flex;justify-content:space-between;align-items:center}
+  summary::-webkit-details-marker{display:none} summary:after{content:'＋';font-size:18px;color:var(--accent)} details[open] summary:after{content:'−'}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid.one{grid-template-columns:1fr}.grid.three{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:430px){.grid,.grid.three{grid-template-columns:1fr}.hero{padding-top:max(12px,env(safe-area-inset-top))}}
+  .field{background:rgba(49,47,27,.14);border:1px solid rgba(255,245,210,.12);border-radius:12px;padding:10px;backdrop-filter:blur(2px)}
+  .field .name{font-size:12px;color:#f6efcf;margin-bottom:5px;text-shadow:0 1px 0 rgba(0,0,0,.25)}.field .hint{font-size:10px;color:#ddd2a5;margin-top:5px}
+  .num-wrap{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;align-items:center}.num-wrap.wide{grid-template-columns:50px 1fr 50px}
+  .num-wrap button{height:40px;border-radius:10px;border:1px solid rgba(255,245,210,.16);background:rgba(74,68,38,.28);color:#fff;font-size:20px;font-weight:800;backdrop-filter:blur(2px)}
+  .num-wrap button:active{transform:scale(.98)}
+  input[type=number]{width:100%;height:40px;border-radius:10px;border:1px solid rgba(255,245,210,.16);background:rgba(31,29,16,.18);color:#fff;text-align:center;font-weight:700;font-size:16px;outline:none;backdrop-filter:blur(2px)}
+  input[type=number]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,195,107,.10)}
+  select{width:100%;height:40px;border-radius:10px;border:1px solid rgba(255,245,210,.16);background:rgba(31,29,16,.18);color:#fff;padding:0 10px;backdrop-filter:blur(2px)}
+  .calc{font-size:12px;margin-top:6px;color:#f2eab6}.calc strong{color:#fff}
+  .evidence{display:grid;gap:8px}.ev{border:1px solid rgba(255,245,210,.10);border-radius:12px;padding:10px;background:rgba(45,43,24,.18);backdrop-filter:blur(3px)}.ev-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.ev-title{font-size:12px;font-weight:700}.ev-rate{font-size:13px;font-weight:800}.ev-note{font-size:11px;color:var(--muted);margin-top:3px}.pill{font-size:10px;border-radius:999px;padding:3px 7px;border:1px solid #766d43;color:#efe7cd;white-space:nowrap}.pill.good{border-color:rgba(183,213,114,.35);color:#d9ec9a;background:rgba(183,213,114,.07)}.pill.bad{border-color:rgba(255,107,120,.35);color:#ff9faa;background:rgba(255,107,120,.07)}.pill.mid{border-color:rgba(240,201,108,.35);color:#ffdc8b;background:rgba(240,201,108,.07)}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.actions.three{grid-template-columns:repeat(3,1fr)}
+  .btn{border:0;border-radius:12px;min-height:44px;padding:10px 12px;font-weight:800;color:#08111d;background:linear-gradient(135deg,#d7c56d,#bccd72)}
+  .btn.secondary{color:#f4edd6;background:#4a4426;border:1px solid #7e7546}.btn.danger{color:#ffd4d8;background:#2a1219;border:1px solid #61303a}
+  .btn:active{transform:translateY(1px)}
+  .small{font-size:11px;color:var(--muted)}
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid var(--line);border-radius:11px;background:#2d2b18;font-size:12px}.check input{width:19px;height:19px;accent-color:var(--accent)}
+  .priors{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.priors label{font-size:10px;color:var(--muted);text-align:center}.priors input{height:36px;font-size:13px}
+  .footer-note{font-size:10px;color:#a9a177;margin:14px 2px}
+  .sticky-actions{position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(7,11,20,.96);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08);padding:8px max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+  .sticky-actions .inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:7px}.sticky-actions .btn{min-height:42px;padding:7px;font-size:12px}
+  .modal{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);padding:16px;overflow:auto}.modal.open{display:block}.modal-box{max-width:720px;margin:4vh auto;background:#2c2918;border:1px solid #6f6740;border-radius:16px;padding:14px}.modal textarea{width:100%;min-height:340px;background:#1a190f;color:#f4edd6;border:1px solid #2c3c58;border-radius:12px;padding:12px;font-size:12px;line-height:1.6}
+
+  .install-btn{display:none;border:1px solid rgba(212,195,107,.42);background:rgba(212,195,107,.10);color:#dff8ff;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;white-space:nowrap}
+  .install-btn.show{display:inline-flex;align-items:center;gap:5px}
+  .install-note{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(183,213,114,.08);border:1px solid rgba(183,213,114,.22);font-size:12px;color:#d9ec9a}
+  .install-note.show{display:block}
+
+  .tabs{position:sticky;top:58px;z-index:19;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:0 0 12px;padding:6px;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:14px}.tabs .tab-btn{grid-column:span 2}.tabs .tab-btn:nth-child(n+4){grid-column:span 3}
+  .tab-btn{min-height:40px;border:1px solid #2c3b58;border-radius:10px;background:#332f1b;color:#d8d0ad;font-size:12px;font-weight:800}
+  .tab-btn.active{background:linear-gradient(135deg,rgba(212,195,107,.20),rgba(124,92,255,.18));border-color:rgba(212,195,107,.55);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+  .tab-panel{display:none}.tab-panel.active{display:block}
+  .mode-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
+  .mode-title{font-size:18px;font-weight:850}.mode-sub{font-size:11px;color:var(--muted);margin-top:3px}
+  .mode-badge{font-size:10px;border:1px solid rgba(240,201,108,.35);color:#f0dc94;background:rgba(240,201,108,.07);padding:5px 8px;border-radius:999px;white-space:nowrap}
+  .mode-badge.calc{border-color:rgba(183,213,114,.35);color:#d9ec9a;background:rgba(183,213,114,.07)}
+  .mode-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+  .statbox{background:#2d2b18;border:1px solid var(--line);border-radius:12px;padding:10px}.statbox .k{font-size:10px;color:var(--muted)}.statbox .v{font-size:18px;font-weight:850;margin-top:2px}
+  .linked-count{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;align-items:center}.linked-count button{height:40px;border-radius:10px;border:1px solid #706940;background:#4a4426;color:#fff;font-size:20px;font-weight:800}.linked-value{height:40px;border-radius:10px;border:1px solid #706940;background:#262413;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+  .legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.legend span{font-size:10px;border:1px solid #30405d;border-radius:999px;padding:4px 7px;color:#d8d0ad}
+  input[type=text], input[type=date], textarea.memo-text{width:100%;border-radius:10px;border:1px solid #706940;background:#262413;color:#fff;padding:9px 10px;outline:none}
+  input[type=text], input[type=date]{height:40px} textarea.memo-text{min-height:78px;resize:vertical;line-height:1.5}
+  input[type=text]:focus, input[type=date]:focus, textarea.memo-text:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,195,107,.10)}
+  .quick-row{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 2px}.quick-btn{border:1px solid #7e7546;background:#3a3620;color:#ece3bf;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:750}
+  .quick-btn:active{transform:scale(.98)}
+  .memo-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px 0}.memo-count{font-size:12px;color:var(--muted)}
+  .memo-list{display:grid;gap:9px}.memo-entry{border:1px solid var(--line);border-radius:13px;background:#2d2b18;padding:10px}.memo-entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.memo-g{font-size:18px;font-weight:850}.memo-time{font-size:10px;color:var(--muted);white-space:nowrap}.memo-tags{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.memo-tag{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid #766d43;color:#efe7cd}.memo-tag.result{border-color:rgba(183,213,114,.35);color:#d9ec9a;background:rgba(183,213,114,.06)}.memo-tag.lamp{border-color:rgba(240,201,108,.35);color:#f0dc94;background:rgba(240,201,108,.06)}
+  .memo-main{font-size:13px;font-weight:700;margin-top:5px}.memo-note{font-size:11px;color:#ded7b7;margin-top:5px;white-space:pre-wrap}.memo-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}.memo-actions button{min-height:32px;border-radius:9px;padding:5px 9px;font-size:10px;font-weight:750;border:1px solid #7e7546;background:#3a3620;color:#ece3bf}.memo-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}
+  .empty-memo{font-size:12px;color:var(--muted);text-align:center;border:1px dashed #706940;border-radius:12px;padding:18px 10px}
+  .event-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}.event-quick button{min-height:52px;border-radius:12px;border:1px solid rgba(212,195,107,.44);background:rgba(55,51,28,.72);color:#fff;font-weight:850;font-size:13px}.event-quick button:disabled{opacity:.35}.event-session-line{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.event-status{font-size:12px;color:#efe7b8}.event-status strong{color:#fff}.event-form{display:none;margin-top:10px;border:1px solid rgba(212,195,107,.24);border-radius:14px;padding:11px;background:rgba(32,30,17,.74)}.event-form.open{display:block}.event-form-title{font-weight:850;margin-bottom:9px}.event-form-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.event-mini-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.event-mini-actions button{border:1px solid #706940;background:#3a3620;color:#ece3bf;border-radius:9px;padding:7px 9px;font-size:11px;font-weight:750}.event-log{display:grid;gap:7px}.event-log-item{border:1px solid rgba(255,245,210,.10);border-radius:11px;padding:9px;background:rgba(45,43,24,.30)}.event-log-item.cancelled{opacity:.62;border-style:dashed}.event-log-head{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted)}.event-log-main{font-size:13px;font-weight:780;margin-top:3px}.event-log-actions{display:flex;justify-content:flex-end;margin-top:7px}.event-log-actions button{border:1px solid #706940;background:#3a3620;color:#ece3bf;border-radius:8px;padding:5px 9px;font-size:10px;font-weight:750}.event-log-actions .cancel{border-color:#61303a;background:#2a1219;color:#ffd4d8}.event-derived{display:grid;gap:7px}.event-derived-item{border-left:3px solid #b7d572;padding:7px 9px;background:rgba(183,213,114,.06);font-size:12px}.event-error{display:none;color:#ffd1d5;border:1px solid #61303a;background:#2a1219;border-radius:10px;padding:9px;margin-top:8px;font-size:12px}.event-error.show{display:block}
+  @media(max-width:430px){.event-quick{grid-template-columns:1fr 1fr}}
+  .history-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+  .history-list{display:grid;gap:10px}.history-entry{border:1px solid var(--line);border-radius:14px;background:#2d2b18;padding:11px}.history-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.history-date{font-size:17px;font-weight:850}.history-sub{font-size:10px;color:var(--muted);margin-top:2px}.history-net{font-size:20px;font-weight:900;white-space:nowrap}.history-net.plus{color:#d9ec9a}.history-net.minus{color:#ff9faa}.history-net.zero{color:#d7e3f4}.history-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:9px}.history-metric{background:#262413;border:1px solid #5b5531;border-radius:10px;padding:7px}.history-metric .k{font-size:9px;color:var(--muted)}.history-metric .v{font-size:13px;font-weight:800;margin-top:1px}.history-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px}.history-actions button{min-height:34px;border-radius:9px;padding:5px 7px;font-size:10px;font-weight:800;border:1px solid #7e7546;background:#3a3620;color:#ece3bf}.history-actions .restore{border-color:rgba(212,195,107,.35);color:#f3e7a5}.history-actions .del{border-color:#61303a;background:#2a1219;color:#ffd4d8}.net-preview{font-size:28px;font-weight:900;text-align:center;padding:8px 0}.net-preview.plus{color:#d9ec9a}.net-preview.minus{color:#ff9faa}.net-preview.zero{color:#f4edd6}
+  .detail-modal-box{max-width:760px;margin:2vh auto;background:#2c2918;border:1px solid #6f6740;border-radius:16px;padding:14px}
+  .detail-hero{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;margin-bottom:10px}
+  .detail-date{font-size:20px;font-weight:900}.detail-est{font-size:11px;color:var(--muted);margin-top:3px}
+  .detail-net{font-size:24px;font-weight:900;text-align:right}.detail-net.plus{color:#d9ec9a}.detail-net.minus{color:#ff9faa}.detail-net.zero{color:#f4edd6}
+  .detail-section{margin-top:12px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#2d2b18}
+  .detail-section-title{padding:8px 10px;font-size:12px;font-weight:900;color:#f3e7a5;background:rgba(212,195,107,.07);border-bottom:1px solid var(--line)}
+  .detail-row{display:grid;grid-template-columns:minmax(118px,.9fr) minmax(0,1.6fr);gap:10px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.055);align-items:start}
+  .detail-row:first-of-type{border-top:0}.detail-k{font-size:11px;color:var(--muted)}.detail-v{font-size:12px;font-weight:800;text-align:right;word-break:break-word}
+  .detail-sub{font-size:10px;color:var(--muted);font-weight:500;margin-top:2px}
+  .detail-log{padding:8px 10px;border-top:1px solid rgba(255,255,255,.055)}.detail-log:first-of-type{border-top:0}
+  .detail-log-head{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:850}.detail-log-meta{font-size:11px;color:#d7e5f8;margin-top:3px}.detail-log-note{font-size:10px;color:var(--muted);margin-top:3px;white-space:pre-wrap}
+  @media(max-width:430px){.detail-row{grid-template-columns:1fr;gap:2px}.detail-v{text-align:left}.detail-hero{grid-template-columns:1fr}.detail-net{text-align:left}}
+  @media(max-width:430px){.tabs{top:62px}.mode-summary{grid-template-columns:1fr 1fr}}
+  @media(min-width:600px){.tabs{grid-template-columns:repeat(5,1fr)}.tabs .tab-btn,.tabs .tab-btn:nth-child(n+4){grid-column:span 1}}
+
+  body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none}
+  body::before{
+    z-index:0;opacity:.62;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 220'><g transform='rotate(-18 260 110)' fill='none' stroke='rgba(245,234,180,0.60)' stroke-width='3'><rect x='56' y='86' width='188' height='42' rx='10' fill='rgba(245,234,180,0.16)'/><rect x='244' y='91' width='118' height='32' rx='8' fill='rgba(245,234,180,0.15)'/><path d='M362 91 L430 107 L362 123 Z' fill='rgba(245,234,180,0.18)'/><circle cx='106' cy='107' r='13' fill='rgba(245,234,180,0.10)'/><path d='M148 86 L148 128 M182 86 L182 128 M216 86 L216 128' opacity='0.55'/></g></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 520 220'><g transform='rotate(24 260 110)' fill='none' stroke='rgba(245,234,180,0.54)' stroke-width='3'><rect x='124' y='92' width='188' height='38' rx='10' fill='rgba(245,234,180,0.14)'/><rect x='312' y='96' width='96' height='30' rx='8' fill='rgba(245,234,180,0.14)'/><path d='M408 96 L470 111 L408 126 Z' fill='rgba(245,234,180,0.16)'/><circle cx='172' cy='111' r='12' fill='rgba(245,234,180,0.05)'/></g></svg>"),
+      radial-gradient(circle at 8% 24%, rgba(0,0,0,.82) 0 9px, rgba(247,229,165,.18) 10px 19px, transparent 20px),
+      radial-gradient(circle at 17% 82%, rgba(0,0,0,.84) 0 8px, rgba(247,229,165,.16) 9px 18px, transparent 19px),
+      radial-gradient(circle at 50% 14%, rgba(0,0,0,.82) 0 9px, rgba(247,229,165,.18) 10px 19px, transparent 20px),
+      radial-gradient(circle at 75% 76%, rgba(0,0,0,.82) 0 9px, rgba(247,229,165,.16) 10px 19px, transparent 20px),
+      radial-gradient(circle at 93% 20%, rgba(0,0,0,.84) 0 8px, rgba(247,229,165,.16) 9px 18px, transparent 19px),
+      radial-gradient(circle at 88% 64%, rgba(0,0,0,.84) 0 8px, rgba(247,229,165,.14) 9px 18px, transparent 19px);
+    background-size:560px 280px,500px 250px,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%;
+    background-position:right -5% top 4%, left -6% bottom 1%, center, center, center, center, center, center;
+    background-repeat:no-repeat;
+  }
+  body::after{
+    z-index:0;opacity:.22;
+    background-image:
+      radial-gradient(circle at 50% -10%, rgba(255,255,255,.22), transparent 36%),
+      radial-gradient(circle at 50% 120%, rgba(0,0,0,.34), transparent 45%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 1px, transparent 1px 120px),
+      repeating-linear-gradient(180deg, rgba(255,255,255,.015) 0 1px, transparent 1px 120px),
+      linear-gradient(135deg, transparent 0 47%, rgba(255,255,255,.02) 48%, transparent 49%),
+      linear-gradient(315deg, transparent 0 47%, rgba(0,0,0,.05) 48%, transparent 49%);
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.7.3 / Event Hybrid</span></div></div>
+    <div class="save-state" id="saveState">入力すると自動保存されます</div>
+  </div>
+  <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
+
+  <nav class="tabs" aria-label="判別メニュー">
+    <button class="tab-btn active" data-tab="setting">設定推測</button>
+    <button class="tab-btn" data-tab="ggo">GGOモード</button>
+    <button class="tab-btn" data-tab="memo">CZ・AT履歴</button>
+    <button class="tab-btn" data-tab="history">履歴</button>
+    <button class="tab-btn" data-tab="event">イベント</button>
+  </nav>
+
+  <div class="tab-panel active" id="tab-setting">
+
+  <section class="card" id="resultCard">
+    <div class="best">
+      <div><div class="label">現在の相対期待度 1位</div><div class="value" id="bestSetting">設定―</div></div>
+      <div class="sub"><span id="bestPct">データ未入力</span><br><span id="confidence">―</span></div>
+    </div>
+    <div class="bars" id="bars"></div>
+    <div class="notice">表示値は「真の設定確率」ではなく、公開解析値に対する<strong>相対尤度</strong>です。相関する項目は保守的に重みを下げ、未公表の終了画面出現率は数値判定に混ぜません。</div>
+    <div class="notice warn" id="validation" style="display:none"></div>
+  </section>
+
+  <section class="card">
+    <details open>
+      <summary>基本データ</summary>
+      <div class="grid">
+        <div class="field"><div class="name">総ゲーム数</div><div class="num-wrap wide"><button data-delta="-100" data-target="totalG">−100</button><input id="totalG" type="number" min="0" value="0"><button data-delta="100" data-target="totalG">+100</button></div><div class="hint">通常時＋AT中。強チャンス目Bなど全状態の出現率に使用</div></div>
+        <div class="field"><div class="name">通常ゲーム数</div><div class="num-wrap wide"><button data-delta="-100" data-target="normalG">−100</button><input id="normalG" type="number" min="0" value="0"><button data-delta="100" data-target="normalG">+100</button></div><div class="hint">CZ・AT初当たり、通常時小役などの分母に使用</div></div>
+        <div class="field"><div class="name">CZ回数</div><div class="num-wrap"><button data-delta="-1" data-target="czCount">−</button><input id="czCount" type="number" min="0" value="0"><button data-delta="1" data-target="czCount">＋</button></div><div class="calc" id="czRate">―</div></div>
+        <div class="field"><div class="name">CZ成功</div><div class="num-wrap"><button data-delta="-1" data-target="czSuccess">−</button><input id="czSuccess" type="number" min="0" value="0"><button data-delta="1" data-target="czSuccess">＋</button></div></div>
+        <div class="field"><div class="name">CZ失敗</div><div class="num-wrap"><button data-delta="-1" data-target="czFail">−</button><input id="czFail" type="number" min="0" value="0"><button data-delta="1" data-target="czFail">＋</button></div><div class="hint">下のAT強化アイテム獲得率の分母にも使用</div></div>
+        <div class="field"><div class="name">CZ失敗時 AT強化アイテム獲得</div><div class="num-wrap"><button data-delta="-1" data-target="itemHit">−</button><input id="itemHit" type="number" min="0" value="0"><button data-delta="1" data-target="itemHit">＋</button></div><div class="calc" id="itemRate">獲得率：―</div></div>
+        <div class="field"><div class="name">AT初当たり</div><div class="num-wrap"><button data-delta="-1" data-target="atCount">−</button><input id="atCount" type="number" min="0" value="0"><button data-delta="1" data-target="atCount">＋</button></div><div class="calc" id="atRate">―</div></div>
+        <div class="field"><div class="name">詩乃モード由来AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="directAT">−</button><input id="directAT" type="number" min="0" value="0"><button data-delta="1" data-target="directAT">＋</button></div><div class="hint">天井・引き戻し・ウルティマチェリー・SC中図柄停止・フリーズ等は除外</div></div>
+      </div>
+    </details>
+
+    <details open>
+      <summary>低確 強チェリー</summary>
+      <div class="grid three">
+        <div class="field"><div class="name">成立回数</div><div class="num-wrap"><button data-delta="-1" data-target="lowStrongTotal">−</button><input id="lowStrongTotal" type="number" min="0" value="0"><button data-delta="1" data-target="lowStrongTotal">＋</button></div></div>
+        <div class="field"><div class="name">→ CZ</div><div class="num-wrap"><button data-delta="-1" data-target="lowStrongCZ">−</button><input id="lowStrongCZ" type="number" min="0" value="0"><button data-delta="1" data-target="lowStrongCZ">＋</button></div></div>
+        <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="lowStrongDirect">−</button><input id="lowStrongDirect" type="number" min="0" value="0"><button data-delta="1" data-target="lowStrongDirect">＋</button></div></div>
+      </div>
+      <div class="calc" id="lowStrongRate">CZ相当当選率：―</div>
+      <div class="small">詩乃モードでCZ当選がAT直撃へ変換されたケースを考慮し、初期設定では「CZ＋詩乃直撃」をCZ相当当選として評価します。</div>
+    </details>
+
+    <details>
+      <summary>高確 強チェリー</summary>
+      <div class="grid three">
+        <div class="field"><div class="name">成立回数</div><div class="num-wrap"><button data-delta="-1" data-target="highStrongTotal">−</button><input id="highStrongTotal" type="number" min="0" value="0"><button data-delta="1" data-target="highStrongTotal">＋</button></div></div>
+        <div class="field"><div class="name">→ CZ</div><div class="num-wrap"><button data-delta="-1" data-target="highStrongCZ">−</button><input id="highStrongCZ" type="number" min="0" value="0"><button data-delta="1" data-target="highStrongCZ">＋</button></div></div>
+        <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="highStrongDirect">−</button><input id="highStrongDirect" type="number" min="0" value="0"><button data-delta="1" data-target="highStrongDirect">＋</button></div></div>
+      </div>
+      <div class="calc" id="highStrongRate">CZ相当当選率：―</div>
+    </details>
+
+    <details open>
+      <summary>低確 スイカ → シューティングチャージ</summary>
+      <div class="grid">
+        <div class="field"><div class="name">低確スイカ回数</div><div class="num-wrap"><button data-delta="-1" data-target="watermelonTotal">−</button><input id="watermelonTotal" type="number" min="0" value="0"><button data-delta="1" data-target="watermelonTotal">＋</button></div></div>
+        <div class="field"><div class="name">SC当選</div><div class="num-wrap"><button data-delta="-1" data-target="watermelonSC">−</button><input id="watermelonSC" type="number" min="0" value="0"><button data-delta="1" data-target="watermelonSC">＋</button></div><div class="hint">当選したSCの種類は下の「SC種類統計」で別にカウント</div></div>
+      </div>
+      <div class="calc" id="watermelonRate">当選率：―</div>
+    </details>
+
+    <details open>
+      <summary>シューティングチャージ種類統計</summary>
+      <div class="grid">
+        <div class="field"><div class="name">キリト射撃訓練</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeKirito">−</button><input id="shootingChargeKirito" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeKirito">＋</button></div><div class="calc" id="scKiritoPct">構成比：―</div></div>
+        <div class="field"><div class="name">シノンビンタ</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeSinon">−</button><input id="shootingChargeSinon" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeSinon">＋</button></div><div class="calc" id="scSinonPct">構成比：―</div></div>
+        <div class="field"><div class="name">水鉄砲チャージ</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeWater">−</button><input id="shootingChargeWater" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeWater">＋</button></div><div class="calc" id="scWaterPct">構成比：―</div></div>
+        <div class="field"><div class="name">NIGHT SPLASH</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeNight">−</button><input id="shootingChargeNight" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeNight">＋</button></div><div class="calc" id="scNightPct">構成比：―</div></div>
+        <div class="field"><div class="name">種類不明 / 旧Ver.引継ぎ</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeUnknown">−</button><input id="shootingChargeUnknown" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeUnknown">＋</button></div><div class="hint">以前のSC総回数など、種類を記録していない分だけ使用</div></div>
+        <div class="field"><div class="name">SC中 AT当選</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeATHit">−</button><input id="shootingChargeATHit" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeATHit">＋</button></div><div class="hint">SC中の7図柄停止などからATへ当選した回数</div></div>
+      </div>
+      <div class="calc" id="shootingChargeTotalView">SC総回数：―</div>
+      <div class="calc" id="shootingChargeRate">参考・SC出現率：―</div>
+      <div class="calc" id="shootingChargeATHitRate">SC中AT当選率：―</div>
+      <div class="small">統計の主目的は4種類の出現数と構成比です。種類別データは実戦履歴にも保存され、履歴タブで累計を確認できます。設定推測には使用しません。</div>
+    </details>
+
+    <details>
+      <summary>スナイパーチャンス突破率（参考統計）</summary>
+      <div class="grid">
+        <div class="field"><div class="name">スナイパーチャンス回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperChanceTotal">−</button><input id="sniperChanceTotal" type="number" min="0" value="0"><button data-delta="1" data-target="sniperChanceTotal">＋</button></div><div class="hint">AT中に突入したスナイパーチャンス総数</div></div>
+        <div class="field"><div class="name">突破回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperChanceSuccess">−</button><input id="sniperChanceSuccess" type="number" min="0" value="0"><button data-delta="1" data-target="sniperChanceSuccess">＋</button></div><div class="hint">次セット移行・突破として数えたい回数</div></div>
+      </div>
+      <div class="calc" id="sniperChanceRate">突破率：―</div>
+      <div class="small">現時点では設定期待度の計算には使用しません。AT中挙動の自分用統計として保存します。</div>
+    </details>
+
+    <details open>
+      <summary>共通ベル（参考記録）</summary>
+      <div class="grid">
+        <div class="field"><div class="name">通常時 共通ベル</div><div class="num-wrap"><button data-delta="-1" data-target="commonBellNormal">−</button><input id="commonBellNormal" type="number" min="0" value="0"><button data-delta="1" data-target="commonBellNormal">＋</button></div><div class="hint">右下がり斜めベルを記録</div></div>
+        <div class="field"><div class="name">ATゲーム数（自動）</div><input id="atGameCount" type="number" min="0" value="0" readonly><div class="hint">総ゲーム数 − 通常ゲーム数で自動計算</div></div>
+        <div class="field"><div class="name">AT中 ナビなし右下がりベル</div><div class="num-wrap"><button data-delta="-1" data-target="commonBellAT">−</button><input id="commonBellAT" type="number" min="0" value="0"><button data-delta="1" data-target="commonBellAT">＋</button></div><div class="hint">押し順ナビありベルは数えない</div></div>
+      </div>
+      <div class="calc" id="commonBellNormalRate">通常時：―</div>
+      <div class="calc" id="commonBellATRate">AT中：―</div>
+      <div class="calc" id="commonBellAllRate">全状態参考：―</div>
+      <div class="small">共通ベルは設定差ありの可能性がありますが、正式な設定別解析値・通常時/AT中の公式カウント基準が未確定のため、現時点では設定期待度の計算には使用しません。通常時とAT中は分けて記録します。</div>
+    </details>
+
+    <details open>
+      <summary>バレットカウンターMAX → CZ（参考統計）</summary>
+      <div class="grid three">
+        <div class="field"><div class="name">MAX到達回数</div><div class="num-wrap"><button data-delta="-1" data-target="bulletMaxTotal">−</button><input id="bulletMaxTotal" type="number" min="0" value="0"><button data-delta="1" data-target="bulletMaxTotal">＋</button></div><div class="hint">バレット7個到達でCZ抽選を受けた回数</div></div>
+        <div class="field"><div class="name">→ CZ当選</div><div class="num-wrap"><button data-delta="-1" data-target="bulletCZHit">−</button><input id="bulletCZHit" type="number" min="0" value="0"><button data-delta="1" data-target="bulletCZHit">＋</button></div></div>
+        <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="bulletDirectAT">−</button><input id="bulletDirectAT" type="number" min="0" value="0"><button data-delta="1" data-target="bulletDirectAT">＋</button></div><div class="hint">詩乃モード等でCZ当選がAT直撃に変換されたと考えられるケース</div></div>
+      </div>
+      <div class="mode-summary">
+        <div class="statbox"><div class="k">CZ相当当選</div><div class="v" id="bulletHitView">0 / 0</div></div>
+        <div class="statbox"><div class="k">非当選</div><div class="v" id="bulletMissView">0回</div></div>
+      </div>
+      <div class="calc" id="bulletRate">CZ相当当選率：―</div>
+      <div class="small">「CZ当選＋AT直撃」をCZ相当当選として集計します。現時点では設定別の具体的な解析値が未公表のため、設定期待度の計算には使用しません。AT直撃は基本データの「詩乃モード由来AT直撃」の内訳として別途数えてください。</div>
+    </details>
+
+    <details>
+      <summary>確定CZ・強チャンス目A/B</summary>
+      <div class="grid three">
+        <div class="field"><div class="name">通常時 強チャンス目A</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceA">−</button><input id="strongChanceA" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceA">＋</button></div><div class="hint">確定CZ当選率の分母に使用。AT中のAは含めない</div></div>
+        <div class="field"><div class="name">強チャンス目B 総回数</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceTotal">−</button><input id="strongChanceTotal" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceTotal">＋</button></div><div class="calc" id="strongChanceRate">B出現率：―</div><div class="hint">通常時＋AT中。総ゲーム数を分母にB単独の出現率を計算</div></div>
+        <div class="field"><div class="name">うち通常時 強チャンス目B</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceNormalB">−</button><input id="strongChanceNormalB" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceNormalB">＋</button></div><div class="hint">確定CZ当選率の分母に使用。B総回数の内数</div></div>
+        <div class="field"><div class="name">通常時 A/B→確定CZ</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceDefCZ">−</button><input id="strongChanceDefCZ" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceDefCZ">＋</button></div><div class="calc" id="strongChanceDefRate">通常時A+B当選率：―</div></div>
+        <div class="field"><div class="name">確定CZ 総回数</div><div class="num-wrap"><button data-delta="-1" data-target="defCZTotal">−</button><input id="defCZTotal" type="number" min="0" value="0"><button data-delta="1" data-target="defCZTotal">＋</button></div></div>
+      </div>
+      <div class="small">強チャンス目Bの出現率は全状態のB総回数÷総ゲーム数。確定CZ当選率だけは通常時A＋通常時Bを分母にします。</div>
+    </details>
+
+
+  </section>
+
+  <section class="card">
+    <details open>
+      <summary>AT終了画面</summary>
+      <div class="grid">
+        <div class="field"><div class="name">デフォルト（キリト＆シノン）</div><div class="num-wrap"><button data-delta="-1" data-target="endDefault">−</button><input id="endDefault" type="number" min="0" value="0"><button data-delta="1" data-target="endDefault">＋</button></div></div>
+        <div class="field"><div class="name">奇数示唆（制服）</div><div class="num-wrap"><button data-delta="-1" data-target="endOdd">−</button><input id="endOdd" type="number" min="0" value="0"><button data-delta="1" data-target="endOdd">＋</button></div></div>
+        <div class="field"><div class="name">偶数示唆（ソファー）</div><div class="num-wrap"><button data-delta="-1" data-target="endEven">−</button><input id="endEven" type="number" min="0" value="0"><button data-delta="1" data-target="endEven">＋</button></div></div>
+        <div class="field"><div class="name">高設定示唆（木漏れ日）</div><div class="num-wrap"><button data-delta="-1" data-target="endHigh">−</button><input id="endHigh" type="number" min="0" value="0"><button data-delta="1" data-target="endHigh">＋</button></div></div>
+        <div class="field"><div class="name">高設定示唆 強（夏祭り）</div><div class="num-wrap"><button data-delta="-1" data-target="endHighStrong">−</button><input id="endHighStrong" type="number" min="0" value="0"><button data-delta="1" data-target="endHighStrong">＋</button></div></div>
+        <div class="field"><div class="name">幼少期（設定5以上示唆）</div><div class="num-wrap"><button data-delta="-1" data-target="endChild">−</button><input id="endChild" type="number" min="0" value="0"><button data-delta="1" data-target="endChild">＋</button></div></div>
+      </div>
+      <h3>AT終了時 コパンダトロフィー</h3>
+      <div class="grid">
+        <div class="field"><div class="name">銅</div><div class="num-wrap"><button data-delta="-1" data-target="trophyBronze">−</button><input id="trophyBronze" type="number" min="0" value="0"><button data-delta="1" data-target="trophyBronze">＋</button></div></div>
+        <div class="field"><div class="name">銀</div><div class="num-wrap"><button data-delta="-1" data-target="trophySilver">−</button><input id="trophySilver" type="number" min="0" value="0"><button data-delta="1" data-target="trophySilver">＋</button></div></div>
+        <div class="field"><div class="name">金</div><div class="num-wrap"><button data-delta="-1" data-target="trophyGold">−</button><input id="trophyGold" type="number" min="0" value="0"><button data-delta="1" data-target="trophyGold">＋</button></div></div>
+        <div class="field"><div class="name">イナズマ</div><div class="num-wrap"><button data-delta="-1" data-target="trophyLightning">−</button><input id="trophyLightning" type="number" min="0" value="0"><button data-delta="1" data-target="trophyLightning">＋</button></div></div>
+        <div class="field"><div class="name">虹</div><div class="num-wrap"><button data-delta="-1" data-target="trophyRainbow">−</button><input id="trophyRainbow" type="number" min="0" value="0"><button data-delta="1" data-target="trophyRainbow">＋</button></div></div>
+      </div>
+      <div class="small" style="margin-top:8px">トロフィーは履歴に保存します。現時点では設定期待度の数値計算には直接加点しません。</div>
+      <h3>確定系</h3>
+      <div class="check-grid">
+        <label class="check"><input type="checkbox" id="end2plus">ワイシャツ：設定2以上</label>
+        <label class="check"><input type="checkbox" id="end3plus">お風呂：設定3以上</label>
+        <label class="check"><input type="checkbox" id="end4plus">水着：設定4以上</label>
+        <label class="check"><input type="checkbox" id="end6">パジャマ：設定6濃厚</label>
+      </div>
+      <div class="small" style="margin-top:8px">奇偶・高設定示唆は出現率の設定別数値が未公表のため、記録・コメントには反映しますが相対期待度の計算には混ぜません。確定系のみ候補設定を除外します。</div>
+    </details>
+
+    <details>
+      <summary>エンディング / マザーズ・ロザリオ 確定系</summary>
+      <div class="check-grid">
+        <label class="check"><input type="checkbox" id="ed4plus">ED 詩乃：設定4以上濃厚</label>
+        <label class="check"><input type="checkbox" id="ed6">ED シノン＆キリト：設定6濃厚</label>
+        <label class="check"><input type="checkbox" id="mr4plus">マザロザ ユイ：設定4以上濃厚</label>
+        <label class="check"><input type="checkbox" id="mr6">マザロザ アスナ＆ユウキ：設定6濃厚</label>
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>判定材料</h2>
+    <div class="evidence" id="evidence"></div>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>判定設定・店舗配分補正</summary>
+      <div class="small">初期値は全設定を同じ事前確率として扱います。店舗傾向が明確な場合だけ倍率を変更してください。例：設定6を半分に見積もるなら「0.5」。</div>
+      <h3>設定別 事前倍率</h3>
+      <div class="priors" id="priorInputs"></div>
+      <div class="actions"><button class="btn secondary" id="resetPriors">倍率を均等に戻す</button><button class="btn secondary" id="recalc">再計算</button></div>
+      <h3>計算方式</h3>
+      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、通常時 強チャンス目A/B合算→確定CZ、CZ失敗時アイテム。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>データ操作</h2>
+    <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
+    <div class="footer-note">Ver.5.7.3：構造変更イベントの安全な取消／復元と、時系列矛盾時の解析上限を追加。</div>
+  </section>
+  </div>
+
+
+  <div class="tab-panel" id="tab-ggo">
+    <section class="card">
+      <div class="mode-head">
+        <div><div class="mode-title">GGOモード判別メモ</div><div class="mode-sub">キリト / 詩乃 / シノン / 死銃を通常モードと分離して記録</div></div>
+        <span class="mode-badge calc">詩乃直撃のみ設定計算</span>
+      </div>
+      <div class="notice">GGOモードのランプ・アイテム等の示唆は、設定差の具体値が未公表のものを<strong>直接加点しません</strong>。詩乃モード由来AT直撃だけは、設定別の解析値を使って「設定推測」へ反映します。</div>
+
+      <details open>
+        <summary>詩乃モード</summary>
+        <div class="grid">
+          <div class="field"><div class="name">50%示唆</div><div class="num-wrap"><button data-delta="-1" data-target="shino50">−</button><input id="shino50" type="number" min="0" value="0"><button data-delta="1" data-target="shino50">＋</button></div></div>
+          <div class="field"><div class="name">濃厚示唆</div><div class="num-wrap"><button data-delta="-1" data-target="shinoSure">−</button><input id="shinoSure" type="number" min="0" value="0"><button data-delta="1" data-target="shinoSure">＋</button></div></div>
+          <div class="field"><div class="name">詩乃由来 AT直撃（設定推測と共通）</div><div class="linked-count"><button data-delta="-1" data-target="directAT">−</button><div class="linked-value" id="directATMirror">0</div><button data-delta="1" data-target="directAT">＋</button></div><div class="hint">設定推測タブの「詩乃モード由来AT直撃」と同じカウンターです</div></div>
+          <div class="field"><div class="name">強チェ由来の詩乃直撃（参考）</div><div class="linked-count"><button data-delta="-1" data-target="lowStrongDirect">−</button><div class="linked-value" id="lowStrongDirectMirror">0</div><button data-delta="1" data-target="lowStrongDirect">＋</button></div><div class="hint">低確強チェリー欄と共通。二重入力不要</div></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>キリトモード</summary>
+        <div class="grid">
+          <div class="field"><div class="name">50%クラス示唆</div><div class="num-wrap"><button data-delta="-1" data-target="ggoKirito50">−</button><input id="ggoKirito50" type="number" min="0" value="0"><button data-delta="1" data-target="ggoKirito50">＋</button></div></div>
+          <div class="field"><div class="name">濃厚示唆</div><div class="num-wrap"><button data-delta="-1" data-target="ggoKiritoSure">−</button><input id="ggoKiritoSure" type="number" min="0" value="0"><button data-delta="1" data-target="ggoKiritoSure">＋</button></div></div>
+          <div class="field"><div class="name">恩恵確認（参考）</div><div class="num-wrap"><button data-delta="-1" data-target="ggoKiritoBenefit">−</button><input id="ggoKiritoBenefit" type="number" min="0" value="0"><button data-delta="1" data-target="ggoKiritoBenefit">＋</button></div></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>シノンモード</summary>
+        <div class="grid">
+          <div class="field"><div class="name">50%クラス示唆</div><div class="num-wrap"><button data-delta="-1" data-target="ggoSinon50">−</button><input id="ggoSinon50" type="number" min="0" value="0"><button data-delta="1" data-target="ggoSinon50">＋</button></div></div>
+          <div class="field"><div class="name">濃厚示唆</div><div class="num-wrap"><button data-delta="-1" data-target="ggoSinonSure">−</button><input id="ggoSinonSure" type="number" min="0" value="0"><button data-delta="1" data-target="ggoSinonSure">＋</button></div></div>
+          <div class="field"><div class="name">AT中スナイパーチャンス高確を確認（参考）</div><div class="num-wrap"><button data-delta="-1" data-target="ggoSinonBenefit">−</button><input id="ggoSinonBenefit" type="number" min="0" value="0"><button data-delta="1" data-target="ggoSinonBenefit">＋</button></div><div class="hint">通常時シューティングチャージ高確ではありません</div></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>死銃モード</summary>
+        <div class="grid">
+          <div class="field"><div class="name">50%クラス示唆</div><div class="num-wrap"><button data-delta="-1" data-target="ggoDeath50">−</button><input id="ggoDeath50" type="number" min="0" value="0"><button data-delta="1" data-target="ggoDeath50">＋</button></div></div>
+          <div class="field"><div class="name">濃厚示唆</div><div class="num-wrap"><button data-delta="-1" data-target="ggoDeathSure">−</button><input id="ggoDeathSure" type="number" min="0" value="0"><button data-delta="1" data-target="ggoDeathSure">＋</button></div></div>
+          <div class="field"><div class="name">恩恵確認（参考）</div><div class="num-wrap"><button data-delta="-1" data-target="ggoDeathBenefit">−</button><input id="ggoDeathBenefit" type="number" min="0" value="0"><button data-delta="1" data-target="ggoDeathBenefit">＋</button></div></div>
+        </div>
+      </details>
+      <div class="small" style="margin-top:10px">「50%クラス示唆」「濃厚示唆」は、実戦中に解析上それに該当するアイテム・演出を確認した時だけカウントするための記録欄です。設定別移行率が公表されるまでは設定期待度へ直接加点しません。</div>
+    </section>
+  </div>
+
+  <div class="tab-panel" id="tab-memo">
+    <section class="card">
+      <div class="mode-head">
+        <div><div class="mode-title">CZ・AT区間ログ</div><div class="mode-sub">CZ当選などを1区間の終点として、液晶G数・メニュー画面・結果・ランプを記録</div></div>
+        <span class="mode-badge">設定計算とは独立</span>
+      </div>
+      <div class="notice"><strong>使い方：</strong>「CZ当選まで」を1区間として保存していく想定です。G数天井やSC中AT当選などで区切れた場合も1件として追加します。ログは設定推測カウンターへ自動加算しません。</div>
+
+      <div class="grid">
+        <div class="field"><div class="name">液晶ゲーム数</div><input id="memoGame" type="number" min="0" inputmode="numeric" placeholder="例：186"><div class="hint">CZ当選・天井到達・SC中AT当選など、区切りになった液晶G数</div></div>
+        <div class="field"><div class="name">メニュー画面キャラ</div><select id="memoMenuChar">
+          <option value="">未確認 / なし</option><option>キリト</option><option>シノン</option><option>菊岡誠二郎</option><option>アスナ・リズベット・リーファ・シリカ</option><option>安岐ナツキ</option><option>シノン・シュピーゲル</option><option>司会者</option><option>ゼクシード</option><option>ダイン</option><option>ペイルライダー</option><option>闇風</option><option>銃士X（マスケティア・イクス）</option><option>デス・ガン</option><option>その他</option>
+        </select><div class="hint">CZ区間中に確認したメニュー画面を選択</div></div>
+        <div class="field"><div class="name">結果</div><select id="memoResult">
+          <option value="">―</option><option value="CZ→AT当選">CZ→AT当選</option><option value="CZ→AT非当選">CZ→AT非当選</option><option value="G数天井AT当選">G数天井AT当選</option><option value="G数天井AT非当選">G数天井AT非当選</option><option value="シューティングチャージ中AT当選">シューティングチャージ中AT当選</option><option value="AT直撃">AT直撃</option>
+        </select></div>
+        <div class="field"><div class="name">ランプ色</div><select id="memoLamp"><option value="">なし / 未確認</option><option>白</option><option>青</option><option>黄</option><option>緑</option><option>赤</option><option>紫</option></select><div class="hint">CZ失敗後・AT終了後に確認したランプ</div></div>
+        <div class="field"><div class="name">追加メモ</div><textarea class="memo-text" id="memoNote" placeholder="例：アミュスフィア緑、前兆が早かった、アイキャッチ赤など"></textarea></div>
+      </div>
+
+      <div class="small" style="margin-top:10px">結果クイック入力</div>
+      <div class="quick-row">
+        <button class="quick-btn" data-memo-preset="czwin">CZ→AT当選</button>
+        <button class="quick-btn" data-memo-preset="czlose">CZ→AT非当選</button>
+        <button class="quick-btn" data-memo-preset="ceilwin">G数天井AT当選</button>
+        <button class="quick-btn" data-memo-preset="scat">SC中AT当選</button>
+      </div>
+
+      <div class="actions"><button class="btn" id="addMemo">この区間を追加</button><button class="btn secondary" id="cancelMemoEdit" style="display:none">編集をキャンセル</button></div>
+      <div class="small" style="margin-top:7px">追加時の実時刻も自動記録します。あとから編集・削除できます。</div>
+    </section>
+
+    <section class="card">
+      <div class="mode-head"><div><div class="mode-title">CZ・AT履歴</div><div class="mode-sub">区間ごとの流れを時系列で確認</div></div><span class="mode-badge" id="memoCountBadge">0件</span></div>
+      <div class="memo-toolbar"><div class="memo-count" id="memoLastGame">最終記録：―</div><div class="actions" style="margin:0;display:flex"><button class="btn secondary" id="copyMemo" style="min-height:36px;padding:6px 10px;font-size:11px">ログだけコピー</button><button class="btn danger" id="clearMemo" style="min-height:36px;padding:6px 10px;font-size:11px">ログ削除</button></div></div>
+      <div class="memo-list" id="memoList"></div>
+    </section>
+  </div>
+
+  <div class="tab-panel" id="tab-history">
+    <section class="card">
+      <div class="mode-head">
+        <div><div class="mode-title">実戦終了 / 履歴保存</div><div class="mode-sub">その日の判別データと結果を1件として保存</div></div>
+        <span class="mode-badge calc">端末内保存</span>
+      </div>
+      <div class="notice">店名・台番号・金額は使わず、<strong>日付＋投資枚数＋回収枚数＋差枚</strong>だけを結果として残します。設定推測・GGOモード・共通ベル・SC種類統計・終了画面/トロフィー・CZ区間ログは自動で一緒に保存されます。</div>
+      <div class="grid">
+        <div class="field"><div class="name">実戦日</div><input id="playDate" type="date"></div>
+        <div class="field"><div class="name">投資枚数</div><input id="investmentCoins" type="number" min="0" value="0" inputmode="numeric"><div class="hint">金額ではなく枚数</div></div>
+        <div class="field"><div class="name">回収枚数</div><input id="returnCoins" type="number" min="0" value="0" inputmode="numeric"><div class="hint">最終的な回収枚数</div></div>
+        <div class="field"><div class="name">差枚（自動）</div><div class="net-preview zero" id="netCoinsPreview">±0枚</div><div class="hint">回収枚数 − 投資枚数</div></div>
+      </div>
+      <div class="actions"><button class="btn" id="saveHistory">実戦終了・履歴に保存</button><button class="btn secondary" id="newSession">新しい実戦を開始</button></div>
+      <div class="small" style="margin-top:8px">履歴へ保存しても現在の入力は消えません。「新しい実戦を開始」を押した時だけ現在データをリセットします。</div>
+    </section>
+
+    <section class="card">
+      <div class="mode-head"><div><div class="mode-title">過去の実戦</div><div class="mode-sub">保存した日の入力データを一覧で見返せます</div></div><span class="mode-badge" id="historyCountBadge">0件</span></div>
+      <div class="history-stats">
+        <div class="statbox"><div class="k">保存実戦数</div><div class="v" id="historyCountStat">0件</div></div>
+        <div class="statbox"><div class="k">累計差枚</div><div class="v" id="historyNetStat">±0枚</div></div>
+      </div>
+      <details open>
+        <summary>保存履歴のSC種類累計</summary>
+        <div class="grid">
+          <div class="statbox"><div class="k">キリト射撃訓練</div><div class="v" id="historyScKirito">0回</div></div>
+          <div class="statbox"><div class="k">シノンビンタ</div><div class="v" id="historyScSinon">0回</div></div>
+          <div class="statbox"><div class="k">水鉄砲チャージ</div><div class="v" id="historyScWater">0回</div></div>
+          <div class="statbox"><div class="k">NIGHT SPLASH</div><div class="v" id="historyScNight">0回</div></div>
+        </div>
+        <div class="calc" id="historyScTotal">種類判明SC：0回</div>
+        <div class="small">保存済み実戦の4種類を合算。各実戦の詳細データにも種類別回数が残ります。</div>
+      </details>
+      <div class="history-list" id="historyList"></div>
+      <div class="actions"><button class="btn secondary" id="copyHistory">履歴一覧をコピー</button><button class="btn danger" id="clearHistory">履歴を全削除</button></div>
+    </section>
+  </div>
+
+  <div class="tab-panel" id="tab-event">
+    <section class="card">
+      <div class="mode-head"><div><div class="mode-title">実測イベント記録</div><div class="mode-sub">現行カウンターとは独立したhybrid記録</div></div><span class="mode-badge calc">Ver.5.7</span></div>
+      <div class="notice">ここで保存したイベントは設定推測・CZ総数・AT初当たりへ自動反映しません。ユーザーが実機で確認した値だけを、新しい独立領域へ保存します。</div>
+      <div class="event-session-line"><div class="event-status" id="evSessionStatus">実戦イベント：未開始</div><div class="event-mini-actions"><button id="evStartSession">実戦開始</button><button id="evPauseSession">一時中断</button><button id="evResumeSession">再開</button><button id="evEndSession">実戦終了</button></div></div>
+      <div class="grid" style="margin-top:9px"><div class="field"><div class="name">開始時液晶G（任意）</div><input id="evSessionStartGame" type="number" min="0" inputmode="numeric" placeholder="確認できた場合のみ"></div><div class="field"><div class="name">最終液晶G（実戦終了時・任意）</div><input id="evSessionEndGame" type="number" min="0" inputmode="numeric" placeholder="確認できた場合のみ"></div></div>
+      <div class="event-error" id="evError"></div>
+    </section>
+
+    <section class="card">
+      <div class="event-quick"><button data-ev-form="menu">メニュー</button><button data-ev-form="sc">SC</button><button data-ev-form="cz">CZ</button><button data-ev-form="direct">AT直撃</button></div>
+      <div class="event-mini-actions"><button data-ev-form="atend">AT終了</button><button data-ev-form="bullet">バレット非当選</button><button data-ev-form="override">ゾーン修正</button><button data-ev-form="note">メモ</button></div>
+
+      <div class="event-form" id="evFormMenu"><div class="event-form-title">メニュー画面確認</div><div class="grid"><div class="field"><div class="name">液晶G</div><input id="evMenuGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">キャラクター</div><select id="evMenuCharacter"><option value="">選択</option><option value="kirito">キリト</option><option value="sinon">シノン</option><option value="kikuoka">菊岡誠二郎</option><option value="asuna_group">アスナ・リズベット・リーファ・シリカ</option><option value="natsuki">安岐ナツキ</option><option value="sinon_spiegel">シノン・シュピーゲル</option><option value="host">司会者</option><option value="zexceed">ゼクシード</option><option value="dyne">ダイン</option><option value="pale_rider">ペイルライダー</option><option value="yamikaze">闇風</option><option value="musketeer_x">銃士X（マスケティア・イクス）</option><option value="death_gun">デス・ガン</option><option value="other">その他</option></select></div></div><div class="event-form-actions"><button class="btn" id="evSaveMenu">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormSc"><div class="event-form-title">シューティングチャージ</div><div class="grid"><div class="field"><div class="name">開始時液晶G</div><input id="evScStart" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">表示加算G</div><input id="evScAdded" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">終了時液晶G（確認時のみ）</div><input id="evScEnd" type="number" min="0" inputmode="numeric" placeholder="未確認なら空欄"></div><div class="field"><div class="name">SC種類</div><select id="evScType"><option value="unknown">不明</option><option value="kirito_training">キリト射撃訓練</option><option value="sinon_slap">シノンビンタ</option><option value="water_gun">水鉄砲チャージ</option><option value="night_splash">NIGHT SPLASH</option></select></div><label class="check"><input type="checkbox" id="evScAtHit">SC中AT当選</label></div><div class="event-form-actions"><button class="btn" id="evSaveSc">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormCz"><div class="event-form-title">CZ確認</div><div class="grid"><div class="field"><div class="name">CZ確認時の液晶G</div><input id="evCzGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">結果</div><select id="evCzOutcome"><option value="success">成功</option><option value="fail">失敗</option></select></div><div class="field"><div class="name">確認できた契機</div><select id="evCzTrigger"><option value="game_zone">ゾーン</option><option value="game_ceiling">G数天井</option><option value="rare_role">レア役</option><option value="strong_chance">強チャンス目</option><option value="bullet">バレットMAX</option><option value="other">その他</option><option value="unknown">不明</option></select></div><div class="field"><label class="check"><input type="checkbox" id="evCzCeiling">ゲーム数天井CZ</label><label class="check"><input type="checkbox" id="evCzDefinite">確定CZ</label><label class="check"><input type="checkbox" id="evCzItem">失敗時アイテム獲得</label></div></div><div class="event-form-actions"><button class="btn" id="evSaveCz">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormDirect"><div class="event-form-title">AT直撃</div><div class="grid"><div class="field"><div class="name">確認時の液晶G</div><input id="evDirectGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">確認できた契機</div><select id="evDirectTrigger"><option value="bullet">バレットMAX</option><option value="sc">SC中</option><option value="rare_role">レア役</option><option value="other">その他</option><option value="unknown">不明</option></select></div><div class="field"><div class="name">詩乃モードとの関係</div><select id="evDirectShino"><option value="unknown">不明</option><option value="confirmed">詩乃由来と確認</option><option value="not_shino">詩乃由来ではない</option></select></div></div><div class="event-form-actions"><button class="btn" id="evSaveDirect">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+
+      <div class="event-form" id="evFormAtend"><div class="event-form-title">AT終了</div><div class="field"><div class="name">AT終了後の液晶G（任意）</div><input id="evAtEndGame" type="number" min="0" inputmode="numeric"></div><div class="event-form-actions"><button class="btn" id="evSaveAtEnd">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+      <div class="event-form" id="evFormBullet"><div class="event-form-title">バレットMAX非当選</div><div class="field"><div class="name">確認時液晶G（任意）</div><input id="evBulletGame" type="number" min="0" inputmode="numeric"></div><div class="event-form-actions"><button class="btn" id="evSaveBullet">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+      <div class="event-form" id="evFormOverride"><div class="event-form-title">自動ゾーン判定の手動修正</div><div class="grid"><div class="field"><div class="name">対象CZ</div><select id="evOverrideTarget"></select></div><div class="field"><div class="name">採用ゾーン</div><select id="evOverrideZone"><option value="zone_250">250Gゾーン</option><option value="zone_350">350Gゾーン</option><option value="unknown">不明</option></select></div></div><div class="event-form-actions"><button class="btn" id="evSaveOverride">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+      <div class="event-form" id="evFormNote"><div class="event-form-title">観測メモ</div><div class="grid"><div class="field"><div class="name">液晶G（任意）</div><input id="evNoteGame" type="number" min="0" inputmode="numeric"></div><div class="field"><div class="name">内容</div><textarea id="evNoteText" class="memo-text"></textarea></div></div><div class="event-form-actions"><button class="btn" id="evSaveNote">保存</button><button class="btn secondary" data-ev-close>閉じる</button></div></div>
+    </section>
+
+    <section class="card"><div class="mode-head"><div><div class="mode-title">派生ゾーン解析</div><div class="mode-sub">原本からいつでも再生成可能</div></div><span class="mode-badge" id="evRuleBadge">Rule 1</span></div><div class="actions"><button class="btn secondary" id="evRebuildDerived">派生データを再生成</button><button class="btn secondary" id="evDropRebuild">キャッシュ削除→再生成</button></div><div class="event-derived" id="evDerivedList" style="margin-top:10px"></div></section>
+    <section class="card"><div class="mode-head"><div><div class="mode-title">イベント履歴</div><div class="mode-sub">sessions・segments・eventsが正本</div></div><span class="mode-badge" id="evCountBadge">0件</span></div><div class="event-log" id="evLog"></div></section>
+  </div>
+</div>
+
+<div class="sticky-actions"><div class="inner"><button class="btn" id="copySummary">全データまとめをコピー</button><button class="btn secondary" id="scrollTop">期待度を見る</button><button class="btn secondary" id="openText">テキスト表示</button></div></div>
+
+<div class="modal" id="textModal"><div class="modal-box"><div class="title-row"><h2 style="margin:0;font-size:16px">実戦データまとめ</h2><button class="btn secondary" id="closeModal" style="min-height:36px;padding:6px 12px">閉じる</button></div><textarea id="summaryText" readonly></textarea><div class="actions"><button class="btn" id="copyModal">コピー</button><button class="btn secondary" id="selectAll">全選択</button></div></div></div>
+
+<div class="modal" id="historyDetailModal"><div class="detail-modal-box"><div class="title-row"><h2 style="margin:0;font-size:16px">保存実戦の詳細</h2><button class="btn secondary" id="closeHistoryDetail" style="min-height:36px;padding:6px 12px">閉じる</button></div><div id="historyDetailBody"></div><div class="actions"><button class="btn" id="copyHistoryDetail">この実戦をコピー</button><button class="btn secondary" id="closeHistoryDetailBottom">閉じる</button></div></div></div>
+
+<script>
+(() => {
+  const STORAGE_KEY = 'sao2-setting-tool-v4';
+  const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v3','sao2-setting-tool-v2','sao2-setting-tool-v1'];
+  const ids = [
+    'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
+    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','sniperChanceTotal','sniperChanceSuccess','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceA','strongChanceTotal','strongChanceNormalB','strongChanceDefCZ',
+    'defCZTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild','trophyBronze','trophySilver','trophyGold','trophyLightning','trophyRainbow',
+    'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit'
+  ];
+  const checks = ['end2plus','end3plus','end4plus','end6','ed4plus','ed6','mr4plus','mr6'];
+  const S = [1,2,3,4,5,6];
+  const R = {
+    czDen:[238.4,232.3,232.7,218.9,225.2,191.7],
+    atDen:[386.2,364.3,368.1,326.8,340.6,269.6],
+    lowStrong:[.20,.21,.20,.25,.20,.33],
+    highStrong:[.50,.51,.52,.55,.58,.60],
+    watermelonSC:[.402,.445,.410,.484,.422,.551],
+    directDen:[18091.8,14160.5,14390.8,8498.0,4723.3,3415.7],
+    defCZDen:[20177.5,17579.1,17586.3,13784.5,11459.0,7077.2],
+    strongChanceDef:[.004,.008,.008,.016,.023,.051],
+    item:[.203,.211,.219,.227,.25,.301]
+  };
+  const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70};
+  let priors = [1,1,1,1,1,1];
+  let memoLogs = [];
+  let memoEditIndex = -1;
+  let playHistory = [];
+
+  const $ = id => document.getElementById(id);
+  const todayLocal = () => {const d=new Date(), y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`;};
+  const fmtCoins = v => {const x=Number(v)||0; return `${x>0?'+':x<0?'−':'±'}${Math.abs(x).toLocaleString()}枚`;};
+  const n = id => Math.max(0, Number($(id)?.value || 0));
+  const b = id => !!$(id)?.checked;
+  const fmtPct = (x,d=1) => Number.isFinite(x) ? (x*100).toFixed(d)+'%' : '―';
+  const fmtDen = (hits,total) => hits>0 ? '1/'+Math.round(total/hits).toLocaleString() : '―';
+  const clampP = p => Math.min(.999999,Math.max(.000001,p));
+  const binLL = (k,total,p) => total>0 ? k*Math.log(clampP(p)) + (total-k)*Math.log(clampP(1-p)) : 0;
+  const poiLL = (k,lambda) => lambda>0 ? k*Math.log(lambda)-lambda : 0;
+
+  function sessionSnapshot(){
+    const data={}; ids.forEach(id=>data[id]=n(id)); checks.forEach(id=>data[id]=b(id)); data.priors=priors.slice(); data.memoLogs=JSON.parse(JSON.stringify(memoLogs)); return data;
+  }
+  function currentMeta(){
+    return {date:$('playDate')?.value||todayLocal(),investment:Math.max(0,Number($('investmentCoins')?.value||0)),returns:Math.max(0,Number($('returnCoins')?.value||0))};
+  }
+  function snapshot(){
+    const data=sessionSnapshot(); data.currentMeta=currentMeta(); data.playHistory=playHistory; return data;
+  }
+  function save(){
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot()));$('saveState').textContent='保存済み '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});}catch(e){$('saveState').textContent='端末保存を利用できません';}
+  }
+  function load(){
+    try{
+      let raw=localStorage.getItem(STORAGE_KEY);
+      if(!raw){for(const key of LEGACY_STORAGE_KEYS){raw=localStorage.getItem(key);if(raw)break;}}
+      if(!raw)return;
+      const d=JSON.parse(raw);
+      ids.forEach(id=>{if(d[id]!==undefined && $(id))$(id).value=d[id]});
+      checks.forEach(id=>{if(d[id]!==undefined)$(id).checked=!!d[id]});
+      if(Array.isArray(d.priors)&&d.priors.length===6)priors=d.priors.map(x=>Math.max(.001,Number(x)||1));
+      const hasScTypes=['shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown'].some(id=>Number(d[id]||0)>0);
+      if(!hasScTypes && Number(d.shootingChargeTotal||0)>0 && $('shootingChargeUnknown')) $('shootingChargeUnknown').value=Number(d.shootingChargeTotal||0);
+      if(Array.isArray(d.memoLogs)) memoLogs=d.memoLogs;
+      if(d.totalG===undefined && $('totalG')) { const legacyNormal=Math.max(0,Number(d.normalG||0)); const legacyAT=Math.max(0,Number(d.atGameCount||0)); $('totalG').value=legacyNormal+legacyAT; }
+      if(Array.isArray(d.playHistory)) playHistory=d.playHistory;
+      if(d.currentMeta){
+        if($('playDate')) $('playDate').value=d.currentMeta.date||todayLocal();
+        if($('investmentCoins')) $('investmentCoins').value=Math.max(0,Number(d.currentMeta.investment||0));
+        if($('returnCoins')) $('returnCoins').value=Math.max(0,Number(d.currentMeta.returns||0));
+      }
+    }catch(e){}
+  }
+
+  function hardMinSetting(){
+    let min=1;
+    if(b('end2plus')) min=Math.max(min,2);
+    if(b('end3plus')) min=Math.max(min,3);
+    if(b('end4plus')||b('ed4plus')||b('mr4plus')) min=Math.max(min,4);
+    if(b('end6')||b('ed6')||b('mr6')) min=6;
+    return min;
+  }
+
+  function validate(){
+    const msgs=[];
+    if(n('totalG')>0 && n('normalG')>n('totalG')) msgs.push('通常ゲーム数が総ゲーム数を超えています。');
+    if(n('czSuccess')+n('czFail')>n('czCount')) msgs.push('CZ成功＋失敗がCZ回数を超えています。');
+    if(n('lowStrongCZ')+n('lowStrongDirect')>n('lowStrongTotal')) msgs.push('低確強チェリーのCZ＋直撃が成立回数を超えています。');
+    if(n('highStrongCZ')+n('highStrongDirect')>n('highStrongTotal')) msgs.push('高確強チェリーのCZ＋直撃が成立回数を超えています。');
+    if(n('watermelonSC')>n('watermelonTotal')) msgs.push('スイカ→SC当選がスイカ回数を超えています。');
+    if(n('strongChanceNormalB')>n('strongChanceTotal')) msgs.push('通常時の強チャンス目BがB総回数を超えています。');
+    if(n('strongChanceDefCZ')>n('strongChanceA')+n('strongChanceNormalB')) msgs.push('通常時A/B→確定CZが通常時の強チャンス目A+B回数を超えています。');
+    if(n('itemHit')>n('czFail')) msgs.push('AT強化アイテム獲得がCZ失敗回数を超えています。');
+    const scTotal=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight')+n('shootingChargeUnknown');
+    if(n('shootingChargeATHit')>scTotal) msgs.push('SC中AT当選回数がSC総回数を超えています。');
+    if(scTotal>0 && n('watermelonSC')>scTotal) msgs.push('低確スイカ由来SCが記録済みSC総回数を超えています。SC種類のカウント漏れがないか確認してください。');
+    if(n('bulletCZHit')+n('bulletDirectAT')>n('bulletMaxTotal')) msgs.push('バレットMAXのCZ当選＋AT直撃がMAX到達回数を超えています。');
+    const box=$('validation');
+    if(msgs.length){box.style.display='block';box.textContent=msgs.join(' ');}else{box.style.display='none';box.textContent='';}
+    return msgs.length===0;
+  }
+
+  function calculate(){
+    const G=n('normalG');
+    const lowN=n('lowStrongTotal'), lowK=n('lowStrongCZ')+n('lowStrongDirect');
+    const highN=n('highStrongTotal'), highK=n('highStrongCZ')+n('highStrongDirect');
+    const wmN=n('watermelonTotal'), wmK=n('watermelonSC');
+    const scN=n('strongChanceA')+n('strongChanceNormalB'), scK=n('strongChanceDefCZ');
+    const itemN=n('czFail'), itemK=n('itemHit');
+    const minSet=hardMinSetting();
+    const scores=S.map((set,idx)=>{
+      if(set<minSet) return -Infinity;
+      let s=Math.log(Math.max(.000001,priors[idx]));
+      if(G>0 && n('czCount')>=0) s += W.cz*poiLL(n('czCount'),G/R.czDen[idx]);
+      if(G>0 && n('atCount')>=0) s += W.at*poiLL(n('atCount'),G/R.atDen[idx]);
+      if(lowN>0) s += W.lowStrong*binLL(lowK,lowN,R.lowStrong[idx]);
+      if(highN>0) s += W.highStrong*binLL(highK,highN,R.highStrong[idx]);
+      if(wmN>0) s += W.watermelon*binLL(wmK,wmN,R.watermelonSC[idx]);
+      if(G>0 && n('directAT')>=0) s += W.direct*poiLL(n('directAT'),G/R.directDen[idx]);
+      if(G>0 && n('defCZTotal')>=0) s += W.defCZ*poiLL(n('defCZTotal'),G/R.defCZDen[idx]);
+      if(scN>0) s += W.strongDef*binLL(scK,scN,R.strongChanceDef[idx]);
+      if(itemN>0) s += W.item*binLL(itemK,itemN,R.item[idx]);
+      return s;
+    });
+    const finite=scores.filter(Number.isFinite);
+    if(!finite.length || (!G && !lowN && !highN && !wmN && !scN && !itemN && minSet===1)) return {probs:[0,0,0,0,0,0],scores};
+    const mx=Math.max(...finite); let ex=scores.map(x=>Number.isFinite(x)?Math.exp(x-mx):0); const sum=ex.reduce((a,c)=>a+c,0)||1; ex=ex.map(x=>x/sum); return {probs:ex,scores};
+  }
+
+  function renderBars(probs){
+    const max=Math.max(...probs); const top=probs.indexOf(max);
+    $('bars').innerHTML=probs.map((p,i)=>`<div class="bar-row ${i===top&&p>0?'top':''}"><strong>設定${i+1}</strong><div class="bar-track"><div class="bar-fill" style="width:${(p*100).toFixed(2)}%"></div></div><div class="bar-pct">${(p*100).toFixed(1)}%</div></div>`).join('');
+    if(max>0){$('bestSetting').textContent='設定'+(top+1);$('bestPct').textContent=(max*100).toFixed(1)+'%';
+      const sorted=[...probs].sort((a,b)=>b-a); const gap=(sorted[0]-sorted[1])*100; $('confidence').textContent=gap>25?'差が大きい':gap>12?'やや優勢':'まだ混戦';
+    }else{$('bestSetting').textContent='設定―';$('bestPct').textContent='データ未入力';$('confidence').textContent='―';}
+  }
+
+  function bestFitBin(k,total,arr){
+    if(!total)return null; let best=0,bv=-Infinity; arr.forEach((p,i)=>{const v=binLL(k,total,p);if(v>bv){bv=v;best=i;}}); return best+1;
+  }
+  function bestFitPoi(k,G,dens){
+    if(!G)return null; let best=0,bv=-Infinity; dens.forEach((d,i)=>{const v=poiLL(k,G/d);if(v>bv){bv=v;best=i;}}); return best+1;
+  }
+  function ev(title,rate,best,note,tone='mid'){return `<div class="ev"><div class="ev-top"><div class="ev-title">${title}</div><span class="pill ${tone}">最も近い：設定${best||'―'}</span></div><div class="ev-rate">${rate}</div><div class="ev-note">${note}</div></div>`}
+
+  function renderEvidence(){
+    const G=n('normalG'); const out=[];
+    if(n('lowStrongTotal')){const k=n('lowStrongCZ')+n('lowStrongDirect'),tot=n('lowStrongTotal');out.push(ev('低確 強チェリー → CZ相当',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.lowStrong),'直撃を含めたCZ相当当選。設定6解析値33.0%。','good'));}
+    if(n('watermelonTotal')){const k=n('watermelonSC'),tot=n('watermelonTotal');out.push(ev('低確 スイカ → SC',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.watermelonSC),'設定1 40.2% ～ 設定6 55.1%。','good'));}
+    if(n('commonBellNormal') || n('commonBellAT')){
+      const lines=[];
+      if(n('commonBellNormal') && G) lines.push(`通常時 ${n('commonBellNormal')}回 / ${G.toLocaleString()}G = ${fmtDen(n('commonBellNormal'),G)}`);
+      if(n('commonBellAT') && n('atGameCount')) lines.push(`AT中 ${n('commonBellAT')}回 / ${n('atGameCount').toLocaleString()}G = ${fmtDen(n('commonBellAT'),n('atGameCount'))}`);
+      const allBell=n('commonBellNormal')+n('commonBellAT'), allGame=G+n('atGameCount');
+      if(allBell && allGame) lines.push(`全状態参考 ${fmtDen(allBell,allGame)}`);
+      out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">共通ベル（参考記録）</div><span class="pill mid">計算未使用</span></div><div class="ev-rate">${lines.join(' / ') || '―'}</div><div class="ev-note">通常時とAT中ナビなし右下がりベルを分離して記録。正式解析値・公式カウント基準待ちのため、現時点では設定期待度に加点していません。</div></div>`);
+    }
+    if(n('bulletMaxTotal')){
+      const tot=n('bulletMaxTotal'), hit=n('bulletCZHit')+n('bulletDirectAT');
+      out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">バレットMAX → CZ相当（参考統計）</div><span class="pill mid">計算未使用</span></div><div class="ev-rate">${hit}/${tot} = ${fmtPct(hit/tot)}</div><div class="ev-note">CZ ${n('bulletCZHit')} / AT直撃 ${n('bulletDirectAT')} / 非当選 ${Math.max(0,tot-hit)}。設定別解析値が未公表のため現在は参考記録のみ。</div></div>`);
+    }
+    if(G){out.push(ev('詩乃モード由来 AT直撃',`${n('directAT')}/${G.toLocaleString()}G = ${fmtDen(n('directAT'),G)}`,bestFitPoi(n('directAT'),G,R.directDen),'例外契機を除いた直撃のみ。設定6解析値 約1/3,416。',n('directAT')?'good':'mid'));}
+    if(G){out.push(ev('CZ初当たり',`${n('czCount')}/${G.toLocaleString()}G = ${fmtDen(n('czCount'),G)}`,bestFitPoi(n('czCount'),G,R.czDen),'設定1 約1/238 ～ 設定6 約1/192。全体値は相関を考慮して低めの重み。', 'mid'));}
+    if(G){out.push(ev('AT初当たり',`${n('atCount')}/${G.toLocaleString()}G = ${fmtDen(n('atCount'),G)}`,bestFitPoi(n('atCount'),G,R.atDen),'設定1 約1/386 ～ 設定6 約1/270。全体値は相関を考慮して低めの重み。', 'mid'));}
+    if(n('czFail')){const k=n('itemHit'),tot=n('czFail');out.push(ev('CZ失敗時 AT強化アイテム',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.item),'設定1 20.3% ～ 設定6 30.1%。','mid'));}
+    const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scAll=scKnown+n('shootingChargeUnknown');
+    if(scAll){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">シューティングチャージ種類統計</div><span class="pill mid">参考記録</span></div><div class="ev-rate">キリト${n('shootingChargeKirito')} / シノン${n('shootingChargeSinon')} / 水鉄砲${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 不明${n('shootingChargeUnknown')}`:''}</div><div class="ev-note">種類判明${scKnown}回${scKnown?`：キリト${fmtPct(n('shootingChargeKirito')/scKnown)}・シノン${fmtPct(n('shootingChargeSinon')/scKnown)}・水鉄砲${fmtPct(n('shootingChargeWater')/scKnown)}・NIGHT SPLASH${fmtPct(n('shootingChargeNight')/scKnown)}`:''}。設定期待度の計算には未使用です。</div></div>`);}
+    if(n('sniperChanceTotal')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">スナイパーチャンス突破率</div><span class="pill mid">参考記録</span></div><div class="ev-rate">${n('sniperChanceSuccess')}/${n('sniperChanceTotal')} = ${fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))}</div><div class="ev-note">AT中のスナイパーチャンス総数と突破数を保存します。現時点では設定期待度の計算には使用しません。</div></div>`);}
+    if(n('strongChanceTotal') && n('totalG')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">強チャンス目B 出現率</div><span class="pill mid">総G基準</span></div><div class="ev-rate">${n('strongChanceTotal')}回 / ${n('totalG').toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),n('totalG'))}</div><div class="ev-note">総ゲーム数を分母にした実戦出現率です。</div></div>`);}
+    if(n('strongChanceA')+n('strongChanceNormalB')){const k=n('strongChanceDefCZ'),tot=n('strongChanceA')+n('strongChanceNormalB');out.push(ev('通常時 強チャンス目A/B → 確定CZ',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.strongChanceDef),'通常時の強チャンス目A・B合算を分母。AT中のA/Bは含めません。設定1 0.4% ～ 設定6 5.1%。','good'));}
+    if(G){out.push(ev('確定CZ 総出現',`${n('defCZTotal')}/${G.toLocaleString()}G = ${fmtDen(n('defCZTotal'),G)}`,bestFitPoi(n('defCZTotal'),G,R.defCZDen),'設定1 約1/20,178 ～ 設定6 約1/7,077。強チャンス目経由と相関するため低めの重み。','mid'));}
+    const qual=[]; if(n('endOdd'))qual.push(`奇数示唆${n('endOdd')}`);if(n('endEven'))qual.push(`偶数示唆${n('endEven')}`);if(n('endHigh'))qual.push(`高設定示唆${n('endHigh')}`);if(n('endHighStrong'))qual.push(`高設定示唆強${n('endHighStrong')}`);if(n('endChild'))qual.push(`幼少期${n('endChild')}`);
+    if(qual.length) out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">AT終了画面（定性評価）</div><span class="pill mid">数値判定外</span></div><div class="ev-rate">${qual.join(' / ')}</div><div class="ev-note">設定別出現率が未公表のため、メモには残しますが相対期待度には直接加点していません。</div></div>`);
+    $('evidence').innerHTML=out.length?out.join(''):'<div class="small">データを入力すると、設定推測に効いている項目をここに表示します。</div>';
+  }
+
+  function updateDerived(){
+    const total=n('totalG'), G=n('normalG'), autoAT=Math.max(0,total-G); if($('atGameCount')) $('atGameCount').value=autoAT;
+    $('czRate').textContent=n('czCount')&&G?`出現率：${fmtDen(n('czCount'),G)}`:'出現率：―'; $('atRate').textContent=n('atCount')&&G?`出現率：${fmtDen(n('atCount'),G)}`:'出現率：―';
+    $('strongChanceRate').innerHTML=`B出現率：<strong>${(n('strongChanceTotal')&&total)?`${n('strongChanceTotal')}回 / ${total.toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),total)}`:'―'}</strong>`;
+    const scAB=n('strongChanceA')+n('strongChanceNormalB'); $('strongChanceDefRate').innerHTML=`通常時A+B当選率：<strong>${scAB?`${n('strongChanceDefCZ')}/${scAB} = ${fmtPct(n('strongChanceDefCZ')/scAB)}`:'―'}</strong>`;
+    const ltot=n('lowStrongTotal'),lk=n('lowStrongCZ')+n('lowStrongDirect'); $('lowStrongRate').innerHTML=`CZ相当当選率：<strong>${ltot?`${lk}/${ltot} = ${fmtPct(lk/ltot)}`:'―'}</strong>`;
+    const htot=n('highStrongTotal'),hk=n('highStrongCZ')+n('highStrongDirect'); $('highStrongRate').innerHTML=`CZ相当当選率：<strong>${htot?`${hk}/${htot} = ${fmtPct(hk/htot)}`:'―'}</strong>`;
+    const wtot=n('watermelonTotal'),wk=n('watermelonSC'); $('watermelonRate').innerHTML=`当選率：<strong>${wtot?`${wk}/${wtot} = ${fmtPct(wk/wtot)}`:'―'}</strong>`;
+    const ftot=n('czFail'),fk=n('itemHit'); $('itemRate').innerHTML=`獲得率：<strong>${ftot?`${fk}/${ftot} = ${fmtPct(fk/ftot)}`:'―'}</strong>`;
+    const scK=n('shootingChargeKirito'), scS=n('shootingChargeSinon'), scW=n('shootingChargeWater'), scN=n('shootingChargeNight'), scU=n('shootingChargeUnknown'), sch=n('shootingChargeATHit');
+    const scKnown=scK+scS+scW+scN, sct=scKnown+scU;
+    $('shootingChargeTotalView').innerHTML=`SC総回数：<strong>${sct}回</strong>${scU?`（うち種類不明 ${scU}回）`:''}`;
+    $('scKiritoPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scK/scKnown):'―'}</strong>`;
+    $('scSinonPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scS/scKnown):'―'}</strong>`;
+    $('scWaterPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scW/scKnown):'―'}</strong>`;
+    $('scNightPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scN/scKnown):'―'}</strong>`;
+    $('shootingChargeRate').innerHTML=`参考・SC出現率：<strong>${(sct&&G)?`${sct}回 / ${G.toLocaleString()}G = ${fmtDen(sct,G)}`:'―'}</strong>`;
+    $('shootingChargeATHitRate').innerHTML=`SC中AT当選率：<strong>${sct?`${sch}/${sct} = ${fmtPct(sch/sct)}`:'―'}</strong>`;
+    const spt=n('sniperChanceTotal'), sps=n('sniperChanceSuccess'); $('sniperChanceRate').innerHTML=`突破率：<strong>${spt?`${sps}/${spt} = ${fmtPct(sps/spt)}`:'―'}</strong>`;
+    const cbn=n('commonBellNormal'), atg=n('atGameCount'), cba=n('commonBellAT');
+    $('commonBellNormalRate').innerHTML=`通常時：<strong>${(cbn && G)?`${cbn}回 / ${G.toLocaleString()}G = ${fmtDen(cbn,G)}`:'―'}</strong>`;
+    $('commonBellATRate').innerHTML=`AT中：<strong>${(cba && atg)?`${cba}回 / ${atg.toLocaleString()}G = ${fmtDen(cba,atg)}`:'―'}</strong>`;
+    const allBell=cbn+cba, allGame=G+atg;
+    $('commonBellAllRate').innerHTML=`全状態参考：<strong>${(allBell && allGame)?`${allBell}回 / ${allGame.toLocaleString()}G = ${fmtDen(allBell,allGame)}`:'―'}</strong>`;
+    const btot=n('bulletMaxTotal'), bhit=n('bulletCZHit')+n('bulletDirectAT'), bmiss=Math.max(0,btot-bhit);
+    $('bulletHitView').textContent=`${bhit} / ${btot}`;
+    $('bulletMissView').textContent=`${bmiss}回`;
+    $('bulletRate').innerHTML=`CZ相当当選率：<strong>${btot?`${bhit}/${btot} = ${fmtPct(bhit/btot)}`:'―'}</strong>`;
+    if($('directATMirror')) $('directATMirror').textContent=n('directAT');
+    if($('lowStrongDirectMirror')) $('lowStrongDirectMirror').textContent=n('lowStrongDirect');
+    if($('netCoinsPreview')){
+      const meta=currentMeta(), net=meta.returns-meta.investment; const el=$('netCoinsPreview'); el.textContent=fmtCoins(net); el.className='net-preview '+(net>0?'plus':net<0?'minus':'zero');
+    }
+  }
+
+  function summary(){
+    const G=n('normalG'), lines=[]; const lowK=n('lowStrongCZ')+n('lowStrongDirect'), highK=n('highStrongCZ')+n('highStrongDirect'); const res=calculate(); const top=res.probs.indexOf(Math.max(...res.probs));
+    lines.push('【スマスロ ソードアート・オンラインⅡ 実戦データ】');
+    const meta=currentMeta(), net=meta.returns-meta.investment;
+    lines.push(`実戦日：${meta.date||'―'} / 投資 ${meta.investment.toLocaleString()}枚 / 回収 ${meta.returns.toLocaleString()}枚 / 差枚 ${fmtCoins(net)}`);
+    const totalG=n('totalG'), autoATG=Math.max(0,totalG-G);
+    lines.push(`総ゲーム数：${totalG.toLocaleString()}G / 通常ゲーム数：${G.toLocaleString()}G / ATゲーム数：${autoATG.toLocaleString()}G`);
+    lines.push(`CZ：${n('czCount')}回 ${n('czCount')&&G?'('+fmtDen(n('czCount'),G)+')':''} / 成功${n('czSuccess')}・失敗${n('czFail')}`);
+    lines.push(`AT初当たり：${n('atCount')}回 ${n('atCount')&&G?'('+fmtDen(n('atCount'),G)+')':''}`);
+    lines.push(`詩乃モード由来AT直撃：${n('directAT')}回 ${n('directAT')&&G?'('+fmtDen(n('directAT'),G)+')':''}`);
+    lines.push('');
+    lines.push(`低確 強チェリー：${n('lowStrongTotal')}回 → CZ ${n('lowStrongCZ')} / AT直撃 ${n('lowStrongDirect')} / CZ相当 ${lowK}${n('lowStrongTotal')?' ('+fmtPct(lowK/n('lowStrongTotal'))+')':''}`);
+    if(n('highStrongTotal')) lines.push(`高確 強チェリー：${n('highStrongTotal')}回 → CZ ${n('highStrongCZ')} / AT直撃 ${n('highStrongDirect')} / CZ相当 ${highK} (${fmtPct(highK/n('highStrongTotal'))})`);
+    lines.push(`低確 スイカ→SC：${n('watermelonSC')}/${n('watermelonTotal')}${n('watermelonTotal')?' ('+fmtPct(n('watermelonSC')/n('watermelonTotal'))+')':''}`);
+    const scABTotal=n('strongChanceA')+n('strongChanceNormalB'); lines.push(`強チャンス目：通常時A ${n('strongChanceA')}回 / B総回数 ${n('strongChanceTotal')}回${n('strongChanceTotal')&&n('totalG')?' (B '+fmtDen(n('strongChanceTotal'),n('totalG'))+')':''} / 通常時B ${n('strongChanceNormalB')}回 / 通常時A+B→確定CZ ${n('strongChanceDefCZ')}/${scABTotal}${scABTotal?' ('+fmtPct(n('strongChanceDefCZ')/scABTotal)+')':''}`);
+    lines.push(`確定CZ総回数：${n('defCZTotal')}回`);
+    lines.push(`CZ失敗時アイテム：${n('itemHit')}/${n('czFail')}${n('czFail')?' ('+fmtPct(n('itemHit')/n('czFail'))+')':''}`);
+    const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scTotal=scKnown+n('shootingChargeUnknown');
+    lines.push(`シューティングチャージ種類：キリト射撃訓練${n('shootingChargeKirito')} / シノンビンタ${n('shootingChargeSinon')} / 水鉄砲チャージ${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 種類不明${n('shootingChargeUnknown')}`:''}`);
+    lines.push(`SC合計：${scTotal}回${scTotal&&G?' ('+fmtDen(scTotal,G)+')':''} / SC中AT当選 ${n('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(n('shootingChargeATHit')/scTotal)+')':''}`);
+    lines.push(`スナイパーチャンス：${n('sniperChanceSuccess')}/${n('sniperChanceTotal')}${n('sniperChanceTotal')?' ('+fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))+')':''}`);
+    const cbAll=n('commonBellNormal')+n('commonBellAT'), gameAll=n('normalG')+n('atGameCount');
+    lines.push(`共通ベル：通常時 ${n('commonBellNormal')}${n('normalG')&&n('commonBellNormal')?' ('+fmtDen(n('commonBellNormal'),n('normalG'))+')':''} / AT中ナビなし右下がり ${n('commonBellAT')}${n('atGameCount')&&n('commonBellAT')?' ('+fmtDen(n('commonBellAT'),n('atGameCount'))+')':''}${cbAll&&gameAll?' / 全状態参考 '+fmtDen(cbAll,gameAll):''}`);
+    const bulletHit=n('bulletCZHit')+n('bulletDirectAT'), bulletMiss=Math.max(0,n('bulletMaxTotal')-bulletHit);
+    lines.push(`バレットMAX：${n('bulletMaxTotal')}回 → CZ ${n('bulletCZHit')} / AT直撃 ${n('bulletDirectAT')} / 非当選 ${bulletMiss} / CZ相当 ${bulletHit}${n('bulletMaxTotal')?' ('+fmtPct(bulletHit/n('bulletMaxTotal'))+')':''}`);
+    const lampCounts=getLampCounts(memoLogs);
+    lines.push('');
+    lines.push('【ランプ集計（CZ・AT区間ログから）】');
+    lines.push(`白${lampCounts['白']} / 青${lampCounts['青']} / 黄${lampCounts['黄']} / 緑${lampCounts['緑']} / 赤${lampCounts['赤']} / 紫${lampCounts['紫']}`);
+    lines.push('');
+    lines.push('【GGOモード示唆】');
+    lines.push(`詩乃：50%示唆${n('shino50')} / 濃厚${n('shinoSure')} / AT直撃${n('directAT')}`);
+    lines.push(`キリト：50%クラス${n('ggoKirito50')} / 濃厚${n('ggoKiritoSure')} / 恩恵確認${n('ggoKiritoBenefit')}`);
+    lines.push(`シノン：50%クラス${n('ggoSinon50')} / 濃厚${n('ggoSinonSure')} / AT中スナイパーチャンス高確確認${n('ggoSinonBenefit')}`);
+    lines.push(`死銃：50%クラス${n('ggoDeath50')} / 濃厚${n('ggoDeathSure')} / 恩恵確認${n('ggoDeathBenefit')}`);
+    lines.push('');
+    lines.push(`AT終了画面：デフォ${n('endDefault')} / 奇数${n('endOdd')} / 偶数${n('endEven')} / 高設定${n('endHigh')} / 高設定強${n('endHighStrong')} / 幼少期${n('endChild')}`);
+    lines.push(`コパンダトロフィー：銅${n('trophyBronze')} / 銀${n('trophySilver')} / 金${n('trophyGold')} / イナズマ${n('trophyLightning')} / 虹${n('trophyRainbow')}`);
+    const conf=[]; if(b('end2plus'))conf.push('終了画面2以上');if(b('end3plus'))conf.push('終了画面3以上');if(b('end4plus'))conf.push('終了画面4以上');if(b('end6'))conf.push('終了画面6濃厚');if(b('ed4plus'))conf.push('ED4以上');if(b('ed6'))conf.push('ED6濃厚');if(b('mr4plus'))conf.push('マザロザ4以上');if(b('mr6'))conf.push('マザロザ6濃厚'); if(conf.length) lines.push('確定・濃厚系：'+conf.join(' / '));
+    if(memoLogs.length){
+      lines.push('');lines.push('【CZ・AT区間ログ】');
+      memoLogs.forEach((m,i)=>{
+        const head=`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'}`;
+        const parts=[]; const mc=m.menuChar||m.content||''; if(mc)parts.push('メニュー '+mc); if(m.result)parts.push(m.result); if(m.lamp)parts.push('ランプ'+m.lamp);
+        lines.push(head+(parts.length?'：'+parts.join(' / '):''));
+        if(m.note)lines.push('  '+m.note.replace(/\n/g,' / '));
+      });
+    }
+    if(Math.max(...res.probs)>0){lines.push('');lines.push('【相対期待度】');res.probs.forEach((p,i)=>lines.push(`設定${i+1}：${(p*100).toFixed(1)}%`));lines.push(`→ 現在1位：設定${top+1}`);}
+    lines.push('');lines.push('※公開解析値への相対尤度。真の設定確率ではありません。終了画面の定性示唆は数値判定に未使用。');
+    return lines.join('\n');
+  }
+
+  const esc = v => String(v ?? '').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  function getLampCounts(logs){const c={'白':0,'青':0,'黄':0,'緑':0,'赤':0,'紫':0};(Array.isArray(logs)?logs:[]).forEach(m=>{if(c[m.lamp]!==undefined)c[m.lamp]++;});return c;}
+  function memoTextOnly(){
+    if(!memoLogs.length)return 'CZ・AT区間ログはまだありません。';
+    const lines=['【SAO2 CZ・AT区間ログ】'];
+    memoLogs.forEach((m,i)=>{
+      const parts=[];const mc=m.menuChar||m.content||'';if(mc)parts.push('メニュー '+mc);if(m.result)parts.push(m.result);if(m.lamp)parts.push('ランプ'+m.lamp);
+      lines.push(`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'}${parts.length?'：'+parts.join(' / '):''}`);
+      if(m.note)lines.push('  '+m.note.replace(/\n/g,' / '));
+    });
+    return lines.join('\n');
+  }
+  function renderMemo(){
+    const list=$('memoList'); if(!list)return;
+    $('memoCountBadge').textContent=memoLogs.length+'件';
+    const last=[...memoLogs].reverse().find(m=>m.game!=='' && m.game!==null && m.game!==undefined);
+    $('memoLastGame').textContent=last?`最終記録：${last.game}G`:'最終記録：―';
+    if(!memoLogs.length){list.innerHTML='<div class="empty-memo">まだ記録がありません。<br>液晶G数と出来事を入れて追加してください。</div>';return;}
+    list.innerHTML=memoLogs.map((m,i)=>{
+      const mc=m.menuChar||m.content||''; const tags=[mc?`<span class="memo-tag">メニュー ${esc(mc)}</span>`:'',m.result?`<span class="memo-tag result">${esc(m.result)}</span>`:'',m.lamp?`<span class="memo-tag lamp">ランプ ${esc(m.lamp)}</span>`:''].join('');
+      return `<div class="memo-entry"><div class="memo-entry-head"><div><span class="memo-g">${m.game!==''?esc(m.game)+'G':'G数未入力'}</span> <span class="small">#${i+1}</span></div><div class="memo-time">${esc(m.time||'')}</div></div><div class="memo-tags">${tags}</div>${m.note?`<div class="memo-note">${esc(m.note)}</div>`:''}<div class="memo-actions"><button data-memo-edit="${i}">編集</button><button class="del" data-memo-delete="${i}">削除</button></div></div>`;
+    }).join('');
+  }
+  function clearMemoForm(){
+    $('memoGame').value='';$('memoMenuChar').value='';$('memoResult').value='';$('memoLamp').value='';$('memoNote').value='';memoEditIndex=-1;$('addMemo').textContent='この区間を追加';$('cancelMemoEdit').style.display='none';
+  }
+  function readMemoForm(){
+    const rawGame=$('memoGame').value.trim();
+    return {game:rawGame===''?'':Math.max(0,Number(rawGame)||0),menuChar:$('memoMenuChar').value,result:$('memoResult').value,lamp:$('memoLamp').value,note:$('memoNote').value.trim(),time:new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})};
+  }
+  function addOrUpdateMemo(){
+    const m=readMemoForm();
+    if(m.game==='' && !m.menuChar && !m.result && !m.lamp && !m.note){alert('液晶G数か区間内容を入力してください。');return;}
+    if(memoEditIndex>=0){m.time=memoLogs[memoEditIndex]?.time||m.time;memoLogs[memoEditIndex]=m;}else{memoLogs.push(m);}
+    save();renderMemo();clearMemoForm();
+    $('saveState').textContent='CZ・AT区間ログを保存しました';
+  }
+  function editMemo(i){
+    const m=memoLogs[i];if(!m)return;
+    memoEditIndex=i;
+    $('memoGame').value=m.game;
+    const legacy=m.menuChar||m.content||'';
+    const opts=[...$('memoMenuChar').options].map(o=>o.value);
+    $('memoMenuChar').value=opts.includes(legacy)?legacy:(legacy?'その他':'');
+    $('memoResult').value=m.result||'';
+    $('memoLamp').value=m.lamp||'';
+    $('memoNote').value=(legacy && !opts.includes(legacy)?('旧メモ内容：'+legacy+'\n'):'')+(m.note||'');
+    $('addMemo').textContent='この記録を更新';
+    $('cancelMemoEdit').style.display='block';
+    activateTab('memo');
+    setTimeout(()=>$('memoGame').focus(),250);
+  }
+
+  function getBestFromSession(data){
+    const current={}; ids.forEach(id=>current[id]=$(id).value); checks.forEach(id=>current[id]=$(id).checked); const oldP=priors.slice(), oldMemo=memoLogs;
+    try{
+      ids.forEach(id=>{if(data[id]!==undefined)$(id).value=data[id]}); checks.forEach(id=>{if(data[id]!==undefined)$(id).checked=!!data[id]}); if(Array.isArray(data.priors)&&data.priors.length===6)priors=data.priors.slice();
+      const r=calculate(), mx=Math.max(...r.probs), idx=r.probs.indexOf(mx); return {setting:mx>0?idx+1:null,pct:mx>0?mx*100:0,probs:r.probs.slice()};
+    } finally {
+      ids.forEach(id=>$(id).value=current[id]); checks.forEach(id=>$(id).checked=current[id]); priors=oldP; memoLogs=oldMemo;
+    }
+  }
+  function saveCurrentToHistory(){
+    const meta=currentMeta();
+    if(!n('totalG') && !n('normalG') && !memoLogs.length && !n('czCount') && !n('atCount')){alert('保存する実戦データがありません。');return;}
+    const r=calculate(), mx=Math.max(...r.probs), top=r.probs.indexOf(mx);
+    const entry={id:'h'+Date.now()+'_'+Math.random().toString(36).slice(2,7),date:meta.date||todayLocal(),investment:meta.investment,returns:meta.returns,net:meta.returns-meta.investment,savedAt:new Date().toISOString(),totalG:n('totalG'),normalG:n('normalG'),bestSetting:mx>0?top+1:null,bestPct:mx>0?mx*100:0,data:sessionSnapshot()};
+    playHistory.unshift(entry); save(); renderHistory(); $('saveState').textContent='実戦履歴に保存しました';
+  }
+  function historyText(entry){
+    const d=entry.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id]; const lines=[]; const lowK=hv('lowStrongCZ')+hv('lowStrongDirect');
+    lines.push('【SAO2 過去実戦】'); lines.push(`実戦日：${entry.date||'―'}`); lines.push(`投資：${Number(entry.investment||0).toLocaleString()}枚 / 回収：${Number(entry.returns||0).toLocaleString()}枚 / 差枚：${fmtCoins(entry.net||0)}`);
+    const histTotal=hv('totalG') || (hv('normalG')+hv('atGameCount')); const histAT=Math.max(0,histTotal-hv('normalG'));
+    lines.push(`総ゲーム数：${histTotal.toLocaleString()}G / 通常ゲーム数：${hv('normalG').toLocaleString()}G / ATゲーム数：${histAT.toLocaleString()}G`); lines.push(`保存時設定推測：${entry.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}`);
+    lines.push(`CZ：${hv('czCount')} / 成功${hv('czSuccess')}・失敗${hv('czFail')} / AT初当たり：${hv('atCount')} / 詩乃直撃：${hv('directAT')}`);
+    lines.push(`低確強チェ：${hv('lowStrongTotal')} → CZ${hv('lowStrongCZ')} / 直撃${hv('lowStrongDirect')}${hv('lowStrongTotal')?` / CZ相当${fmtPct(lowK/hv('lowStrongTotal'))}`:''}`);
+    lines.push(`低確スイカ→シューティングチャージ：${hv('watermelonSC')}/${hv('watermelonTotal')}${hv('watermelonTotal')?` (${fmtPct(hv('watermelonSC')/hv('watermelonTotal'))})`:''}`);
+    const histScAB=hv('strongChanceA')+hv('strongChanceNormalB'); lines.push(`強チャンス目：通常時A ${hv('strongChanceA')}回 / B総回数 ${hv('strongChanceTotal')}回${hv('strongChanceTotal')&&histTotal?` (B ${fmtDen(hv('strongChanceTotal'),histTotal)})`:''} / 通常時B ${hv('strongChanceNormalB')}回 / 通常時A+B→確定CZ ${hv('strongChanceDefCZ')}/${histScAB}${histScAB?` (${fmtPct(hv('strongChanceDefCZ')/histScAB)})`:''}`);
+    const oldScTotal=hv('shootingChargeTotal'), scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldScTotal:0), scKnown=scK+scS+scW+scN, scTotal=scKnown+scU;
+    lines.push(`シューティングチャージ種類：キリト射撃訓練${scK} / シノンビンタ${scS} / 水鉄砲チャージ${scW} / NIGHT SPLASH${scN}${scU?` / 種類不明${scU}`:''}`);
+    lines.push(`SC合計：${scTotal}回${scTotal&&hv('normalG')?' ('+fmtDen(scTotal,hv('normalG'))+')':''} / SC中AT当選${hv('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(hv('shootingChargeATHit')/scTotal)+')':''}`);
+    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=histAT; lines.push(`共通ベル：通常${bellN}${bellN&&hv('normalG')?' ('+fmtDen(bellN,hv('normalG'))+')':''} / AT中${bellAT}${bellAT&&atG?' ('+fmtDen(bellAT,atG)+')':''}`);
+    const bulletHit=hv('bulletCZHit')+hv('bulletDirectAT'), bulletMiss=Math.max(0,hv('bulletMaxTotal')-bulletHit); lines.push(`バレットMAX：${hv('bulletMaxTotal')} → CZ${hv('bulletCZHit')} / AT直撃${hv('bulletDirectAT')} / 非当選${bulletMiss}${hv('bulletMaxTotal')?` / CZ相当${fmtPct(bulletHit/hv('bulletMaxTotal'))}`:''}`);
+    lines.push(`終了画面：デフォ${hv('endDefault')} / 奇数${hv('endOdd')} / 偶数${hv('endEven')} / 高設定${hv('endHigh')} / 高設定強${hv('endHighStrong')} / 幼少期${hv('endChild')}`);
+    lines.push(`トロフィー：銅${hv('trophyBronze')} / 銀${hv('trophySilver')} / 金${hv('trophyGold')} / イナズマ${hv('trophyLightning')} / 虹${hv('trophyRainbow')}`);
+    lines.push(`GGO詩乃：50%示唆${hv('shino50')} / 濃厚${hv('shinoSure')} / 直撃${hv('directAT')}`);
+    const ml=Array.isArray(d.memoLogs)?d.memoLogs:[]; const lc=getLampCounts(ml); lines.push(`ランプ集計：白${lc['白']} / 青${lc['青']} / 黄${lc['黄']} / 緑${lc['緑']} / 赤${lc['赤']} / 紫${lc['紫']}`); if(ml.length){lines.push('');lines.push('【CZ・AT区間ログ】');ml.forEach((m,i)=>{const parts=[];const mc=m.menuChar||m.content||'';if(mc)parts.push('メニュー '+mc);if(m.result)parts.push(m.result);if(m.lamp)parts.push('ランプ'+m.lamp);lines.push(`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'}${parts.length?'：'+parts.join(' / '):''}`);if(m.note)lines.push('  '+String(m.note).replace(/\n/g,' / '));});}
+    return lines.join('\n');
+  }
+  let openedHistoryIndex = -1;
+  const detailRow=(k,v,sub='')=>`<div class="detail-row"><div class="detail-k">${esc(k)}</div><div class="detail-v">${v}${sub?`<div class="detail-sub">${esc(sub)}</div>`:''}</div></div>`;
+  const detailSection=(title,rows)=>`<div class="detail-section"><div class="detail-section-title">${esc(title)}</div>${rows.join('')}</div>`;
+  function historyDetailHtml(entry){
+    const d=entry?.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id], G=hv('normalG'), totalG=hv('totalG')||(G+hv('atGameCount')), autoATG=Math.max(0,totalG-G);
+    const rate=(hits,total)=>hits&&total?`${hits}回　${fmtDen(hits,total)}`:`${hits}回`;
+    const ratio=(hits,total)=>total?`${hits}/${total}　${fmtPct(hits/total)}`:`${hits}/${total}`;
+    const net=Number(entry?.net||0), netCls=net>0?'plus':net<0?'minus':'zero';
+    const lowHit=hv('lowStrongCZ')+hv('lowStrongDirect'), highHit=hv('highStrongCZ')+hv('highStrongDirect');
+    const scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), oldSc=hv('shootingChargeTotal');
+    const scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldSc:0), scTotal=scK+scS+scW+scN+scU;
+    const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=autoATG;
+    const ml=Array.isArray(d.memoLogs)?d.memoLogs:[], lc=getLampCounts(ml);
+    const conf=[]; if(hb('end2plus'))conf.push('設定2以上'); if(hb('end3plus'))conf.push('設定3以上'); if(hb('end4plus'))conf.push('設定4以上'); if(hb('end6'))conf.push('設定6濃厚'); if(hb('ed4plus'))conf.push('ED 設定4以上'); if(hb('ed6'))conf.push('ED 設定6濃厚'); if(hb('mr4plus'))conf.push('マザロザ 設定4以上'); if(hb('mr6'))conf.push('マザロザ 設定6濃厚');
+    const html=[];
+    html.push(`<div class="detail-hero"><div><div class="detail-date">${esc(entry?.date||'日付なし')}</div><div class="detail-est">保存時推測：${entry?.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}</div></div><div class="detail-net ${netCls}">${esc(fmtCoins(net))}</div></div>`);
+    html.push(detailSection('実戦結果',[
+      detailRow('総ゲーム数',`${totalG.toLocaleString()}G`),
+      detailRow('通常ゲーム数',`${G.toLocaleString()}G`),
+      detailRow('ATゲーム数',`${autoATG.toLocaleString()}G`,'総G − 通常G'),
+      detailRow('投資 / 回収',`${Number(entry?.investment||0).toLocaleString()}枚 / ${Number(entry?.returns||0).toLocaleString()}枚`),
+      detailRow('差枚',esc(fmtCoins(net)))
+    ]));
+    html.push(detailSection('CZ・AT',[
+      detailRow('CZ',rate(hv('czCount'),G),`成功 ${hv('czSuccess')} / 失敗 ${hv('czFail')}`),
+      detailRow('AT初当たり',rate(hv('atCount'),G)),
+      detailRow('詩乃由来AT直撃',rate(hv('directAT'),G)),
+      detailRow('CZ失敗時アイテム',ratio(hv('itemHit'),hv('czFail')))
+    ]));
+    html.push(detailSection('設定推測用レア役',[
+      detailRow('低確 強チェリー',`${hv('lowStrongTotal')}回`,`CZ ${hv('lowStrongCZ')} / AT直撃 ${hv('lowStrongDirect')} / CZ相当 ${hv('lowStrongTotal')?fmtPct(lowHit/hv('lowStrongTotal')):'―'}`),
+      detailRow('高確 強チェリー',`${hv('highStrongTotal')}回`,`CZ ${hv('highStrongCZ')} / AT直撃 ${hv('highStrongDirect')} / CZ相当 ${hv('highStrongTotal')?fmtPct(highHit/hv('highStrongTotal')):'―'}`),
+      detailRow('低確スイカ→SC',ratio(hv('watermelonSC'),hv('watermelonTotal'))),
+      detailRow('通常時 強チャンス目A',`${hv('strongChanceA')}回`),
+      detailRow('強チャンス目B 総出現率',rate(hv('strongChanceTotal'),totalG)),
+      detailRow('うち通常時 強チャンス目B',`${hv('strongChanceNormalB')}回`),
+      detailRow('通常時 強チャンス目A/B→確定CZ',ratio(hv('strongChanceDefCZ'),hv('strongChanceA')+hv('strongChanceNormalB'))),
+      detailRow('確定CZ 総回数',`${hv('defCZTotal')}回`)
+    ]));
+    html.push(detailSection('シューティングチャージ',[
+      detailRow('SC合計',rate(scTotal,G),scU?`種類不明 ${scU}回を含む`:''),
+      detailRow('キリト射撃訓練',`${scK}回${scTotal?`　${fmtPct(scK/scTotal)}`:''}`),
+      detailRow('シノンビンタ',`${scS}回${scTotal?`　${fmtPct(scS/scTotal)}`:''}`),
+      detailRow('水鉄砲チャージ',`${scW}回${scTotal?`　${fmtPct(scW/scTotal)}`:''}`),
+      detailRow('NIGHT SPLASH',`${scN}回${scTotal?`　${fmtPct(scN/scTotal)}`:''}`),
+      ...(scU?[detailRow('種類不明',`${scU}回${scTotal?`　${fmtPct(scU/scTotal)}`:''}`)]:[]),
+      detailRow('SC中AT当選',ratio(hv('shootingChargeATHit'),scTotal)),
+      detailRow('スナイパーチャンス突破',ratio(hv('sniperChanceSuccess'),hv('sniperChanceTotal')))
+    ]));
+    html.push(detailSection('共通ベル',[
+      detailRow('通常時',rate(bellN,G)),
+      detailRow('AT中ナビなし右下がり',rate(bellAT,atG),atG?`AT中 ${atG.toLocaleString()}G`:'AT中G数未入力'),
+      detailRow('全状態参考',rate(bellN+bellAT,G+atG))
+    ]));
+    const bulletHit=hv('bulletCZHit')+hv('bulletDirectAT'), bulletMiss=Math.max(0,hv('bulletMaxTotal')-bulletHit);
+    html.push(detailSection('バレットカウンターMAX',[
+      detailRow('MAX到達',`${hv('bulletMaxTotal')}回`),
+      detailRow('→ CZ当選',`${hv('bulletCZHit')}回`),
+      detailRow('→ AT直撃',`${hv('bulletDirectAT')}回`),
+      detailRow('非当選',`${bulletMiss}回`),
+      detailRow('CZ相当当選率',hv('bulletMaxTotal')?`${bulletHit}/${hv('bulletMaxTotal')}　${fmtPct(bulletHit/hv('bulletMaxTotal'))}`:'―','設定期待度には未反映')
+    ]));
+    html.push(detailSection('AT終了画面・トロフィー',[
+      detailRow('終了画面',`デフォ ${hv('endDefault')} / 奇数 ${hv('endOdd')} / 偶数 ${hv('endEven')}`),
+      detailRow('高設定示唆',`弱 ${hv('endHigh')} / 強 ${hv('endHighStrong')} / 幼少期 ${hv('endChild')}`),
+      detailRow('確定・濃厚系',conf.length?esc(conf.join(' / ')):'なし'),
+      detailRow('コパンダトロフィー',`銅 ${hv('trophyBronze')} / 銀 ${hv('trophySilver')} / 金 ${hv('trophyGold')} / イナズマ ${hv('trophyLightning')} / 虹 ${hv('trophyRainbow')}`)
+    ]));
+    html.push(detailSection('GGOモード示唆',[
+      detailRow('詩乃',`50%示唆 ${hv('shino50')} / 濃厚 ${hv('shinoSure')} / 直撃 ${hv('directAT')}`),
+      detailRow('キリト',`50%クラス ${hv('ggoKirito50')} / 濃厚 ${hv('ggoKiritoSure')} / 恩恵確認 ${hv('ggoKiritoBenefit')}`),
+      detailRow('シノン',`50%クラス ${hv('ggoSinon50')} / 濃厚 ${hv('ggoSinonSure')} / 恩恵確認 ${hv('ggoSinonBenefit')}`),
+      detailRow('死銃',`50%クラス ${hv('ggoDeath50')} / 濃厚 ${hv('ggoDeathSure')} / 恩恵確認 ${hv('ggoDeathBenefit')}`)
+    ]));
+    html.push(detailSection('ランプ集計',[
+      detailRow('ボイス＋ランプ',`白 ${lc['白']} / 青 ${lc['青']} / 黄 ${lc['黄']} / 緑 ${lc['緑']} / 赤 ${lc['赤']} / 紫 ${lc['紫']}`)
+    ]));
+    const logs=ml.length?ml.map((m,i)=>{const mc=m.menuChar||m.content||'', meta=[]; if(mc)meta.push(`メニュー：${esc(mc)}`); if(m.result)meta.push(esc(m.result)); if(m.lamp)meta.push(`ランプ${esc(m.lamp)}`); return `<div class="detail-log"><div class="detail-log-head"><span>#${i+1}</span><span>${m.game!==''?esc(m.game)+'G':'G数未入力'}</span></div>${meta.length?`<div class="detail-log-meta">${meta.join(' / ')}</div>`:''}${m.note?`<div class="detail-log-note">${esc(m.note)}</div>`:''}</div>`;}).join(''):'<div class="detail-log"><div class="detail-log-note">区間ログなし</div></div>';
+    html.push(`<div class="detail-section"><div class="detail-section-title">CZ・AT区間ログ</div>${logs}</div>`);
+    return html.join('');
+  }
+  function openHistoryDetail(i){const h=playHistory[i];if(!h)return;openedHistoryIndex=i;$('historyDetailBody').innerHTML=historyDetailHtml(h);$('historyDetailModal').classList.add('open');}
+  function closeHistoryDetail(){openedHistoryIndex=-1;$('historyDetailModal').classList.remove('open');}
+
+  function renderHistory(){
+    if(!$('historyList'))return; $('historyCountBadge').textContent=playHistory.length+'件'; $('historyCountStat').textContent=playHistory.length+'件';
+    const totalNet=playHistory.reduce((a,h)=>a+Number(h.net||0),0); $('historyNetStat').textContent=fmtCoins(totalNet); $('historyNetStat').style.color=totalNet>0?'#d9ec9a':totalNet<0?'#ff9faa':'#f4f7fb';
+    const scAgg={k:0,s:0,w:0,n:0};
+    playHistory.forEach(h=>{const d=h.data||{};scAgg.k+=Number(d.shootingChargeKirito||0);scAgg.s+=Number(d.shootingChargeSinon||0);scAgg.w+=Number(d.shootingChargeWater||0);scAgg.n+=Number(d.shootingChargeNight||0);});
+    const scAggTotal=scAgg.k+scAgg.s+scAgg.w+scAgg.n;
+    $('historyScKirito').textContent=`${scAgg.k}回${scAggTotal?` (${fmtPct(scAgg.k/scAggTotal)})`:''}`;
+    $('historyScSinon').textContent=`${scAgg.s}回${scAggTotal?` (${fmtPct(scAgg.s/scAggTotal)})`:''}`;
+    $('historyScWater').textContent=`${scAgg.w}回${scAggTotal?` (${fmtPct(scAgg.w/scAggTotal)})`:''}`;
+    $('historyScNight').textContent=`${scAgg.n}回${scAggTotal?` (${fmtPct(scAgg.n/scAggTotal)})`:''}`;
+    $('historyScTotal').innerHTML=`種類判明SC：<strong>${scAggTotal}回</strong>`;
+    if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
+    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">総G / 通常G</div><div class="v">${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()} / ${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">CZ・AT区間ログ</div><div class="v">${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
+  }
+  function restoreHistory(i){
+    const h=playHistory[i]; if(!h||!h.data)return; if(!confirm('現在の入力内容を、この過去実戦データで上書きしますか？\n履歴そのものは消えません。'))return; const d=h.data;
+    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=!!d[id]); priors=Array.isArray(d.priors)&&d.priors.length===6?d.priors.map(x=>Math.max(.001,Number(x)||1)):[1,1,1,1,1,1]; memoLogs=Array.isArray(d.memoLogs)?JSON.parse(JSON.stringify(d.memoLogs)):[];
+    $('playDate').value=h.date||todayLocal(); $('investmentCoins').value=Math.max(0,Number(h.investment||0)); $('returnCoins').value=Math.max(0,Number(h.returns||0)); clearMemoForm(); renderPriorInputs(); refresh(); activateTab('setting'); $('saveState').textContent='過去実戦を現在データへ復元しました';
+  }
+  function clearCurrentSession(){
+    if(!confirm('現在の入力データとCZ・AT区間ログをリセットして、新しい実戦を開始しますか？\n保存済みの過去履歴は残ります。'))return; ids.forEach(id=>$(id).value=0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1]; memoLogs=[]; clearMemoForm(); $('playDate').value=todayLocal(); $('investmentCoins').value=0; $('returnCoins').value=0; renderPriorInputs(); refresh(); activateTab('setting');
+  }
+  function historyListText(){
+    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / 総${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()}G・通常${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); return lines.join('\n');
+  }
+
+  function renderPriorInputs(){
+    $('priorInputs').innerHTML=priors.map((v,i)=>`<label>設定${i+1}<input type="number" min="0.001" step="0.1" value="${v}" data-prior="${i}"></label>`).join('');
+    document.querySelectorAll('[data-prior]').forEach(el=>el.addEventListener('input',()=>{priors[Number(el.dataset.prior)]=Math.max(.001,Number(el.value)||1);refresh();}));
+  }
+  function refresh(){validate();updateDerived();const r=calculate();renderBars(r.probs);renderEvidence();renderMemo();renderHistory();save();}
+
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-delta]'); if(btn){const id=btn.dataset.target,delta=Number(btn.dataset.delta);$(id).value=Math.max(0,n(id)+delta);refresh();return;}
+  });
+  ids.forEach(id=>$(id).addEventListener('input',refresh)); checks.forEach(id=>$(id).addEventListener('change',refresh));
+  $('scrollTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+  $('copySummary').onclick=async()=>{const text=summary();try{await navigator.clipboard.writeText(text);$('saveState').textContent='全データまとめをコピーしました';}catch(e){$('summaryText').value=text;$('textModal').classList.add('open');}};
+  $('openText').onclick=()=>{$('summaryText').value=summary();$('textModal').classList.add('open');};
+  $('closeModal').onclick=()=>$('textModal').classList.remove('open'); $('textModal').addEventListener('click',e=>{if(e.target===$('textModal'))$('textModal').classList.remove('open');});
+  $('closeHistoryDetail').onclick=closeHistoryDetail; $('closeHistoryDetailBottom').onclick=closeHistoryDetail; $('historyDetailModal').addEventListener('click',e=>{if(e.target===$('historyDetailModal'))closeHistoryDetail();});
+  $('copyHistoryDetail').onclick=async()=>{if(openedHistoryIndex<0||!playHistory[openedHistoryIndex])return;const t=historyText(playHistory[openedHistoryIndex]);try{await navigator.clipboard.writeText(t);$('saveState').textContent='この実戦データをコピーしました';}catch(e){$('summaryText').value=t;$('textModal').classList.add('open');}};
+  $('copyModal').onclick=async()=>{try{await navigator.clipboard.writeText($('summaryText').value);}catch(e){$('summaryText').select();document.execCommand('copy');}}; $('selectAll').onclick=()=>{$('summaryText').focus();$('summaryText').select();};
+  $('resetPriors').onclick=()=>{priors=[1,1,1,1,1,1];renderPriorInputs();refresh();}; $('recalc').onclick=refresh;
+  $('resetAll').onclick=()=>{if(!confirm('現在の入力データとCZ・AT区間ログを削除しますか？\n保存済みの過去履歴は残ります。'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];memoLogs=[];clearMemoForm();$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();};
+  $('loadSample').onclick=()=>{
+    const d={totalG:4603,normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,shootingChargeUnknown:12,shootingChargeATHit:0,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
+    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];memoLogs=[];$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
+  };
+  $('exportJson').onclick=()=>{
+    const blob=new Blob([JSON.stringify(snapshot(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sao2_playdata_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  };
+
+  $('addMemo').onclick=addOrUpdateMemo;
+  $('cancelMemoEdit').onclick=clearMemoForm;
+  $('copyMemo').onclick=async()=>{const text=memoTextOnly();try{await navigator.clipboard.writeText(text);$('saveState').textContent='CZ・AT区間ログをコピーしました';}catch(e){$('summaryText').value=text;$('textModal').classList.add('open');}};
+  $('clearMemo').onclick=()=>{if(!memoLogs.length)return;if(!confirm('CZ・AT区間ログだけをすべて削除しますか？'))return;memoLogs=[];clearMemoForm();renderMemo();save();};
+  document.addEventListener('click',e=>{
+    const edit=e.target.closest('[data-memo-edit]');if(edit){editMemo(Number(edit.dataset.memoEdit));return;}
+    const del=e.target.closest('[data-memo-delete]');if(del){const i=Number(del.dataset.memoDelete);if(confirm('この記録を削除しますか？')){memoLogs.splice(i,1);renderMemo();save();}return;}
+    const preset=e.target.closest('[data-memo-preset]');if(preset){
+      const v=preset.dataset.memoPreset;
+      if(v==='czwin')$('memoResult').value='CZ→AT当選';
+      if(v==='czlose')$('memoResult').value='CZ→AT非当選';
+      if(v==='ceilwin')$('memoResult').value='G数天井AT当選';
+      if(v==='scat')$('memoResult').value='シューティングチャージ中AT当選';
+    }
+  });
+
+  ['playDate','investmentCoins','returnCoins'].forEach(id=>$(id)?.addEventListener('input',refresh));
+  $('saveHistory').onclick=saveCurrentToHistory;
+  $('newSession').onclick=clearCurrentSession;
+  $('copyHistory').onclick=async()=>{const t=historyListText();try{await navigator.clipboard.writeText(t);$('saveState').textContent='実戦履歴一覧をコピーしました';}catch(e){$('summaryText').value=t;$('textModal').classList.add('open');}};
+  $('clearHistory').onclick=()=>{if(!playHistory.length)return;if(!confirm('保存済みの実戦履歴をすべて削除しますか？\nこの操作は元に戻せません。'))return;playHistory=[];renderHistory();save();};
+  document.addEventListener('click',e=>{
+    const view=e.target.closest('[data-history-view]');if(view){openHistoryDetail(Number(view.dataset.historyView));return;}
+    const restore=e.target.closest('[data-history-restore]');if(restore){restoreHistory(Number(restore.dataset.historyRestore));return;}
+    const del=e.target.closest('[data-history-delete]');if(del){const i=Number(del.dataset.historyDelete);if(confirm('この実戦履歴を削除しますか？')){playHistory.splice(i,1);renderHistory();save();}return;}
+  });
+
+  function activateTab(name){
+    document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.tab===name));
+    document.querySelectorAll('.tab-panel').forEach(panel=>panel.classList.toggle('active',panel.id==='tab-'+name));
+    try{localStorage.setItem('sao2-active-tab',name);}catch(e){}
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
+
+  if($('playDate'))$('playDate').value=todayLocal();
+  load();renderPriorInputs();refresh();
+  let savedTab='setting';try{savedTab=localStorage.getItem('sao2-active-tab')||'setting';}catch(e){}
+  if(!['setting','ggo','memo','history','event'].includes(savedTab))savedTab='setting';
+  activateTab(savedTab);
+})();
+</script>
+
+<script>
+(() => {
+  'use strict';
+  const EVENT_STORAGE_KEY='sao2-event-store-v1';
+  const EVENT_SCHEMA_VERSION=1;
+  const ZONE_RULE_VERSION=1;
+  // Rule 1 contains only zones explicitly fixed for the initial research example.
+  // Adding or changing zones requires a new ruleVersion and full derived rebuild.
+  const ZONE_MASTER={ruleVersion:ZONE_RULE_VERSION,zones:[
+    {zoneId:'zone_250',label:'250Gゾーン',anchorGame:250,status:'project_confirmed'},
+    {zoneId:'zone_350',label:'350Gゾーン',anchorGame:350,status:'project_confirmed'}
+  ]};
+  const EVENT_TYPES=new Set(['menu_observation','sc','cz','direct_at','at_end','bullet_max','zone_override','note']);
+  const clone=v=>JSON.parse(JSON.stringify(v));
+  const iso=()=>new Date().toISOString();
+  const isNum=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0;
+  const nullableGame=v=>v===''||v===null||v===undefined?null:Math.max(0,Number(v));
+  function uid(prefix){
+    const random=(globalThis.crypto&&typeof globalThis.crypto.randomUUID==='function')?globalThis.crypto.randomUUID().replace(/-/g,''):Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+    return `${prefix}_${Date.now().toString(36)}_${random}`;
+  }
+  function blankStore(){return {schemaVersion:EVENT_SCHEMA_VERSION,createdAt:iso(),updatedAt:iso(),nextSequence:1,activeSessionId:null,sessions:[],segments:[],events:[],derivedCaches:{}};}
+  function validateStore(s){
+    const errors=[];
+    if(!s||typeof s!=='object'||Array.isArray(s))return ['イベントストアがオブジェクトではありません。'];
+    if(s.schemaVersion!==EVENT_SCHEMA_VERSION)errors.push('未対応のイベントストア形式です。');
+    ['sessions','segments','events'].forEach(k=>{if(!Array.isArray(s[k]))errors.push(`${k}が配列ではありません。`);});
+    if(errors.length)return errors;
+    const checkUnique=(arr,key,label)=>{const seen=new Set();arr.forEach(x=>{const v=x&&x[key];if(!v)errors.push(`${label}のIDがありません。`);else if(seen.has(v))errors.push(`${label} IDが重複しています：${v}`);else seen.add(v);});return seen;};
+    const sessionIds=checkUnique(s.sessions,'sessionId','session');
+    const segmentIds=checkUnique(s.segments,'segmentId','segment');
+    const segmentById=new Map(s.segments.map(x=>[x.segmentId,x]));
+    checkUnique(s.events,'eventId','event');
+    const openBySession=new Map();
+    s.segments.forEach(x=>{
+      if(!sessionIds.has(x.sessionId))errors.push(`segmentのsession参照が不正です：${x.segmentId}`);
+      if(x.status==='open')openBySession.set(x.sessionId,(openBySession.get(x.sessionId)||0)+1);
+      const start=x.start;
+      if(!start||typeof start!=='object'||Array.isArray(start))errors.push(`segment.startが不正です：${x.segmentId}`);
+      else if(Object.prototype.hasOwnProperty.call(start,'startDisplayGame')){
+        if(start.startDisplayGame!==null&&!isNum(start.startDisplayGame))errors.push(`segment.startDisplayGameが不正です：${x.segmentId}`);
+        if(!['user_observed','machine_reset_rule','unknown'].includes(start.startGameSource))errors.push(`segment.startGameSourceが不正です：${x.segmentId}`);
+        if(start.startGameSource==='machine_reset_rule'&&(start.startDisplayGame!==0||start.reason!=='after_cz_reset'))errors.push(`machine_reset_ruleのsegment開始条件が不正です：${x.segmentId}`);
+      }else if(start.observedDisplayGame!==null&&!isNum(start.observedDisplayGame))errors.push(`旧形式segment.start.observedDisplayGameが不正です：${x.segmentId}`);
+    });
+    openBySession.forEach((count,sessionId)=>{if(count>1)errors.push(`同一sessionにopen segmentが複数あります：${sessionId}`);});
+    const sequences=new Set();let maxSequence=0;
+    const requiredString=(e,key)=>{if(typeof e.observed[key]!=='string'||!e.observed[key])errors.push(`${e.eventType}.${key}が不正です：${e.eventId}`);};
+    const requiredGame=(e,key)=>{if(!isNum(e.observed[key]))errors.push(`${e.eventType}.${key}が不正です：${e.eventId}`);};
+    const nullableObservedGame=(e,key)=>{const v=e.observed[key];if(v!==null&&!isNum(v))errors.push(`${e.eventType}.${key}が不正です：${e.eventId}`);};
+    const enumValue=(e,key,values)=>{if(!values.includes(e.observed[key]))errors.push(`${e.eventType}.${key}が未対応値です：${e.eventId}`);};
+    s.events.forEach(x=>{
+      if(!EVENT_TYPES.has(x.eventType))errors.push(`未対応eventTypeです：${x.eventType}`);
+      if(!sessionIds.has(x.sessionId))errors.push(`eventのsession参照が不正です：${x.eventId}`);
+      if(x.segmentId!==null&&!segmentIds.has(x.segmentId))errors.push(`eventのsegment参照が不正です：${x.eventId}`);
+      if(x.segmentId!==null&&segmentById.has(x.segmentId)&&segmentById.get(x.segmentId).sessionId!==x.sessionId)errors.push(`eventとsegmentのsessionが一致しません：${x.eventId}`);
+      if(!Number.isInteger(x.sequence)||x.sequence<1)errors.push(`event sequenceが不正です：${x.eventId}`);
+      else{if(sequences.has(x.sequence))errors.push(`event sequenceが重複しています：${x.sequence}`);sequences.add(x.sequence);maxSequence=Math.max(maxSequence,x.sequence);}
+      if(!x.observed||typeof x.observed!=='object'||Array.isArray(x.observed))errors.push(`observedが不正です：${x.eventId}`);
+      if(!x.observed||typeof x.observed!=='object'||Array.isArray(x.observed))return;
+      if(x.eventType==='menu_observation'){requiredGame(x,'displayGame');requiredString(x,'characterId');requiredString(x,'characterLabel');}
+      if(x.eventType==='sc'){requiredGame(x,'startDisplayGame');requiredGame(x,'displayedAddedGames');nullableObservedGame(x,'endDisplayGame');enumValue(x,'scType',['unknown','kirito_training','sinon_slap','water_gun','night_splash']);if(typeof x.observed.atHit!=='boolean')errors.push(`sc.atHitが不正です：${x.eventId}`);}
+      if(x.eventType==='cz'){requiredGame(x,'displayGame');enumValue(x,'outcome',['success','fail','unknown']);enumValue(x,'triggerType',['game_zone','game_ceiling','rare_role','strong_chance','bullet','other','unknown']);['isGameCeiling','isDefiniteCZ','atStarted','bulletMaxObserved'].forEach(k=>{if(typeof x.observed[k]!=='boolean')errors.push(`cz.${k}が不正です：${x.eventId}`);});}
+      if(x.eventType==='direct_at'){requiredGame(x,'displayGame');enumValue(x,'triggerType',['bullet','sc','rare_role','other','unknown']);enumValue(x,'shinoRelation',['confirmed','not_shino','unknown']);if(typeof x.observed.bulletMaxObserved!=='boolean')errors.push(`direct_at.bulletMaxObservedが不正です：${x.eventId}`);}
+      if(x.eventType==='at_end')nullableObservedGame(x,'displayGame');
+      if(x.eventType==='bullet_max'){nullableObservedGame(x,'displayGame');enumValue(x,'result',['no_hit']);}
+      if(x.eventType==='zone_override'){requiredString(x,'targetEventId');enumValue(x,'selectedZoneId',['zone_250','zone_350','unknown']);if(!s.events.some(e=>e.eventId===x.observed.targetEventId&&e.eventType==='cz'))errors.push(`zone_overrideの対象CZがありません：${x.eventId}`);}
+      if(x.eventType==='note'){nullableObservedGame(x,'displayGame');requiredString(x,'text');}
+    });
+    if(!Number.isInteger(s.nextSequence)||s.nextSequence<=maxSequence)errors.push('nextSequenceが既存event sequenceの最大値以下です。');
+    if(s.activeSessionId!==null&&!sessionIds.has(s.activeSessionId))errors.push('activeSessionIdの参照が不正です。');
+    return errors;
+  }
+  function fingerprint(s){return [ZONE_RULE_VERSION,...s.sessions.map(x=>`${x.sessionId}:${x.updatedAt||x.createdAt||''}`),...s.segments.map(x=>`${x.segmentId}:${x.updatedAt||x.createdAt||''}:${x.status}`),...s.events.map(x=>`${x.eventId}:${x.updatedAt||x.createdAt||''}:${x.deletedAt||''}`)].join('|');}
+  function eventDisplayGame(e){return e&&e.observed&&isNum(e.observed.displayGame)?e.observed.displayGame:null;}
+  function segmentStartGame(seg){
+    const start=seg&&seg.start;
+    if(start&&isNum(start.startDisplayGame))return start.startDisplayGame;
+    // Ver.5.7 / 5.7.1で保存済みのsegmentを移行せず、そのまま解析できる互換読取。
+    return start&&isNum(start.observedDisplayGame)?start.observedDisplayGame:null;
+  }
+  function latestMenu(events,limitGame,limitSequence){
+    return events.filter(e=>e.eventType==='menu_observation'&&eventDisplayGame(e)!==null&&eventDisplayGame(e)<=limitGame&&e.sequence<limitSequence).sort((a,b)=>eventDisplayGame(b)-eventDisplayGame(a)||b.sequence-a.sequence)[0]||null;
+  }
+  function deriveStore(s,zoneMaster=ZONE_MASTER){
+    const activeEvents=s.events.filter(e=>!e.deletedAt).sort((a,b)=>a.sequence-b.sequence);
+    const eventAssignments=[]; const exposureMap=new Map();
+    const overrides=new Map();
+    activeEvents.filter(e=>e.eventType==='zone_override').forEach(e=>overrides.set(e.observed.targetEventId,e));
+    for(const seg of s.segments){
+      const evs=activeEvents.filter(e=>e.segmentId===seg.segmentId&&e.eventType!=='zone_override').sort((a,b)=>a.sequence-b.sequence);
+      let cursor=segmentStartGame(seg);
+      const natural=[]; const jumps=[]; let pathUncertain=cursor===null,temporalConflict=false;
+      for(const e of evs){
+        if(e.eventType==='sc'){
+          const start=isNum(e.observed.startDisplayGame)?e.observed.startDisplayGame:null;
+          const observedEnd=isNum(e.observed.endDisplayGame)?e.observed.endDisplayGame:null;
+          const calculatedEnd=start!==null&&isNum(e.observed.displayedAddedGames)?start+e.observed.displayedAddedGames:null;
+          const end=observedEnd!==null?observedEnd:calculatedEnd;
+          if(cursor!==null&&start!==null&&start>=cursor)natural.push({from:cursor,to:start,sourceEventId:e.eventId});
+          else if(start!==null&&cursor===null)pathUncertain=true;
+          else if(start!==null&&cursor!==null&&start<cursor){pathUncertain=true;temporalConflict=true;}
+          if(start!==null&&end!==null&&end>=start)jumps.push({from:start,to:end,sourceEventId:e.eventId,endSource:observedEnd!==null?'observed':'calculated'});
+          else{pathUncertain=true;if(start!==null&&end!==null&&end<start)temporalConflict=true;}
+          cursor=end!==null&&start!==null&&end>=start?end:null;
+          continue;
+        }
+        if(!['cz','direct_at'].includes(e.eventType))continue;
+        const g=eventDisplayGame(e);
+        if(g!==null){
+          if(cursor!==null&&g>=cursor)natural.push({from:cursor,to:g,sourceEventId:e.eventId});
+          else if(cursor!==null&&g<cursor){pathUncertain=true;temporalConflict=true;}
+          if(cursor===null||g>=cursor)cursor=g;
+        }
+      }
+      const segmentBoundaryId=seg.end&&seg.end.boundaryEventId||null;
+      const segmentBoundaryActive=!segmentBoundaryId||activeEvents.some(e=>e.eventId===segmentBoundaryId);
+      const segmentEndGame=segmentBoundaryActive&&isNum(seg.end&&seg.end.observedDisplayGame)?seg.end.observedDisplayGame:null;
+      if(segmentEndGame!==null){
+        if(cursor!==null&&segmentEndGame>=cursor)natural.push({from:cursor,to:segmentEndGame,sourceEventId:seg.end&&seg.end.boundaryEventId||null});
+        else if(cursor!==null&&segmentEndGame<cursor){pathUncertain=true;temporalConflict=true;}
+        else pathUncertain=true;
+      }
+      const reached=new Set(),skipped=new Set();
+      for(const z of zoneMaster.zones){
+        if(natural.some(r=>r.from<=z.anchorGame&&z.anchorGame<=r.to))reached.add(z.zoneId);
+        if(!reached.has(z.zoneId)&&jumps.some(j=>j.from<z.anchorGame&&z.anchorGame<=j.to))skipped.add(z.zoneId);
+      }
+      const czEvents=evs.filter(e=>e.eventType==='cz');
+      for(const cz of czEvents){
+        const g=eventDisplayGame(cz); let autoZoneId=null; let reason='not_zone_trigger';
+        const naturalCandidates=g===null||temporalConflict?[]:zoneMaster.zones.filter(z=>z.anchorGame<=g&&reached.has(z.zoneId)).sort((a,b)=>a.anchorGame-b.anchorGame);
+        const lastNaturallyReachedZoneId=naturalCandidates.length?naturalCandidates[naturalCandidates.length-1].zoneId:null;
+        if(temporalConflict)reason='temporal_conflict';
+        else if(cz.observed.triggerType==='game_zone'&&g!==null){
+          if(naturalCandidates.length){autoZoneId=lastNaturallyReachedZoneId;reason='latest_effectively_reached_zone';}
+          else reason=pathUncertain?'insufficient_path_data':'no_effectively_reached_zone';
+        }
+        const override=overrides.get(cz.eventId)||null;
+        const manualZoneId=override?override.observed.selectedZoneId:null;
+        const finalZoneId=manualZoneId||autoZoneId;
+        const menu=g===null?null:latestMenu(evs,g,cz.sequence);
+        const skippedZoneIds=temporalConflict||g===null?[]:zoneMaster.zones.filter(z=>z.anchorGame<=g&&skipped.has(z.zoneId)).map(z=>z.zoneId);
+        eventAssignments.push({eventId:cz.eventId,sessionId:cz.sessionId,segmentId:cz.segmentId,observedDisplayGame:g,autoZoneId,manualZoneId,finalZoneId,lastNaturallyReachedZoneId,skippedZoneIds,representativeCharacterId:menu?menu.observed.characterId:null,representativeCharacterLabel:menu?menu.observed.characterLabel:null,sourceMenuEventId:menu?menu.eventId:null,reason,pathUncertain,temporalConflict,ruleVersion:zoneMaster.ruleVersion});
+      }
+      const segmentMax=Math.max(-1,...evs.map(eventDisplayGame).filter(v=>v!==null),segmentEndGame===null?-1:segmentEndGame);
+      const temporalUpperBound=segmentEndGame!==null?segmentEndGame:Math.max(-1,...evs.filter(e=>['cz','direct_at'].includes(e.eventType)).map(eventDisplayGame).filter(v=>v!==null));
+      for(const z of zoneMaster.zones){
+        // 時系列が壊れた場合、信頼できるCZ/AT直撃またはsegment終点より未来のゾーンは確定記録しない。
+        if(temporalConflict&&(temporalUpperBound<0||z.anchorGame>temporalUpperBound))continue;
+        let state=null;
+        if(temporalConflict&&segmentMax>=z.anchorGame)state='unknown';
+        else if(reached.has(z.zoneId))state='reached_miss';
+        else if(skipped.has(z.zoneId))state='skipped_by_sc';
+        else if(segmentMax>=z.anchorGame&&pathUncertain)state='unknown';
+        if(!state)continue;
+        const assignment=eventAssignments.find(a=>a.segmentId===seg.segmentId&&a.finalZoneId===z.zoneId);
+        if(assignment&&!assignment.temporalConflict&&activeEvents.find(e=>e.eventId===assignment.eventId)?.observed.triggerType==='game_zone')state='hit';
+        const menuForZone=assignment&&state==='hit'&&assignment.sourceMenuEventId?activeEvents.find(e=>e.eventId===assignment.sourceMenuEventId):latestMenu(evs,z.anchorGame,Number.MAX_SAFE_INTEGER);
+        const key=`${zoneMaster.ruleVersion}:${seg.sessionId}:${seg.segmentId}:${z.zoneId}`;
+        exposureMap.set(key,{exposureKey:key,ruleVersion:zoneMaster.ruleVersion,sessionId:seg.sessionId,segmentId:seg.segmentId,zoneId:z.zoneId,state,characterId:menuForZone?menuForZone.observed.characterId:null,characterLabel:menuForZone?menuForZone.observed.characterLabel:null,sourceMenuEventId:menuForZone?menuForZone.eventId:null,sourceEventIds:evs.map(e=>e.eventId),generatedAt:iso()});
+      }
+    }
+    const zoneExposures=[...exposureMap.values()];
+    const aggregateMap=new Map();
+    zoneExposures.forEach(x=>{const k=`${x.characterId||'unknown'}:${x.zoneId}`,a=aggregateMap.get(k)||{characterId:x.characterId||'unknown',characterLabel:x.characterLabel||'未確認',zoneId:x.zoneId,hit:0,reachedMiss:0,validReach:0,skipped:0,unknown:0};if(x.state==='hit')a.hit++;if(x.state==='reached_miss')a.reachedMiss++;if(x.state==='skipped_by_sc')a.skipped++;if(x.state==='unknown')a.unknown++;a.validReach=a.hit+a.reachedMiss;aggregateMap.set(k,a);});
+    const eventCounts={czTotal:0,czSuccess:0,czFail:0,atInitial:0,definiteCZ:0,bulletCZ:0,bulletDirectAT:0,bulletNoHit:0};
+    activeEvents.forEach(e=>{if(e.eventType==='cz'){eventCounts.czTotal++;if(e.observed.outcome==='success'){eventCounts.czSuccess++;eventCounts.atInitial++;}if(e.observed.outcome==='fail')eventCounts.czFail++;if(e.observed.isDefiniteCZ)eventCounts.definiteCZ++;if(e.observed.triggerType==='bullet')eventCounts.bulletCZ++;}if(e.eventType==='direct_at'){eventCounts.atInitial++;if(e.observed.triggerType==='bullet')eventCounts.bulletDirectAT++;}if(e.eventType==='sc'&&e.observed.atHit)eventCounts.atInitial++;if(e.eventType==='bullet_max'&&e.observed.result==='no_hit')eventCounts.bulletNoHit++;});
+    return {ruleVersion:zoneMaster.ruleVersion,sourceFingerprint:fingerprint(s),generatedAt:iso(),eventAssignments,zoneExposures,characterZoneAggregates:[...aggregateMap.values()],eventCounts};
+  }
+
+  function isStructuralEvent(e){return !!e&&(e.eventType==='cz'||e.eventType==='direct_at'||e.eventType==='at_end'||(e.eventType==='sc'&&e.observed&&e.observed.atHit===true));}
+  function assertNoActiveFollowingEvents(s,target){if(s.events.some(e=>e.sessionId===target.sessionId&&!e.deletedAt&&e.sequence>target.sequence))throw new Error('後続イベントがあるため取消できません');}
+  function structuralSegment(s,target){const seg=s.segments.find(x=>x.segmentId===target.segmentId&&x.sessionId===target.sessionId);if(!seg)throw new Error('対象イベントのsegmentがありません。');return seg;}
+  function removeGeneratedSegment(s,sessionId,reason){
+    const matches=s.segments.filter(x=>x.sessionId===sessionId&&x.status==='open'&&x.start&&x.start.reason===reason);
+    if(matches.length!==1)throw new Error('構造を安全に巻き戻せないため取消できません。');
+    const seg=matches[0];
+    if(s.events.some(e=>e.segmentId===seg.segmentId&&!e.deletedAt))throw new Error('後続イベントがあるため取消できません');
+    s.segments=s.segments.filter(x=>x.segmentId!==seg.segmentId);
+  }
+  function cancelEventSafely(s,eventId,at=iso()){
+    const target=s.events.find(x=>x.eventId===eventId);if(!target)throw new Error('対象イベントがありません。');if(target.deletedAt)throw new Error('対象イベントは取消済みです。');
+    if(!isStructuralEvent(target)){target.deletedAt=at;target.updatedAt=at;return;}
+    assertNoActiveFollowingEvents(s,target);
+    const session=s.sessions.find(x=>x.sessionId===target.sessionId);if(!session)throw new Error('対象sessionがありません。');
+    if(target.eventType==='at_end'){
+      if(session.phase!=='normal')throw new Error('構造を安全に巻き戻せないため取消できません。');
+      removeGeneratedSegment(s,target.sessionId,'after_at_end');session.phase='at';
+    }else{
+      const seg=structuralSegment(s,target);
+      if(!seg.end||seg.end.boundaryEventId!==target.eventId)throw new Error('構造を安全に巻き戻せないため取消できません。');
+      if(target.eventType==='cz'&&target.observed.outcome==='fail')removeGeneratedSegment(s,target.sessionId,'after_cz_reset');
+      const expectedPhase=target.eventType==='cz'?(target.observed.outcome==='fail'?'normal':target.observed.outcome==='success'?'at':'pending'):'at';
+      if(session.phase!==expectedPhase)throw new Error('構造を安全に巻き戻せないため取消できません。');
+      seg.status='open';seg.end=null;seg.updatedAt=at;session.phase='normal';
+    }
+    target.deletedAt=at;target.updatedAt=at;session.updatedAt=at;
+  }
+  function restoreEventSafely(s,eventId,at=iso()){
+    const target=s.events.find(x=>x.eventId===eventId);if(!target)throw new Error('対象イベントがありません。');if(!target.deletedAt)throw new Error('対象イベントは取消されていません。');
+    if(!isStructuralEvent(target)){target.deletedAt=null;target.updatedAt=at;return;}
+    if(s.events.some(e=>e.sessionId===target.sessionId&&!e.deletedAt&&e.sequence>target.sequence))throw new Error('後続イベントがあるため復元できません');
+    const session=s.sessions.find(x=>x.sessionId===target.sessionId);if(!session)throw new Error('対象sessionがありません。');
+    if(target.eventType==='at_end'){
+      if(session.phase!=='at'||s.segments.some(x=>x.sessionId===target.sessionId&&x.status==='open'))throw new Error('構造整合性を保証できないため復元できません。');
+      const game=target.observed.displayGame;createSegment(s,session,'after_at_end',game,game===null?'unknown':'user_observed');session.phase='normal';
+    }else{
+      const seg=structuralSegment(s,target);
+      if(seg.status!=='open'||seg.end!==null)throw new Error('構造整合性を保証できないため復元できません。');
+      closeSegment(seg,target.eventType==='sc'?'sc_at':target.eventType,target.eventId,target.eventType==='sc'?(isNum(target.observed.endDisplayGame)?target.observed.endDisplayGame:target.observed.startDisplayGame):target.observed.displayGame);
+      if(target.eventType==='cz'&&target.observed.outcome==='fail'){createSegment(s,session,'after_cz_reset',0,'machine_reset_rule');session.phase='normal';}
+      else if(target.eventType==='cz'&&target.observed.outcome==='unknown')session.phase='pending';
+      else session.phase='at';
+    }
+    target.deletedAt=null;target.updatedAt=at;session.updatedAt=at;
+  }
+
+  const API={EVENT_STORAGE_KEY,EVENT_SCHEMA_VERSION,ZONE_RULE_VERSION,ZONE_MASTER,blankStore,validateStore,deriveStore,fingerprint,isStructuralEvent,cancelEventSafely,restoreEventSafely};
+  globalThis.SAO2EventV57Core=API;
+  if(typeof document==='undefined'||typeof localStorage==='undefined')return;
+
+  const $=id=>document.getElementById(id);
+  let store=null,blocked=false;
+  function showError(msg){const el=$('evError');if(!el)return;el.textContent=msg||'';el.classList.toggle('show',!!msg);}
+  function loadStore(){
+    try{
+      const raw=localStorage.getItem(EVENT_STORAGE_KEY);
+      if(!raw){store=blankStore();return;}
+      const parsed=JSON.parse(raw),errors=validateStore(parsed);
+      if(errors.length){blocked=true;store=parsed;showError('イベント保存データを読み込めません。既存データは変更していません。'+errors.join(' '));return;}
+      store=parsed;
+    }catch(e){blocked=true;store=null;showError('イベント保存データのJSONを読み込めません。既存データは削除・初期化していません。');}
+  }
+  function writeCandidate(candidate){
+    const errors=validateStore(candidate);if(errors.length)throw new Error(errors.join(' '));
+    candidate.updatedAt=iso();
+    localStorage.setItem(EVENT_STORAGE_KEY,JSON.stringify(candidate));
+  }
+  function commit(mutator,message){
+    if(blocked||!store){showError('保存を停止しています。既存イベントデータを保護するため上書きしません。');return false;}
+    const candidate=clone(store);
+    try{mutator(candidate);candidate.derivedCaches={zoneAnalysis:deriveStore(candidate,ZONE_MASTER)};writeCandidate(candidate);store=candidate;showError('');renderAll();if(message&&$('saveState'))$('saveState').textContent=message;return true;}
+    catch(e){showError('イベント保存に失敗しました。既存データは保持されています。'+e.message);return false;}
+  }
+  function activeSession(s=store){return s&&s.sessions.find(x=>x.sessionId===s.activeSessionId)||null;}
+  function openSegment(s=store,sessionId=s&&s.activeSessionId){return s&&s.segments.find(x=>x.sessionId===sessionId&&x.status==='open')||null;}
+  function createSegment(s,session,reason,startDisplayGame=null,startGameSource='unknown'){const t=iso(),seg={segmentId:uid('segment'),sessionId:session.sessionId,sequence:s.segments.filter(x=>x.sessionId===session.sessionId).length+1,status:'open',start:{reason,startDisplayGame,startGameSource,startedAt:t},end:null,createdAt:t,updatedAt:t};s.segments.push(seg);return seg;}
+  function closeSegment(seg,reason,eventId,game,status='closed'){seg.status=status;seg.end={reason,boundaryEventId:eventId||null,observedDisplayGame:game,endedAt:iso()};seg.updatedAt=iso();}
+  function addEvent(s,session,segment,eventType,observed){const e={eventId:uid('event'),sessionId:session.sessionId,segmentId:segment?segment.segmentId:null,sequence:s.nextSequence++,eventType,observed,createdAt:iso(),updatedAt:iso(),deletedAt:null,source:{inputMethod:'quick_input',legacyImported:false,legacyReference:null}};s.events.push(e);return e;}
+  function requireNormal(){const session=activeSession(),seg=openSegment();if(!session||session.status!=='active'||session.phase!=='normal'||!seg){showError('通常時の実戦イベントを開始してから入力してください。');return null;}return {session,seg};}
+  function requireAT(){const session=activeSession();if(!session||session.status!=='active'||session.phase!=='at'){showError('AT中状態ではありません。');return null;}return session;}
+  function rebuildDerived(write=true){
+    if(!store||blocked)return null;
+    const derived=deriveStore(store,ZONE_MASTER);
+    if(write){const candidate=clone(store);candidate.derivedCaches={zoneAnalysis:derived};try{writeCandidate(candidate);store=candidate;}catch(e){showError('派生キャッシュの保存に失敗しました。原本は変更していません。'+e.message);return null;}}
+    else store.derivedCaches={zoneAnalysis:derived};
+    return derived;
+  }
+  function ensureDerived(){const d=store&&store.derivedCaches&&store.derivedCaches.zoneAnalysis;if(!d||d.ruleVersion!==ZONE_RULE_VERSION||d.sourceFingerprint!==fingerprint(store))return rebuildDerived(true);return d;}
+  function textEvent(e){const o=e.observed||{},g=isNum(o.displayGame)?`${o.displayGame}G `:'';if(e.eventType==='menu_observation')return `${g}メニュー：${o.characterLabel}`;if(e.eventType==='sc')return `SC ${o.startDisplayGame}G ＋${o.displayedAddedGames}G → ${isNum(o.endDisplayGame)?o.endDisplayGame+'G（実測）':'未確認'}${o.atHit?' / AT当選':''}`;if(e.eventType==='cz')return `${g}CZ ${o.outcome==='success'?'成功':o.outcome==='fail'?'失敗':'結果不明'} / ${o.triggerType}${o.isGameCeiling?' / 天井':''}${o.isDefiniteCZ?' / 確定CZ':''}`;if(e.eventType==='direct_at')return `${g}AT直撃 / ${o.triggerType}`;if(e.eventType==='at_end')return `AT終了${isNum(o.displayGame)?' / '+o.displayGame+'G':''}`;if(e.eventType==='bullet_max')return `${g}バレットMAX 非当選`;if(e.eventType==='zone_override')return `ゾーン修正：${o.targetEventId} → ${o.selectedZoneId}`;return `${g}${o.text||'メモ'}`;}
+  function renderAll(){
+    if(blocked){$('evSessionStatus').textContent='イベント保存：保護停止中';document.querySelectorAll('#tab-event button').forEach(b=>b.disabled=true);return;}
+    if(!store)return;
+    const session=activeSession(),seg=openSegment();
+    $('evSessionStatus').innerHTML=session?`実戦イベント：<strong>${session.status==='paused'?'一時中断':session.phase==='at'?'AT中':session.status==='closed'?'終了':'通常時'}</strong>${seg?` / 区間${seg.sequence}`:''}`:'実戦イベント：未開始';
+    $('evPauseSession').disabled=!session||session.status!=='active';$('evResumeSession').disabled=!session||session.status!=='paused';$('evEndSession').disabled=!session||session.status==='closed';$('evStartSession').disabled=!!session&&session.status!=='closed';
+    document.querySelectorAll('[data-ev-form="menu"],[data-ev-form="sc"],[data-ev-form="cz"],[data-ev-form="direct"],[data-ev-form="bullet"],[data-ev-form="note"]').forEach(b=>b.disabled=!session||session.status!=='active'||session.phase!=='normal'||!seg);
+    document.querySelector('[data-ev-form="atend"]').disabled=!session||session.status!=='active'||session.phase!=='at';
+    const currentEvents=store.events.filter(e=>(!session||e.sessionId===session.sessionId)).sort((a,b)=>b.sequence-a.sequence),activeCount=currentEvents.filter(e=>!e.deletedAt).length;$('evCountBadge').textContent=activeCount+'件';$('evLog').innerHTML=currentEvents.length?currentEvents.map(e=>`<div class="event-log-item ${e.deletedAt?'cancelled':''}"><div class="event-log-head"><span>${e.eventType}${e.deletedAt?'（取消済み）':''}</span><span>${new Date(e.createdAt).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}</span></div><div class="event-log-main">${textEvent(e).replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]))}</div><div class="event-log-actions">${e.deletedAt?`<button data-ev-restore="${e.eventId}">復元</button>`:`<button class="cancel" data-ev-cancel="${e.eventId}">取消</button>`}</div></div>`).join(''):'<div class="empty-memo">新しい実戦イベントはまだありません。</div>';
+    const czs=store.events.filter(e=>!e.deletedAt&&e.eventType==='cz'&&(!session||e.sessionId===session.sessionId));$('evOverrideTarget').innerHTML=czs.length?czs.map(e=>`<option value="${e.eventId}">${eventDisplayGame(e)??'G不明'}G / ${e.observed.outcome}</option>`).join(''):'<option value="">対象CZなし</option>';
+    const d=ensureDerived();$('evRuleBadge').textContent='Rule '+ZONE_RULE_VERSION;
+    if(!d){$('evDerivedList').innerHTML='<div class="empty-memo">派生解析を生成できません。</div>';return;}
+    const assignments=d.eventAssignments.filter(a=>!session||a.sessionId===session.sessionId);$('evDerivedList').innerHTML=assignments.length?assignments.map(a=>`<div class="event-derived-item">${a.observedDisplayGame??'G不明'}G CZ：${a.finalZoneId||'unknown'} / 代表キャラ ${a.representativeCharacterLabel||'未確認'} / skipped ${a.skippedZoneIds.length?a.skippedZoneIds.join(', '):'なし'}<br><span class="small">${a.reason}</span></div>`).join(''):'<div class="empty-memo">CZイベントを保存すると派生判定を表示します。</div>';
+  }
+  function openForm(name){document.querySelectorAll('.event-form').forEach(x=>x.classList.remove('open'));const id='evForm'+name.charAt(0).toUpperCase()+name.slice(1);$(id)?.classList.add('open');}
+  function closeForms(){document.querySelectorAll('.event-form').forEach(x=>x.classList.remove('open'));}
+  function val(id){return $(id).value;}
+  function numRequired(id,label){const v=nullableGame(val(id));if(v===null||!Number.isFinite(v))throw new Error(label+'を入力してください。');return v;}
+
+  function bindUI(){
+    document.querySelectorAll('[data-ev-form]').forEach(b=>b.addEventListener('click',()=>openForm(b.dataset.evForm)));document.querySelectorAll('[data-ev-close]').forEach(b=>b.addEventListener('click',closeForms));
+    $('evStartSession').onclick=()=>commit(s=>{const current=activeSession(s);if(current&&current.status!=='closed')throw new Error('進行中の実戦があります。');const t=iso(),session={sessionId:uid('session'),historyId:null,playDate:new Date().toLocaleDateString('sv-SE'),status:'active',phase:'normal',startedAt:t,endedAt:null,createdAt:t,updatedAt:t};s.sessions.push(session);s.activeSessionId=session.sessionId;const startGame=nullableGame(val('evSessionStartGame'));createSegment(s,session,'session_start',startGame,startGame===null?'unknown':'user_observed');},'イベント実戦を開始しました');
+    $('evPauseSession').onclick=()=>commit(s=>{const x=activeSession(s);if(!x||x.status!=='active')throw new Error('中断できる実戦がありません。');x.status='paused';x.updatedAt=iso();},'イベント実戦を一時中断しました');
+    $('evResumeSession').onclick=()=>commit(s=>{const x=activeSession(s);if(!x||x.status!=='paused')throw new Error('再開できる実戦がありません。');x.status='active';x.updatedAt=iso();},'イベント実戦を再開しました');
+    $('evEndSession').onclick=()=>commit(s=>{const x=activeSession(s);if(!x||x.status==='closed')throw new Error('終了できる実戦がありません。');const seg=openSegment(s,x.sessionId);if(seg)closeSegment(seg,'session_end',null,nullableGame(val('evSessionEndGame')),'incomplete');x.status='closed';x.phase='ended';x.endedAt=iso();x.updatedAt=iso();s.activeSessionId=null;},'イベント実戦を終了しました');
+    $('evSaveMenu').onclick=()=>{const c=requireNormal();if(!c)return;let game;try{game=numRequired('evMenuGame','液晶G');}catch(e){showError(e.message);return;}const sel=$('evMenuCharacter');if(!sel.value){showError('キャラクターを選択してください。');return;}commit(s=>{const x=activeSession(s),seg=openSegment(s);addEvent(s,x,seg,'menu_observation',{displayGame:game,characterId:sel.value,characterLabel:sel.options[sel.selectedIndex].text});},'メニュー画面をイベント保存しました')&&closeForms();};
+    $('evSaveSc').onclick=()=>{const c=requireNormal();if(!c)return;let start,added;try{start=numRequired('evScStart','SC開始時液晶G');added=numRequired('evScAdded','表示加算G');}catch(e){showError(e.message);return;}const end=nullableGame(val('evScEnd')),atHit=$('evScAtHit').checked;commit(s=>{const x=activeSession(s),seg=openSegment(s),e=addEvent(s,x,seg,'sc',{scType:val('evScType'),startDisplayGame:start,displayedAddedGames:added,endDisplayGame:end,atHit,note:''});if(atHit){closeSegment(seg,'sc_at',e.eventId,end!==null?end:start);x.phase='at';x.updatedAt=iso();}},'SCをイベント保存しました')&&closeForms();};
+    $('evSaveCz').onclick=()=>{const c=requireNormal();if(!c)return;let game;try{game=numRequired('evCzGame','CZ確認時液晶G');}catch(e){showError(e.message);return;}const outcome=val('evCzOutcome'),trigger=val('evCzTrigger');commit(s=>{const x=activeSession(s),seg=openSegment(s),isCeiling=$('evCzCeiling').checked||trigger==='game_ceiling',e=addEvent(s,x,seg,'cz',{displayGame:game,outcome,triggerType:trigger,isGameCeiling:isCeiling,isDefiniteCZ:$('evCzDefinite').checked,atStarted:outcome==='success',bulletMaxObserved:trigger==='bullet',itemObtainedOnFailure:outcome==='fail'?$('evCzItem').checked:null,note:''});closeSegment(seg,'cz',e.eventId,game);if(outcome==='success')x.phase='at';else if(outcome==='fail'){x.phase='normal';createSegment(s,x,'after_cz_reset',0,'machine_reset_rule');}else x.phase='pending';x.updatedAt=iso();},'CZをイベント保存しました')&&closeForms();};
+    $('evSaveDirect').onclick=()=>{const c=requireNormal();if(!c)return;let game;try{game=numRequired('evDirectGame','確認時液晶G');}catch(e){showError(e.message);return;}commit(s=>{const x=activeSession(s),seg=openSegment(s),trigger=val('evDirectTrigger'),e=addEvent(s,x,seg,'direct_at',{displayGame:game,triggerType:trigger,shinoRelation:val('evDirectShino'),bulletMaxObserved:trigger==='bullet',note:''});closeSegment(seg,'direct_at',e.eventId,game);x.phase='at';x.updatedAt=iso();},'AT直撃をイベント保存しました')&&closeForms();};
+    $('evSaveAtEnd').onclick=()=>{const x=requireAT();if(!x)return;const game=nullableGame(val('evAtEndGame'));commit(s=>{const session=activeSession(s),e=addEvent(s,session,null,'at_end',{displayGame:game,note:''});session.phase='normal';session.updatedAt=iso();createSegment(s,session,'after_at_end',game,game===null?'unknown':'user_observed');},'AT終了をイベント保存しました')&&closeForms();};
+    $('evSaveBullet').onclick=()=>{const c=requireNormal();if(!c)return;commit(s=>{addEvent(s,activeSession(s),openSegment(s),'bullet_max',{displayGame:nullableGame(val('evBulletGame')),result:'no_hit'});},'バレットMAX非当選を保存しました')&&closeForms();};
+    $('evSaveOverride').onclick=()=>{const target=val('evOverrideTarget');if(!target){showError('対象CZがありません。');return;}const targetEvent=store.events.find(e=>e.eventId===target);commit(s=>{const session=s.sessions.find(x=>x.sessionId===targetEvent.sessionId),seg=s.segments.find(x=>x.segmentId===targetEvent.segmentId);addEvent(s,session,seg,'zone_override',{targetEventId:target,selectedZoneId:val('evOverrideZone'),reason:'user_confirmed'});},'ゾーン修正を保存しました')&&closeForms();};
+    $('evSaveNote').onclick=()=>{const c=requireNormal();if(!c)return;const text=val('evNoteText').trim();if(!text){showError('メモ内容を入力してください。');return;}commit(s=>{addEvent(s,activeSession(s),openSegment(s),'note',{displayGame:nullableGame(val('evNoteGame')),text});},'観測メモを保存しました')&&closeForms();};
+    $('evRebuildDerived').onclick=()=>{rebuildDerived(true);renderAll();};
+    $('evDropRebuild').onclick=()=>{if(!store||blocked)return;const candidate=clone(store);candidate.derivedCaches={};try{writeCandidate(candidate);store=candidate;rebuildDerived(true);renderAll();showError('');}catch(e){showError('派生キャッシュ再生成に失敗しました。原本は保持されています。'+e.message);}};
+    $('evLog').addEventListener('click',e=>{
+      const cancel=e.target.closest('[data-ev-cancel]');
+      if(cancel){const eventId=cancel.dataset.evCancel;if(confirm('このイベントを取り消しますか？構造変更イベントは安全な場合だけ巻き戻します。'))commit(s=>cancelEventSafely(s,eventId),'イベントを取り消しました');return;}
+      const restore=e.target.closest('[data-ev-restore]');
+      if(restore){const eventId=restore.dataset.evRestore;commit(s=>restoreEventSafely(s,eventId),'イベントを復元しました');}
+    });
+  }
+  function init(){loadStore();if(!store&&!blocked)store=blankStore();bindUI();if(store&&!blocked)ensureDerived();renderAll();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+<script>
+(() => {
+  let deferredPrompt = null;
+  const installBtn = document.getElementById('installApp');
+  const installNote = document.getElementById('installNote');
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) installBtn.classList.add('show');
+    if (installNote) installNote.classList.add('show');
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      try { await deferredPrompt.userChoice; } catch (_) {}
+      deferredPrompt = null;
+      installBtn.classList.remove('show');
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    if (installBtn) installBtn.classList.remove('show');
+    if (installNote) {
+      installNote.textContent = 'ホーム画面への追加が完了しました。';
+      installNote.classList.add('show');
+      setTimeout(() => installNote.classList.remove('show'), 3500);
+    }
+  });
+
+  // standalone 起動時は案内を隠す
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if (standalone && installNote) installNote.classList.remove('show');
+})();
+</script>
+
+</body>
+</html>
