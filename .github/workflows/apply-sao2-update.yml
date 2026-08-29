@@ -1,0 +1,35 @@
+name: Apply SAO2 update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.sao2-update/trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.head_commit.message != 'Update index to Ver.5.8.2'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Rebuild audited index
+        shell: bash
+        run: |
+          cat .sao2-update/part-* > /tmp/index.html.gz.b64
+          base64 -d /tmp/index.html.gz.b64 > /tmp/index.html.gz
+          gzip -dc /tmp/index.html.gz > index.html
+          echo "64ff87781dfef3ebdaccc51649927c010e39a71c745008bca186d7fd7a2060b4  index.html" | sha256sum -c -
+      - name: Commit update
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -r .sao2-update
+          git add index.html
+          git commit -m "Update index to Ver.5.8.2"
+          git push
