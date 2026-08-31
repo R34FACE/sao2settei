@@ -115,6 +115,37 @@
   @media(max-width:430px){.tabs{top:62px}.mode-summary{grid-template-columns:1fr 1fr}}
   @media(min-width:600px){.tabs{grid-template-columns:repeat(4,1fr)}.tabs .tab-btn{grid-column:span 1}}
 
+  .setting-input-card{display:flex;flex-direction:column}
+  .setting-order-games{order:1}.setting-order-watermelon{order:2}.setting-order-sc{order:3}.setting-order-common-bell{order:4}.setting-order-bullet{order:5}.setting-order-cz{order:6}.setting-order-low-strong{order:7}.setting-order-high-strong{order:8}.setting-order-def-cz{order:9}.setting-order-sniper{order:10}
+  @media(max-width:430px){
+    html,body,.app{max-width:100%;overflow-x:hidden}
+    .app{padding-left:8px;padding-right:8px}
+    .hero{margin-left:-8px;margin-right:-8px;padding-left:8px;padding-right:8px}
+    .title-row{flex-wrap:wrap}.tabs{gap:4px;padding:4px}.tab-btn{min-width:0;min-height:58px;padding:5px 2px;font-size:17px;line-height:1.18;overflow-wrap:anywhere}
+    .card{min-width:0;padding:11px;margin:10px 0;overflow-wrap:anywhere}.card h2{font-size:19px}.card h3{font-size:17px}
+    summary{font-size:17px;min-height:54px;padding:9px 0}
+    .field{min-width:0;padding:11px}.field .name{font-size:18px;line-height:1.35;margin-bottom:8px}.field .hint{font-size:14px;line-height:1.45}
+    .num-wrap,.num-wrap.wide,.linked-count{grid-template-columns:64px minmax(0,1fr) 64px;gap:6px;min-width:0}
+    .num-wrap button,.linked-count button{width:100%;height:60px;min-height:60px;padding:0 2px;font-size:27px}
+    .num-wrap.wide button{font-size:21px}
+    input[type=number],input[type=text],input[type=date],select{min-width:0;height:60px;min-height:60px;font-size:25px}
+    select{font-size:22px;padding-left:8px;padding-right:28px}
+    .linked-value{height:60px;font-size:25px}
+    .btn,.quick-btn,.research-quick button{min-height:56px;font-size:17px}
+    .small,.notice,.mode-sub,.source-note{font-size:14px;line-height:1.5}
+    .calc,.ev-rate{font-size:18px;line-height:1.45}.ev-title{font-size:16px}.ev-note{font-size:14px}
+    .best,.mode-head,.history-head,.memo-entry-head{flex-wrap:wrap}.best .label,.best .sub{font-size:14px}.bar-row{font-size:14px}
+    .research-quick{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.research-quick button{min-width:0;min-height:50px;height:50px;padding-left:2px;padding-right:2px;font-size:14px;white-space:nowrap}.research-zone-list{gap:8px}
+    .research-zone-row{grid-template-columns:88px minmax(0,1fr);gap:9px;padding:11px}
+    .research-zone-row strong{font-size:23px}.research-zone-row select{height:60px;min-height:60px;font-size:22px}
+    .research-item,.memo-entry{font-size:15px}.research-item button,.memo-actions button{min-height:48px;font-size:14px}
+    .memo-main{font-size:16px}.memo-note{font-size:14px}.memo-time,.memo-tag{font-size:14px}
+    .research-stat .k{font-size:14px}.research-stat .v{font-size:19px}.research-table{display:block;max-width:100%;overflow-x:auto;font-size:14px}
+    .actions,.actions.three{grid-template-columns:1fr}.check-grid{grid-template-columns:1fr}
+    .sticky-actions .inner{grid-template-columns:1fr 1fr 1fr}.sticky-actions .btn{min-width:0;min-height:56px;padding:7px 3px;font-size:15px}
+    input,select,textarea,button,.field,.card{max-width:100%}
+  }
+
   body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none}
   body::before{
     z-index:0;opacity:.62;
@@ -147,7 +178,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.2 / Normal Research</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.6 / Buggy Colors</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -171,12 +202,18 @@
     <div class="notice warn" id="validation" style="display:none"></div>
   </section>
 
-  <section class="card">
-    <details open>
+  <section class="card setting-input-card">
+    <details open class="setting-order-games">
       <summary>基本データ</summary>
       <div class="grid">
         <div class="field"><div class="name">総ゲーム数</div><div class="num-wrap wide"><button data-delta="-100" data-target="totalG">−100</button><input id="totalG" type="number" min="0" value="0"><button data-delta="100" data-target="totalG">+100</button></div><div class="hint">通常時＋AT中。強チャンス目Bなど全状態の出現率に使用</div></div>
         <div class="field"><div class="name">通常ゲーム数</div><div class="num-wrap wide"><button data-delta="-100" data-target="normalG">−100</button><input id="normalG" type="number" min="0" value="0"><button data-delta="100" data-target="normalG">+100</button></div><div class="hint">CZ・AT初当たり、通常時小役などの分母に使用</div></div>
+      </div>
+    </details>
+
+    <details open class="setting-order-cz">
+      <summary>CZ・AT基本データ</summary>
+      <div class="grid">
         <div class="field"><div class="name">CZ回数</div><div class="num-wrap"><button data-delta="-1" data-target="czCount">−</button><input id="czCount" type="number" min="0" value="0"><button data-delta="1" data-target="czCount">＋</button></div><div class="calc" id="czRate">―</div></div>
         <div class="field"><div class="name">CZ成功</div><div class="num-wrap"><button data-delta="-1" data-target="czSuccess">−</button><input id="czSuccess" type="number" min="0" value="0"><button data-delta="1" data-target="czSuccess">＋</button></div></div>
         <div class="field"><div class="name">CZ失敗</div><div class="num-wrap"><button data-delta="-1" data-target="czFail">−</button><input id="czFail" type="number" min="0" value="0"><button data-delta="1" data-target="czFail">＋</button></div><div class="hint">下のAT強化アイテム獲得率の分母にも使用</div></div>
@@ -186,7 +223,7 @@
       </div>
     </details>
 
-    <details open>
+    <details open class="setting-order-low-strong">
       <summary>低確 強チェリー</summary>
       <div class="grid three">
         <div class="field"><div class="name">成立回数</div><div class="num-wrap"><button data-delta="-1" data-target="lowStrongTotal">−</button><input id="lowStrongTotal" type="number" min="0" value="0"><button data-delta="1" data-target="lowStrongTotal">＋</button></div></div>
@@ -197,7 +234,7 @@
       <div class="small">詩乃モードでCZ当選がAT直撃へ変換されたケースを考慮し、初期設定では「CZ＋詩乃直撃」をCZ相当当選として評価します。</div>
     </details>
 
-    <details>
+    <details class="setting-order-high-strong">
       <summary>高確 強チェリー</summary>
       <div class="grid three">
         <div class="field"><div class="name">成立回数</div><div class="num-wrap"><button data-delta="-1" data-target="highStrongTotal">−</button><input id="highStrongTotal" type="number" min="0" value="0"><button data-delta="1" data-target="highStrongTotal">＋</button></div></div>
@@ -207,7 +244,7 @@
       <div class="calc" id="highStrongRate">CZ相当当選率：―</div>
     </details>
 
-    <details open>
+    <details open class="setting-order-watermelon">
       <summary>低確 スイカ → シューティングチャージ</summary>
       <div class="grid">
         <div class="field"><div class="name">低確スイカ回数</div><div class="num-wrap"><button data-delta="-1" data-target="watermelonTotal">−</button><input id="watermelonTotal" type="number" min="0" value="0"><button data-delta="1" data-target="watermelonTotal">＋</button></div></div>
@@ -216,7 +253,7 @@
       <div class="calc" id="watermelonRate">当選率：―</div>
     </details>
 
-    <details open>
+    <details open class="setting-order-sc">
       <summary>シューティングチャージ種類統計</summary>
       <div class="grid">
         <div class="field"><div class="name">キリト射撃訓練</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeKirito">−</button><input id="shootingChargeKirito" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeKirito">＋</button></div><div class="calc" id="scKiritoPct">構成比：―</div></div>
@@ -232,7 +269,7 @@
       <div class="small">統計の主目的は4種類の出現数と構成比です。種類別データは実戦履歴にも保存され、履歴タブで累計を確認できます。設定推測には使用しません。</div>
     </details>
 
-    <details>
+    <details class="setting-order-sniper">
       <summary>スナイパーチャンス突破率（参考統計）</summary>
       <div class="grid">
         <div class="field"><div class="name">スナイパーチャンス回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperChanceTotal">−</button><input id="sniperChanceTotal" type="number" min="0" value="0"><button data-delta="1" data-target="sniperChanceTotal">＋</button></div><div class="hint">AT中に突入したスナイパーチャンス総数</div></div>
@@ -242,7 +279,7 @@
       <div class="small">現時点では設定期待度の計算には使用しません。AT中挙動の自分用統計として保存します。</div>
     </details>
 
-    <details open>
+    <details open class="setting-order-common-bell">
       <summary>共通ベル（参考記録）</summary>
       <div class="grid">
         <div class="field"><div class="name">通常時 共通ベル</div><div class="num-wrap"><button data-delta="-1" data-target="commonBellNormal">−</button><input id="commonBellNormal" type="number" min="0" value="0"><button data-delta="1" data-target="commonBellNormal">＋</button></div><div class="hint">右下がり斜めベルを記録</div></div>
@@ -255,7 +292,7 @@
       <div class="small">共通ベルは設定差ありの可能性がありますが、正式な設定別解析値・通常時/AT中の公式カウント基準が未確定のため、現時点では設定期待度の計算には使用しません。通常時とAT中は分けて記録します。</div>
     </details>
 
-    <details open>
+    <details open class="setting-order-bullet">
       <summary>バレットカウンターMAX → CZ（参考統計）</summary>
       <div class="grid three">
         <div class="field"><div class="name">MAX到達回数</div><div class="num-wrap"><button data-delta="-1" data-target="bulletMaxTotal">−</button><input id="bulletMaxTotal" type="number" min="0" value="0"><button data-delta="1" data-target="bulletMaxTotal">＋</button></div><div class="hint">バレット7個到達でCZ抽選を受けた回数</div></div>
@@ -270,7 +307,7 @@
       <div class="small">「CZ当選＋AT直撃」をCZ相当当選として集計します。現時点では設定別の具体的な解析値が未公表のため、設定期待度の計算には使用しません。AT直撃は基本データの「詩乃モード由来AT直撃」の内訳として別途数えてください。</div>
     </details>
 
-    <details>
+    <details class="setting-order-def-cz">
       <summary>確定CZ・強チャンス目A/B</summary>
       <div class="grid three">
         <div class="field"><div class="name">通常時 強チャンス目A</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceA">−</button><input id="strongChanceA" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceA">＋</button></div><div class="hint">確定CZ当選率の分母に使用。AT中のAは含めない</div></div>
@@ -346,7 +383,7 @@
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.5.8.2：確定済み区間の下書き自動保存時にも、次区間の開始理由を即時再整合。</div>
+    <div class="footer-note">Ver.5.8.6：バギーを緑・赤へ細分化。旧Ver.5.8.5の色不明バギーは互換データとして保持。</div>
   </section>
   </div>
 
@@ -394,6 +431,15 @@
           <div class="field"><div class="name">濃厚示唆</div><div class="num-wrap"><button data-delta="-1" data-target="ggoDeathSure">−</button><input id="ggoDeathSure" type="number" min="0" value="0"><button data-delta="1" data-target="ggoDeathSure">＋</button></div></div>
           <div class="field"><div class="name">恩恵確認（参考）</div><div class="num-wrap"><button data-delta="-1" data-target="ggoDeathBenefit">−</button><input id="ggoDeathBenefit" type="number" min="0" value="0"><button data-delta="1" data-target="ggoDeathBenefit">＋</button></div></div>
         </div>
+      </details>
+      <details>
+        <summary>バギー</summary>
+        <div class="grid">
+          <div class="field"><div class="name">バギー緑</div><div class="num-wrap"><button data-delta="-1" data-target="ggoBuggyGreen">−</button><input id="ggoBuggyGreen" type="number" min="0" value="0"><button data-delta="1" data-target="ggoBuggyGreen">＋</button></div></div>
+          <div class="field"><div class="name">バギー赤</div><div class="num-wrap"><button data-delta="-1" data-target="ggoBuggyRed">−</button><input id="ggoBuggyRed" type="number" min="0" value="0"><button data-delta="1" data-target="ggoBuggyRed">＋</button></div></div>
+        </div>
+        <input id="ggoBuggy" type="hidden" value="0">
+        <div class="small" id="ggoBuggyLegacyNote" style="display:none;margin-top:8px"></div>
       </details>
       <div class="small" style="margin-top:10px">「50%クラス示唆」「濃厚示唆」は、実戦中に解析上それに該当するアイテム・演出を確認した時だけカウントするための記録欄です。設定別移行率が公表されるまでは設定期待度へ直接加点しません。</div>
     </section>
@@ -572,9 +618,9 @@
 (() => {
   'use strict';
   const ZONES=[50,100,250,350,500,650];
-  const GGO_KEYS=['shino50','shinoSure','kirito50','kiritoSure','sinon50','sinonSure','death50','deathSure'];
-  const GGO_COUNTER_MAP={shino50:'shino50',shinoSure:'shinoSure',kirito50:'ggoKirito50',kiritoSure:'ggoKiritoSure',sinon50:'ggoSinon50',sinonSure:'ggoSinonSure',death50:'ggoDeath50',deathSure:'ggoDeathSure'};
-  const GGO_LABELS={shino50:'詩乃 50%示唆',shinoSure:'詩乃 濃厚',kirito50:'キリト 50%クラス',kiritoSure:'キリト 濃厚',sinon50:'シノン 50%クラス',sinonSure:'シノン 濃厚',death50:'死銃 50%クラス',deathSure:'死銃 濃厚'};
+  const GGO_KEYS=['shino50','shinoSure','kirito50','kiritoSure','sinon50','sinonSure','death50','deathSure','buggyGreen','buggyRed','buggy'];
+  const GGO_COUNTER_MAP={shino50:'shino50',shinoSure:'shinoSure',kirito50:'ggoKirito50',kiritoSure:'ggoKiritoSure',sinon50:'ggoSinon50',sinonSure:'ggoSinonSure',death50:'ggoDeath50',deathSure:'ggoDeathSure',buggyGreen:'ggoBuggyGreen',buggyRed:'ggoBuggyRed',buggy:'ggoBuggy'};
+  const GGO_LABELS={shino50:'詩乃 50%示唆',shinoSure:'詩乃 濃厚',kirito50:'キリト 50%クラス',kiritoSure:'キリト 濃厚',sinon50:'シノン 50%クラス',sinonSure:'シノン 濃厚',death50:'死銃 50%クラス',deathSure:'死銃 濃厚',buggyGreen:'バギー緑',buggyRed:'バギー赤',buggy:'バギー色不明'};
   const ZONE_STATES=['unreached','unconfirmed','no_premonition','premonition','cz_hit','sc_skipped'];
   const nrn=v=>Math.max(0,Number(v)||0),nrClone=v=>JSON.parse(JSON.stringify(v));
   function nrId(prefix='nrs'){return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,9)}`;}
@@ -586,11 +632,11 @@
   function scEnd(sc){return sc.endDisplayGame!==null&&sc.endDisplayGame!==''&&Number.isFinite(Number(sc.endDisplayGame))?nrn(sc.endDisplayGame):nrn(sc.startDisplayGame)+nrn(sc.displayedAddedGames);}
   function effectiveZoneState(seg,game){const raw=seg.zoneObservations&&seg.zoneObservations[String(game)]||{state:'unreached'},hasEnd=seg.end&&seg.end.displayGame!==null&&seg.end.displayGame!==''&&Number.isFinite(Number(seg.end.displayGame));if(hasEnd&&nrn(seg.end.displayGame)<game)return 'unreached';if(['no_premonition','premonition','cz_hit'].includes(raw.state))return raw.state;if(raw.state==='sc_skipped')return 'sc_skipped';const skipped=(seg.scObservations||[]).some(sc=>nrn(sc.startDisplayGame)<game&&game<=scEnd(sc));return skipped?'sc_skipped':raw.state;}
   function ggoTotals(segments){const out=blankHints();for(const s of normalizeSegments(segments)){for(const k of GGO_KEYS)out[k]+=nrn(s.ggoHints[k]);for(const o of s.ggoHintObservations)out[o.hintType]+=nrn(o.count);}return out;}
-  function ggoFamilies(t){return {shino:nrn(t.shino50)+nrn(t.shinoSure),kirito:nrn(t.kirito50)+nrn(t.kiritoSure),sinon:nrn(t.sinon50)+nrn(t.sinonSure),death:nrn(t.death50)+nrn(t.deathSure),total:GGO_KEYS.reduce((a,k)=>a+nrn(t[k]),0)};}
+  function ggoFamilies(t){const buggyGreen=nrn(t.buggyGreen),buggyRed=nrn(t.buggyRed),buggyLegacy=nrn(t.buggy),buggyTotal=buggyGreen+buggyRed+buggyLegacy;return {shino:nrn(t.shino50)+nrn(t.shinoSure),kirito:nrn(t.kirito50)+nrn(t.kiritoSure),sinon:nrn(t.sinon50)+nrn(t.sinonSure),death:nrn(t.death50)+nrn(t.deathSure),buggyGreen,buggyRed,buggyLegacy,buggyTotal,buggy:buggyTotal,total:GGO_KEYS.reduce((a,k)=>a+nrn(t[k]),0)};}
   function reconcileGgo(current,oldApplied,newApplied){const totals={},manual={};for(const k of GGO_KEYS){const counter=GGO_COUNTER_MAP[k];manual[counter]=Math.max(0,nrn(current[counter])-nrn(oldApplied[k]));totals[counter]=manual[counter]+nrn(newApplied[k]);}return {totals,manual,applied:nrClone(newApplied)};}
   function latestMenuAt(seg,game){return (seg.menuObservations||[]).filter(m=>nrn(m.displayGame)<=game).sort((a,b)=>nrn(b.displayGame)-nrn(a.displayGame)||String(b.observedAt||'').localeCompare(String(a.observedAt||'')))[0]||null;}
   function aggregateCharacters(segments){const map=new Map(),make=(id,label)=>({characterId:id,characterLabel:label,segmentCount:0,observationCount:0,ggoHintSegments:0,ggoTotal:0,ggo:blankHints(),zones:Object.fromEntries(ZONES.map(g=>[g,{valid:0,premonitionWithCz:0,premonitionOnly:0,cz:0}]))});for(const seg of normalizeSegments(segments)){const seen=new Map();for(const m of seg.menuObservations){const key=m.characterId||m.characterLabel||'other',x=seen.get(key)||{label:m.characterLabel||key,count:0};x.count++;seen.set(key,x);}for(const [id,x] of seen){const a=map.get(id)||make(id,x.label);a.segmentCount++;a.observationCount+=x.count;map.set(id,a);}for(const g of ZONES){const state=effectiveZoneState(seg,g);if(!['no_premonition','premonition','cz_hit'].includes(state))continue;const rep=latestMenuAt(seg,g);if(!rep)continue;const id=rep.characterId||rep.characterLabel||'other',a=map.get(id)||make(id,rep.characterLabel||id),z=a.zones[g];z.valid++;if(state==='premonition'){z.premonitionWithCz++;z.premonitionOnly++;}if(state==='cz_hit'){z.premonitionWithCz++;z.cz++;}map.set(id,a);}const assigned=new Set();for(const o of seg.ggoHintObservations){if(o.displayGame===null)continue;const rep=latestMenuAt(seg,o.displayGame);if(!rep)continue;const id=rep.characterId||rep.characterLabel||'other',a=map.get(id)||make(id,rep.characterLabel||id),count=nrn(o.count);a.ggo[o.hintType]+=count;a.ggoTotal+=count;assigned.add(id);map.set(id,a);}for(const id of assigned)map.get(id).ggoHintSegments++;}return [...map.values()].sort((a,b)=>b.segmentCount-a.segmentCount||a.characterLabel.localeCompare(b.characterLabel,'ja'));}
-  function historyGgoByBest(history){const out=Object.fromEntries([1,2,3,4,5,6].map(x=>[x,{bestSetting:x,sessions:0,normalGames:0,ggoTotal:0,shino:0,kirito:0,sinon:0,death:0}]));for(const h of Array.isArray(history)?history:[]){const k=Number(h.bestSetting);if(!out[k])continue;const d=h.data||{},t=ggoTotals(d.normalResearchSegments||[]),f=ggoFamilies(t),a=out[k];a.sessions++;a.normalGames+=nrn(d.normalG??h.normalG);a.ggoTotal+=f.total;a.shino+=f.shino;a.kirito+=f.kirito;a.sinon+=f.sinon;a.death+=f.death;}return Object.values(out);}
+  function historyGgoByBest(history){const out=Object.fromEntries([1,2,3,4,5,6].map(x=>[x,{bestSetting:x,sessions:0,normalGames:0,ggoTotal:0,shino:0,kirito:0,sinon:0,death:0,buggyGreen:0,buggyRed:0,buggyLegacy:0,buggy:0}]));for(const h of Array.isArray(history)?history:[]){const k=Number(h.bestSetting);if(!out[k])continue;const d=h.data||{},t=ggoTotals(d.normalResearchSegments||[]),f=ggoFamilies(t),a=out[k];a.sessions++;a.normalGames+=nrn(d.normalG??h.normalG);a.ggoTotal+=f.total;a.shino+=f.shino;a.kirito+=f.kirito;a.sinon+=f.sinon;a.death+=f.death;a.buggyGreen+=f.buggyGreen;a.buggyRed+=f.buggyRed;a.buggyLegacy+=f.buggyLegacy;a.buggy+=f.buggyTotal;}return Object.values(out);}
   function nextStartedFrom(type){return ['cz_at_win','cz_at_fail','game_ceiling_cz'].includes(type)?'cz_reset':'play_start_unknown';}
   function realignFollowingSegment(segments,segmentId,endType){const out=normalizeSegments(segments),i=out.findIndex(x=>x.id===segmentId);if(i>=0&&out[i+1])out[i+1].startedFrom=nextStartedFrom(endType);return out;}
   function lampCounts(logs,research=[]){const c={'白':0,'青':0,'黄':0,'緑':0,'赤':0,'紫':0};for(const m of Array.isArray(logs)?logs:[])if(c[m&&m.lamp]!==undefined)c[m.lamp]++;for(const s of Array.isArray(research)?research:[])if(s&&s.status==='closed'&&c[s.lamp]!==undefined)c[s.lamp]++;return c;}
@@ -606,7 +652,7 @@
     'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
     'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','sniperChanceTotal','sniperChanceSuccess','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceA','strongChanceTotal','strongChanceNormalB','strongChanceDefCZ',
     'defCZTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild','trophyBronze','trophySilver','trophyGold','trophyLightning','trophyRainbow',
-    'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit'
+    'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit','ggoBuggyGreen','ggoBuggyRed','ggoBuggy'
   ];
   const checks = ['end2plus','end3plus','end4plus','end6','ed4plus','ed6','mr4plus','mr6'];
   const S = [1,2,3,4,5,6];
@@ -853,6 +899,7 @@
     lines.push(`キリト：50%クラス${n('ggoKirito50')} / 濃厚${n('ggoKiritoSure')} / 恩恵確認${n('ggoKiritoBenefit')}`);
     lines.push(`シノン：50%クラス${n('ggoSinon50')} / 濃厚${n('ggoSinonSure')} / AT中スナイパーチャンス高確確認${n('ggoSinonBenefit')}`);
     lines.push(`死銃：50%クラス${n('ggoDeath50')} / 濃厚${n('ggoDeathSure')} / 恩恵確認${n('ggoDeathBenefit')}`);
+    lines.push(`バギー：緑${n('ggoBuggyGreen')} / 赤${n('ggoBuggyRed')}${n('ggoBuggy')?` / 旧色不明${n('ggoBuggy')}`:''}`);
     lines.push('');
     lines.push(`AT終了画面：デフォ${n('endDefault')} / 奇数${n('endOdd')} / 偶数${n('endEven')} / 高設定${n('endHigh')} / 高設定強${n('endHighStrong')} / 幼少期${n('endChild')}`);
     lines.push(`コパンダトロフィー：銅${n('trophyBronze')} / 銀${n('trophySilver')} / 金${n('trophyGold')} / イナズマ${n('trophyLightning')} / 虹${n('trophyRainbow')}`);
@@ -888,14 +935,14 @@
     $('researchScList').innerHTML=s.scObservations.length?s.scObservations.map(sc=>`<div class="research-item"><span>SC ${sc.startDisplayGame}G ＋${sc.displayedAddedGames}G → ${sc.endDisplayGame===null?'派生'+NR.scEnd(sc)+'G':sc.endDisplayGame+'G（実測）'}</span><span><button data-research-sc-edit="${sc.id}">編集</button> <button class="del" data-research-sc-delete="${sc.id}">削除</button></span></div>`).join(''):'';
     const legacyGgo=NR.ggoFamilies(s.ggoHints||{}).total;$('researchGgoList').innerHTML=(s.ggoHintObservations.length?s.ggoHintObservations.map(o=>`<div class="research-item"><span>${o.displayGame===null?'G不明':o.displayGame+'G'}　${NR.GGO_LABELS[o.hintType]} ×${o.count}</span><span><button data-research-ggo-edit="${o.id}">編集</button> <button class="del" data-research-ggo-delete="${o.id}">削除</button></span></div>`).join(''):'')+(legacyGgo?`<div class="research-item"><span>旧Ver.5.8区間集計：${legacyGgo}個（時点不明・キャラ帰属対象外）</span></div>`:'');
     $('researchZoneList').innerHTML=NR.ZONES.map(g=>{const raw=s.zoneObservations[String(g)],eff=NR.effectiveZoneState(s,g),derived=eff!==raw.state;return `<label class="research-zone-row"><strong>${g}G</strong><span><select data-research-zone="${g}">${researchZoneOptions(eff)}</select>${derived?`<div class="source-note">生データは${NR_ZONE_LABELS[raw.state]}／派生表示：${NR_ZONE_LABELS[eff]}</div>`:''}</span></label>`;}).join('');
-    const editGgo=s.ggoHintObservations.find(x=>x.id===researchGgoEditId)||null;$('researchGgoInputs').innerHTML=`<div class="field"><div class="name">確認時液晶G（任意）</div><input id="researchGgoGame" type="number" min="0" inputmode="numeric" value="${editGgo&&editGgo.displayGame!==null?editGgo.displayGame:''}" placeholder="不明なら空欄"></div><div class="field"><div class="name">示唆カテゴリ</div><select id="researchGgoType">${NR.GGO_KEYS.map(k=>`<option value="${k}"${editGgo&&editGgo.hintType===k?' selected':''}>${NR.GGO_LABELS[k]}</option>`).join('')}</select></div><div class="field"><div class="name">個数</div><input id="researchGgoCount" type="number" min="1" inputmode="numeric" value="${editGgo?editGgo.count:1}"></div>`;
+    const editGgo=s.ggoHintObservations.find(x=>x.id===researchGgoEditId)||null,ggoInputKeys=NR.GGO_KEYS.filter(k=>k!=='buggy');if(editGgo&&editGgo.hintType==='buggy')ggoInputKeys.push('buggy');$('researchGgoInputs').innerHTML=`<div class="field"><div class="name">確認時液晶G（任意）</div><input id="researchGgoGame" type="number" min="0" inputmode="numeric" value="${editGgo&&editGgo.displayGame!==null?editGgo.displayGame:''}" placeholder="不明なら空欄"></div><div class="field"><div class="name">示唆カテゴリ</div><select id="researchGgoType">${ggoInputKeys.map(k=>`<option value="${k}"${editGgo&&editGgo.hintType===k?' selected':''}>${NR.GGO_LABELS[k]}</option>`).join('')}</select></div><div class="field"><div class="name">個数</div><input id="researchGgoCount" type="number" min="1" inputmode="numeric" value="${editGgo?editGgo.count:1}"></div>`;
     $('researchEndType').value=s.end.type||'';$('researchEndGame').value=s.end.displayGame===null?'':s.end.displayGame;$('researchLamp').value=s.lamp||'';$('researchNote').value=s.note||'';$('researchFinalize').textContent=normalResearchEditId?'区間の変更を保存':'区間を確定';$('researchCancelEdit').style.display=normalResearchEditId?'block':'none';
-    const totals=NR.ggoTotals(normalResearchSegments),fam=NR.ggoFamilies(totals),G=n('normalG'),rate=G?fam.total/G*1000:null;$('researchGgoSummary').innerHTML=[['詩乃系',fam.shino],['キリト系',fam.kirito],['シノン系',fam.sinon],['死銃系',fam.death],['全GGO示唆合計',fam.total],['1000通常Gあたり',rate===null?'―':rate.toFixed(2)]].map(([k,v])=>`<div class="research-stat"><div class="k">${k}</div><div class="v">${v}${k==='1000通常Gあたり'?'個':'個'}</div></div>`).join('');
+    const totals=NR.ggoTotals(normalResearchSegments),fam=NR.ggoFamilies(totals),G=n('normalG'),rate=G?fam.total/G*1000:null;const ggoSummary=[['詩乃系',fam.shino],['キリト系',fam.kirito],['シノン系',fam.sinon],['死銃系',fam.death],['バギー緑',fam.buggyGreen],['バギー赤',fam.buggyRed]];if(fam.buggyLegacy)ggoSummary.push(['バギー色不明',fam.buggyLegacy]);ggoSummary.push(['全GGO示唆合計',fam.total],['1000通常Gあたり',rate===null?'―':rate.toFixed(2)]);$('researchGgoSummary').innerHTML=ggoSummary.map(([k,v])=>`<div class="research-stat"><div class="k">${k}</div><div class="v">${v}個</div></div>`).join('');
     const closed=normalResearchSegments.filter(x=>x.status==='closed');$('researchSegmentList').innerHTML=closed.length?closed.map(x=>{const menus=x.menuObservations.slice().sort((a,b)=>a.displayGame-b.displayGame).map(m=>`${m.displayGame}G ${m.characterLabel}`).join(' / ')||'メニュー未確認';const zones=NR.ZONES.map(g=>`${g}:${NR_ZONE_LABELS[NR.effectiveZoneState(x,g)]}`).join(' / ');return `<div class="memo-entry"><div class="memo-entry-head"><strong>#${x.sequence} ${esc(NR_END_LABELS[x.end.type]||'その他')} ${x.end.displayGame===null?'':x.end.displayGame+'G'}</strong><span>${x.startedFrom==='cz_reset'?'0Gリセット':'開始G不明'}</span></div><div class="small">${esc(menus)}</div><div class="small">${esc(zones)}</div>${x.lamp?`<span class="memo-tag lamp">ランプ ${esc(x.lamp)}</span>`:''}${x.note?`<div class="memo-note">${esc(x.note)}</div>`:''}<div class="memo-actions"><button data-research-segment-edit="${x.id}">編集</button><button class="del" data-research-segment-delete="${x.id}">削除</button></div></div>`;}).join(''):'<div class="empty-memo">確定済み区間はまだありません。</div>';
-    const stats=NR.aggregateCharacters(normalResearchSegments);$('researchCharacterStats').innerHTML=stats.length?stats.map(a=>`<details><summary>${esc(a.characterLabel)}：${a.segmentCount}区間 / ${a.observationCount}回</summary><table class="research-table"><thead><tr><th>地点</th><th>前兆あり<br>（CZ含む）</th><th>前兆のみ</th><th>有効観測</th><th>CZ</th></tr></thead><tbody>${NR.ZONES.map(g=>`<tr><td>${g}G</td><td>${a.zones[g].premonitionWithCz}</td><td>${a.zones[g].premonitionOnly}</td><td>${a.zones[g].valid}</td><td>${a.zones[g].cz}</td></tr>`).join('')}</tbody></table><div class="small">GGO示唆あり ${a.ggoHintSegments}/${a.segmentCount}区間 / 総${a.ggoTotal}個<br>詩乃${a.ggo.shino50+a.ggo.shinoSure}・キリト${a.ggo.kirito50+a.ggo.kiritoSure}・シノン${a.ggo.sinon50+a.ggo.sinonSure}・死銃${a.ggo.death50+a.ggo.deathSure}</div></details>`).join(''):'<div class="empty-memo">メニュー観測を追加すると表示します。</div>';
-    for(const [key,counter] of Object.entries(NR.GGO_COUNTER_MAP)){const input=$(counter);if(!input)continue;let note=input.closest('.field')?.querySelector('.source-note');if(!note){note=document.createElement('div');note.className='source-note';input.closest('.field')?.appendChild(note);}note.textContent=`合計${n(counter)}回（うち通常時解析から${normalResearchGgoApplied[key]||0}回）`;}
+    const stats=NR.aggregateCharacters(normalResearchSegments);$('researchCharacterStats').innerHTML=stats.length?stats.map(a=>`<details><summary>${esc(a.characterLabel)}：${a.segmentCount}区間 / ${a.observationCount}回</summary><table class="research-table"><thead><tr><th>地点</th><th>前兆あり<br>（CZ含む）</th><th>前兆のみ</th><th>有効観測</th><th>CZ</th></tr></thead><tbody>${NR.ZONES.map(g=>`<tr><td>${g}G</td><td>${a.zones[g].premonitionWithCz}</td><td>${a.zones[g].premonitionOnly}</td><td>${a.zones[g].valid}</td><td>${a.zones[g].cz}</td></tr>`).join('')}</tbody></table><div class="small">GGO示唆あり ${a.ggoHintSegments}/${a.segmentCount}区間 / 総${a.ggoTotal}個<br>詩乃${a.ggo.shino50+a.ggo.shinoSure}・キリト${a.ggo.kirito50+a.ggo.kiritoSure}・シノン${a.ggo.sinon50+a.ggo.sinonSure}・死銃${a.ggo.death50+a.ggo.deathSure}・バギー緑${a.ggo.buggyGreen}・バギー赤${a.ggo.buggyRed}${a.ggo.buggy?`・バギー不明${a.ggo.buggy}`:''}</div></details>`).join(''):'<div class="empty-memo">メニュー観測を追加すると表示します。</div>';
+    for(const [key,counter] of Object.entries(NR.GGO_COUNTER_MAP)){const input=$(counter),field=input?.closest('.field');if(!input||!field)continue;let note=field.querySelector('.source-note');if(!note){note=document.createElement('div');note.className='source-note';field.appendChild(note);}note.textContent=`合計${n(counter)}回（うち通常時解析から${normalResearchGgoApplied[key]||0}回）`;}const legacyNote=$('ggoBuggyLegacyNote'),legacyCount=n('ggoBuggy');legacyNote.style.display=legacyCount?'block':'none';legacyNote.textContent=legacyCount?`旧Ver.5.8.5 色不明バギー：${legacyCount}回`:'';
   }
-  function researchText(){const lines=['【SAO2 通常時解析】'];for(const s of normalResearchSegments.filter(x=>x.status==='closed')){lines.push(`#${s.sequence} ${NR_END_LABELS[s.end.type]||'その他'} ${s.end.displayGame===null?'G不明':s.end.displayGame+'G'} / ${s.startedFrom==='cz_reset'?'CZ後0G':'開始G不明'}`);if(s.menuObservations.length)lines.push(' メニュー：'+s.menuObservations.slice().sort((a,b)=>a.displayGame-b.displayGame).map(m=>`${m.displayGame}G ${m.characterLabel}`).join(' / '));lines.push(' 地点：'+NR.ZONES.map(g=>`${g}G ${NR_ZONE_LABELS[NR.effectiveZoneState(s,g)]}`).join(' / '));const f=NR.ggoFamilies(NR.ggoTotals([s]));if(f.total)lines.push(` GGO示唆：詩乃${f.shino} / キリト${f.kirito} / シノン${f.sinon} / 死銃${f.death}`);if(s.lamp)lines.push(' ランプ：'+s.lamp);if(s.note)lines.push(' '+s.note.replace(/\n/g,' / '));}return lines.join('\n');}
+  function researchText(){const lines=['【SAO2 通常時解析】'];for(const s of normalResearchSegments.filter(x=>x.status==='closed')){lines.push(`#${s.sequence} ${NR_END_LABELS[s.end.type]||'その他'} ${s.end.displayGame===null?'G不明':s.end.displayGame+'G'} / ${s.startedFrom==='cz_reset'?'CZ後0G':'開始G不明'}`);if(s.menuObservations.length)lines.push(' メニュー：'+s.menuObservations.slice().sort((a,b)=>a.displayGame-b.displayGame).map(m=>`${m.displayGame}G ${m.characterLabel}`).join(' / '));lines.push(' 地点：'+NR.ZONES.map(g=>`${g}G ${NR_ZONE_LABELS[NR.effectiveZoneState(s,g)]}`).join(' / '));const f=NR.ggoFamilies(NR.ggoTotals([s]));if(f.total)lines.push(` GGO示唆：詩乃${f.shino} / キリト${f.kirito} / シノン${f.sinon} / 死銃${f.death} / バギー緑${f.buggyGreen} / バギー赤${f.buggyRed}${f.buggyLegacy?` / バギー不明${f.buggyLegacy}`:''}`);if(s.lamp)lines.push(' ランプ：'+s.lamp);if(s.note)lines.push(' '+s.note.replace(/\n/g,' / '));}return lines.join('\n');}
   function researchHasData(){return normalResearchSegments.some(s=>s.status==='closed'||s.menuObservations.length||s.scObservations.length||Object.values(s.zoneObservations||{}).some(z=>z.state!=='unreached')||NR.ggoFamilies(NR.ggoTotals([s])).total||s.lamp||s.note);}
   function clearResearchData(){normalResearchSegments=[];normalResearchEditId=null;researchMenuEditId=null;researchScEditId=null;researchGgoEditId=null;reconcileResearchGgo();normalResearchSegments=[NR.blankSegment(1,'play_start_unknown')];}
   function memoTextOnly(){
@@ -982,6 +1029,7 @@
     lines.push(`終了画面：デフォ${hv('endDefault')} / 奇数${hv('endOdd')} / 偶数${hv('endEven')} / 高設定${hv('endHigh')} / 高設定強${hv('endHighStrong')} / 幼少期${hv('endChild')}`);
     lines.push(`トロフィー：銅${hv('trophyBronze')} / 銀${hv('trophySilver')} / 金${hv('trophyGold')} / イナズマ${hv('trophyLightning')} / 虹${hv('trophyRainbow')}`);
     lines.push(`GGO詩乃：50%示唆${hv('shino50')} / 濃厚${hv('shinoSure')} / 直撃${hv('directAT')}`);
+    lines.push(`GGOバギー：緑${hv('ggoBuggyGreen')} / 赤${hv('ggoBuggyRed')}${hv('ggoBuggy')?` / 旧色不明${hv('ggoBuggy')}`:''}`);
     const ml=Array.isArray(d.memoLogs)?d.memoLogs:[]; const lc=getLampCounts(ml,d.normalResearchSegments||[]); lines.push(`ランプ集計：白${lc['白']} / 青${lc['青']} / 黄${lc['黄']} / 緑${lc['緑']} / 赤${lc['赤']} / 紫${lc['紫']}`); if(ml.length){lines.push('');lines.push('【旧CZ・AT区間ログ】');ml.forEach((m,i)=>{const parts=[];const mc=m.menuChar||m.content||'';if(mc)parts.push('メニュー '+mc);if(m.result)parts.push(m.result);if(m.lamp)parts.push('ランプ'+m.lamp);lines.push(`#${i+1} ${m.game!==''?m.game+'G':'G数未入力'}${parts.length?'：'+parts.join(' / '):''}`);if(m.note)lines.push('  '+String(m.note).replace(/\n/g,' / '));});}
     return lines.join('\n');
   }
@@ -1057,11 +1105,12 @@
       detailRow('詩乃',`50%示唆 ${hv('shino50')} / 濃厚 ${hv('shinoSure')} / 直撃 ${hv('directAT')}`),
       detailRow('キリト',`50%クラス ${hv('ggoKirito50')} / 濃厚 ${hv('ggoKiritoSure')} / 恩恵確認 ${hv('ggoKiritoBenefit')}`),
       detailRow('シノン',`50%クラス ${hv('ggoSinon50')} / 濃厚 ${hv('ggoSinonSure')} / 恩恵確認 ${hv('ggoSinonBenefit')}`),
-      detailRow('死銃',`50%クラス ${hv('ggoDeath50')} / 濃厚 ${hv('ggoDeathSure')} / 恩恵確認 ${hv('ggoDeathBenefit')}`)
+      detailRow('死銃',`50%クラス ${hv('ggoDeath50')} / 濃厚 ${hv('ggoDeathSure')} / 恩恵確認 ${hv('ggoDeathBenefit')}`),
+      detailRow('バギー',`緑 ${hv('ggoBuggyGreen')} / 赤 ${hv('ggoBuggyRed')}${hv('ggoBuggy')?` / 旧色不明 ${hv('ggoBuggy')}`:''}`,'設定期待度には未反映')
     ]));
     const nrSegments=NR.normalizeSegments(d.normalResearchSegments||[]),nrTotals=NR.ggoTotals(nrSegments),nrFam=NR.ggoFamilies(nrTotals);html.push(detailSection('通常時解析',[
       detailRow('保存区間',`${nrSegments.filter(x=>x.status==='closed').length}区間`,d.normalResearchSegments?'新研究データ':'旧履歴のためデータなし'),
-      detailRow('GGO示唆アイテム',`合計 ${nrFam.total}個`,`詩乃 ${nrFam.shino} / キリト ${nrFam.kirito} / シノン ${nrFam.sinon} / 死銃 ${nrFam.death}`)
+      detailRow('GGO示唆アイテム',`合計 ${nrFam.total}個`,`詩乃 ${nrFam.shino} / キリト ${nrFam.kirito} / シノン ${nrFam.sinon} / 死銃 ${nrFam.death} / バギー緑 ${nrFam.buggyGreen} / バギー赤 ${nrFam.buggyRed}${nrFam.buggyLegacy?` / バギー不明 ${nrFam.buggyLegacy}`:''}`)
     ]));
     html.push(detailSection('ランプ集計',[
       detailRow('ボイス＋ランプ',`白 ${lc['白']} / 青 ${lc['青']} / 黄 ${lc['黄']} / 緑 ${lc['緑']} / 赤 ${lc['赤']} / 紫 ${lc['紫']}`)
@@ -1084,7 +1133,7 @@
     $('historyScWater').textContent=`${scAgg.w}回${scAggTotal?` (${fmtPct(scAgg.w/scAggTotal)})`:''}`;
     $('historyScNight').textContent=`${scAgg.n}回${scAggTotal?` (${fmtPct(scAgg.n/scAggTotal)})`:''}`;
     $('historyScTotal').innerHTML=`種類判明SC：<strong>${scAggTotal}回</strong>`;
-    const ggoRows=NR.historyGgoByBest(playHistory);$('historyGgoByBest').innerHTML=`<table class="research-table"><thead><tr><th>保存時1位</th><th>実戦</th><th>通常G</th><th>示唆総数</th><th>1000Gあたり</th><th>内訳</th></tr></thead><tbody>${ggoRows.map(a=>`<tr><td>設定${a.bestSetting}</td><td>${a.sessions}${a.sessions<5?'（参考）':''}</td><td>${a.normalGames.toLocaleString()}</td><td>${a.ggoTotal}</td><td>${a.normalGames?(a.ggoTotal/a.normalGames*1000).toFixed(2):'―'}</td><td>詩${a.shino}/キ${a.kirito}/シ${a.sinon}/死${a.death}</td></tr>`).join('')}</tbody></table>`;
+    const ggoRows=NR.historyGgoByBest(playHistory);$('historyGgoByBest').innerHTML=`<table class="research-table"><thead><tr><th>保存時1位</th><th>実戦</th><th>通常G</th><th>示唆総数</th><th>1000Gあたり</th><th>内訳</th></tr></thead><tbody>${ggoRows.map(a=>`<tr><td>設定${a.bestSetting}</td><td>${a.sessions}${a.sessions<5?'（参考）':''}</td><td>${a.normalGames.toLocaleString()}</td><td>${a.ggoTotal}</td><td>${a.normalGames?(a.ggoTotal/a.normalGames*1000).toFixed(2):'―'}</td><td>詩${a.shino}/キ${a.kirito}/シ${a.sinon}/死${a.death}/バ緑${a.buggyGreen}/バ赤${a.buggyRed}${a.buggyLegacy?`/バ不明${a.buggyLegacy}`:''}</td></tr>`).join('')}</tbody></table>`;
     if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
     $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0,nr=Array.isArray(d.normalResearchSegments)?d.normalResearchSegments.filter(x=>x.status==='closed').length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">総G / 通常G</div><div class="v">${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()} / ${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">通常時解析 / 旧ログ</div><div class="v">${nr} / ${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
   }
