@@ -1,4 +1,4 @@
-name: Apply SAO2 Ver.5.8.7
+name: Cleanup SAO2 Ver.5.8.7
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  apply:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,31 +17,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reconstruct and verify Ver.5.8.7
-        shell: bash
-        run: |
-          cat \
-            .github/update/sao2_v587.gz.b64 \
-            .github/update/sao2_v587.part1 \
-            .github/update/sao2_v587.part2 \
-            .github/update/sao2_v587.part3 \
-            .github/update/sao2_v587.part4 \
-            .github/update/sao2_v587.part5 \
-            .github/update/sao2_v587.part6 > /tmp/sao2_v587.b64
-          base64 -d /tmp/sao2_v587.b64 > /tmp/sao2_v587.gz
-          gzip -dc /tmp/sao2_v587.gz > index.html
-          echo 'f98406be632d1e2cc02a8def0037e0e151b435f3d73fb33349fba781c342c83f  index.html' | sha256sum -c -
-          test "$(git hash-object index.html)" = '308f708f2587357c43c3e44f48a5718f590ac2b6'
-
-      - name: Commit index update
+      - name: Remove temporary update files
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          if git diff --cached --quiet; then
-            echo 'index.html already matches Ver.5.8.7'
-            exit 0
-          fi
-          git commit -m 'Update index to Ver.5.8.7'
+          rm -f .github/update/sao2_v587.gz.b64 \
+                .github/update/sao2_v587.part1 \
+                .github/update/sao2_v587.part2 \
+                .github/update/sao2_v587.part3 \
+                .github/update/sao2_v587.part4 \
+                .github/update/sao2_v587.part5 \
+                .github/update/sao2_v587.part6 \
+                .github/workflows/apply-sao2-v587.yml
+          git add -A
+          git commit -m 'Remove temporary SAO2 Ver.5.8.7 update files'
           git push
