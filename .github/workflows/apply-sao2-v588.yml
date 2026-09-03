@@ -26,7 +26,11 @@ jobs:
             .github/update/sao2_v588.part2 \
             .github/update/sao2_v588.part3 \
             .github/update/sao2_v588.part4 \
-            .github/update/sao2_v588.part5 \
+            .github/update/sao2_v588.part5a \
+            .github/update/sao2_v588.part5b0 \
+            .github/update/sao2_v588.part5b1 \
+            .github/update/sao2_v588.part5b2 \
+            .github/update/sao2_v588.part5b3 \
             .github/update/sao2_v588.part6 > /tmp/sao2_v588.b64
           base64 -d /tmp/sao2_v588.b64 > /tmp/sao2_v588.gz
           gzip -dc /tmp/sao2_v588.gz > index.html
