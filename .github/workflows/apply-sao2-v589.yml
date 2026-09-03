@@ -26,7 +26,10 @@ jobs:
             .github/update/sao2_v589.part02 \
             .github/update/sao2_v589.part03 \
             .github/update/sao2_v589.part04 \
-            .github/update/sao2_v589.part05 > /tmp/sao2_v589.b64
+            .github/update/sao2_v589.part05a \
+            .github/update/sao2_v589.part05b_00 \
+            .github/update/sao2_v589.part05b_01 \
+            .github/update/sao2_v589.part05b_02 > /tmp/sao2_v589.b64
           base64 -d /tmp/sao2_v589.b64 > /tmp/sao2_v589.gz
           gzip -dc /tmp/sao2_v589.gz > index.html
           echo '3fa4663bc8c6b7c16f5217effe2806d976b6568daabe8fabf1678ef116d215a0  index.html' | sha256sum -c -
