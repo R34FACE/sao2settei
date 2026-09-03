@@ -178,7 +178,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.7 / Cumulative Research</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.8 / Death Gun Research</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -270,13 +270,16 @@
     </details>
 
     <details class="setting-order-sniper">
-      <summary>スナイパーチャンス突破率（参考統計）</summary>
+      <summary>スナイパーチャンス / 設定5研究</summary>
       <div class="grid">
         <div class="field"><div class="name">スナイパーチャンス回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperChanceTotal">−</button><input id="sniperChanceTotal" type="number" min="0" value="0"><button data-delta="1" data-target="sniperChanceTotal">＋</button></div><div class="hint">AT中に突入したスナイパーチャンス総数</div></div>
         <div class="field"><div class="name">突破回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperChanceSuccess">−</button><input id="sniperChanceSuccess" type="number" min="0" value="0"><button data-delta="1" data-target="sniperChanceSuccess">＋</button></div><div class="hint">次セット移行・突破として数えたい回数</div></div>
+        <div class="field"><div class="name">2戦目到達回数</div><div class="num-wrap"><button data-delta="-1" data-target="sniperSecondTotal">−</button><input id="sniperSecondTotal" type="number" min="0" value="0"><button data-delta="1" data-target="sniperSecondTotal">＋</button></div><div class="hint">設定5研究用の分母。1戦目は集計しない</div></div>
+        <div class="field"><div class="name">2戦目 デス・ガン選択</div><div class="num-wrap"><button data-delta="-1" data-target="sniperSecondDeathGun">−</button><input id="sniperSecondDeathGun" type="number" min="0" value="0"><button data-delta="1" data-target="sniperSecondDeathGun">＋</button></div><div class="hint">2戦目でデス・ガンが選ばれた回数</div></div>
       </div>
       <div class="calc" id="sniperChanceRate">突破率：―</div>
-      <div class="small">現時点では設定期待度の計算には使用しません。AT中挙動の自分用統計として保存します。</div>
+      <div class="calc" id="sniperSecondDeathGunRate">2戦目デス・ガン選択率：―</div>
+      <div class="small">設定5を意識した研究では2戦目だけを独立集計します。<br>1戦目は死銃モードやリセット影響の可能性があるため、この設定5研究用データには含めません。<br>現時点では相対期待度の数値計算には使用しません。</div>
     </details>
 
     <details open class="setting-order-common-bell">
@@ -383,7 +386,7 @@
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.5.8.7：保存済み実戦を横断する累計メニューキャラ研究統計とコピー機能を追加。</div>
+    <div class="footer-note">Ver.5.8.8：設定5研究用の2戦目デス・ガン選択率と保存履歴累計を追加。</div>
   </section>
   </div>
 
@@ -577,6 +580,15 @@
         <div class="calc" id="historyScTotal">種類判明SC：0回</div>
         <div class="small">保存済み実戦の4種類を合算。各実戦の詳細データにも種類別回数が残ります。</div>
       </details>
+      <details open>
+        <summary>設定5研究：2戦目デス・ガン累計</summary>
+        <div class="grid">
+          <div class="statbox"><div class="k">2戦目到達</div><div class="v" id="historySniperSecondTotal">0回</div></div>
+          <div class="statbox"><div class="k">2戦目デス・ガン</div><div class="v" id="historySniperSecondDeathGun">0回</div></div>
+        </div>
+        <div class="calc" id="historySniperSecondRate">累計選択率：―</div>
+        <div class="small">保存済み実戦を横断集計。1戦目は含めません。</div>
+      </details>
       <details open><summary>保存時相対期待度1位別 GGO示唆統計</summary><div class="small">真の設定別出現率ではありません。保存時に相対期待度1位だった設定でまとめた参考集計です。</div><div style="overflow:auto;margin-top:8px" id="historyGgoByBest"></div></details>
       <div class="history-list" id="historyList"></div>
       <div class="actions"><button class="btn secondary" id="copyHistory">履歴一覧をコピー</button><button class="btn danger" id="clearHistory">履歴を全削除</button></div>
@@ -660,7 +672,7 @@
   const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v3','sao2-setting-tool-v2','sao2-setting-tool-v1'];
   const ids = [
     'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
-    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','sniperChanceTotal','sniperChanceSuccess','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceA','strongChanceTotal','strongChanceNormalB','strongChanceDefCZ',
+    'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','sniperChanceTotal','sniperChanceSuccess','sniperSecondTotal','sniperSecondDeathGun','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceA','strongChanceTotal','strongChanceNormalB','strongChanceDefCZ',
     'defCZTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild','trophyBronze','trophySilver','trophyGold','trophyLightning','trophyRainbow',
     'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit','ggoBuggyGreen','ggoBuggyRed','ggoBuggy'
   ];
@@ -759,6 +771,8 @@
     const scTotal=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight')+n('shootingChargeUnknown');
     if(n('shootingChargeATHit')>scTotal) msgs.push('SC中AT当選回数がSC総回数を超えています。');
     if(scTotal>0 && n('watermelonSC')>scTotal) msgs.push('低確スイカ由来SCが記録済みSC総回数を超えています。SC種類のカウント漏れがないか確認してください。');
+    if(n('sniperSecondTotal')>n('sniperChanceTotal')) msgs.push('スナイパーチャンス2戦目到達回数がスナイパーチャンス回数を超えています。');
+    if(n('sniperSecondDeathGun')>n('sniperSecondTotal')) msgs.push('2戦目デス・ガン選択回数が2戦目到達回数を超えています。');
     if(n('bulletCZHit')+n('bulletDirectAT')>n('bulletMaxTotal')) msgs.push('バレットMAXのCZ当選＋AT直撃がMAX到達回数を超えています。');
     const box=$('validation');
     if(msgs.length){box.style.display='block';box.textContent=msgs.join(' ');}else{box.style.display='none';box.textContent='';}
@@ -858,6 +872,7 @@
     $('shootingChargeRate').innerHTML=`参考・SC出現率：<strong>${(sct&&G)?`${sct}回 / ${G.toLocaleString()}G = ${fmtDen(sct,G)}`:'―'}</strong>`;
     $('shootingChargeATHitRate').innerHTML=`SC中AT当選率：<strong>${sct?`${sch}/${sct} = ${fmtPct(sch/sct)}`:'―'}</strong>`;
     const spt=n('sniperChanceTotal'), sps=n('sniperChanceSuccess'); $('sniperChanceRate').innerHTML=`突破率：<strong>${spt?`${sps}/${spt} = ${fmtPct(sps/spt)}`:'―'}</strong>`;
+    const ssTotal=n('sniperSecondTotal'), ssDeath=n('sniperSecondDeathGun'); $('sniperSecondDeathGunRate').innerHTML=`2戦目デス・ガン選択率：<strong>${ssTotal?`${ssDeath}/${ssTotal} = ${fmtPct(ssDeath/ssTotal)}`:'―'}</strong>`;
     const cbn=n('commonBellNormal'), atg=n('atGameCount'), cba=n('commonBellAT');
     $('commonBellNormalRate').innerHTML=`通常時：<strong>${(cbn && G)?`${cbn}回 / ${G.toLocaleString()}G = ${fmtDen(cbn,G)}`:'―'}</strong>`;
     $('commonBellATRate').innerHTML=`AT中：<strong>${(cba && atg)?`${cba}回 / ${atg.toLocaleString()}G = ${fmtDen(cba,atg)}`:'―'}</strong>`;
@@ -895,6 +910,18 @@
     lines.push(`シューティングチャージ種類：キリト射撃訓練${n('shootingChargeKirito')} / シノンビンタ${n('shootingChargeSinon')} / 水鉄砲チャージ${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 種類不明${n('shootingChargeUnknown')}`:''}`);
     lines.push(`SC合計：${scTotal}回${scTotal&&G?' ('+fmtDen(scTotal,G)+')':''} / SC中AT当選 ${n('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(n('shootingChargeATHit')/scTotal)+')':''}`);
     lines.push(`スナイパーチャンス：${n('sniperChanceSuccess')}/${n('sniperChanceTotal')}${n('sniperChanceTotal')?' ('+fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))+')':''}`);
+    lines.push('');
+    lines.push('【設定5研究：2戦目デス・ガン】');
+    lines.push(`スナイパーチャンス：${n('sniperChanceTotal')}回`);
+    lines.push(`2戦目到達：${n('sniperSecondTotal')}回`);
+    lines.push(`2戦目デス・ガン：${n('sniperSecondDeathGun')}回`);
+    lines.push(`2戦目デス・ガン選択率：${n('sniperSecondTotal')?fmtPct(n('sniperSecondDeathGun')/n('sniperSecondTotal')):'―'}`);
+    const summarySniperHistory=historySniperSecondTotals();
+    lines.push('');
+    lines.push('【設定5研究：2戦目デス・ガン累計】');
+    lines.push(`2戦目到達：${summarySniperHistory.total}回`);
+    lines.push(`2戦目デス・ガン：${summarySniperHistory.death}回`);
+    lines.push(`累計選択率：${summarySniperHistory.total?fmtPct(summarySniperHistory.death/summarySniperHistory.total):'―'}`);
     const cbAll=n('commonBellNormal')+n('commonBellAT'), gameAll=n('normalG')+n('atGameCount');
     lines.push(`共通ベル：通常時 ${n('commonBellNormal')}${n('normalG')&&n('commonBellNormal')?' ('+fmtDen(n('commonBellNormal'),n('normalG'))+')':''} / AT中ナビなし右下がり ${n('commonBellAT')}${n('atGameCount')&&n('commonBellAT')?' ('+fmtDen(n('commonBellAT'),n('atGameCount'))+')':''}${cbAll&&gameAll?' / 全状態参考 '+fmtDen(cbAll,gameAll):''}`);
     const bulletHit=n('bulletCZHit')+n('bulletDirectAT'), bulletMiss=Math.max(0,n('bulletMaxTotal')-bulletHit);
@@ -1018,7 +1045,7 @@
   }
   function saveCurrentToHistory(){
     const meta=currentMeta();
-    if(!n('totalG') && !n('normalG') && !memoLogs.length && !researchHasData() && !n('czCount') && !n('atCount')){alert('保存する実戦データがありません。');return;}
+    if(!n('totalG') && !n('normalG') && !memoLogs.length && !researchHasData() && !n('czCount') && !n('atCount') && !n('sniperSecondTotal') && !n('sniperSecondDeathGun')){alert('保存する実戦データがありません。');return;}
     const r=calculate(), mx=Math.max(...r.probs), top=r.probs.indexOf(mx);
     const entry={id:'h'+Date.now()+'_'+Math.random().toString(36).slice(2,7),date:meta.date||todayLocal(),investment:meta.investment,returns:meta.returns,net:meta.returns-meta.investment,savedAt:new Date().toISOString(),totalG:n('totalG'),normalG:n('normalG'),bestSetting:mx>0?top+1:null,bestPct:mx>0?mx*100:0,data:sessionSnapshot()};
     playHistory.unshift(entry); save(); renderHistory(); $('saveState').textContent='実戦履歴に保存しました';
@@ -1035,6 +1062,12 @@
     const oldScTotal=hv('shootingChargeTotal'), scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldScTotal:0), scKnown=scK+scS+scW+scN, scTotal=scKnown+scU;
     lines.push(`シューティングチャージ種類：キリト射撃訓練${scK} / シノンビンタ${scS} / 水鉄砲チャージ${scW} / NIGHT SPLASH${scN}${scU?` / 種類不明${scU}`:''}`);
     lines.push(`SC合計：${scTotal}回${scTotal&&hv('normalG')?' ('+fmtDen(scTotal,hv('normalG'))+')':''} / SC中AT当選${hv('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(hv('shootingChargeATHit')/scTotal)+')':''}`);
+    lines.push('');
+    lines.push('【設定5研究：2戦目デス・ガン】');
+    lines.push(`スナイパーチャンス：${hv('sniperChanceTotal')}回`);
+    lines.push(`2戦目到達：${hv('sniperSecondTotal')}回`);
+    lines.push(`2戦目デス・ガン：${hv('sniperSecondDeathGun')}回`);
+    lines.push(`2戦目デス・ガン選択率：${hv('sniperSecondTotal')?fmtPct(hv('sniperSecondDeathGun')/hv('sniperSecondTotal')):'―'}`);
     const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=histAT; lines.push(`共通ベル：通常${bellN}${bellN&&hv('normalG')?' ('+fmtDen(bellN,hv('normalG'))+')':''} / AT中${bellAT}${bellAT&&atG?' ('+fmtDen(bellAT,atG)+')':''}`);
     const bulletHit=hv('bulletCZHit')+hv('bulletDirectAT'), bulletMiss=Math.max(0,hv('bulletMaxTotal')-bulletHit); lines.push(`バレットMAX：${hv('bulletMaxTotal')} → CZ${hv('bulletCZHit')} / AT直撃${hv('bulletDirectAT')} / 非当選${bulletMiss}${hv('bulletMaxTotal')?` / CZ相当${fmtPct(bulletHit/hv('bulletMaxTotal'))}`:''}`);
     lines.push(`終了画面：デフォ${hv('endDefault')} / 奇数${hv('endOdd')} / 偶数${hv('endEven')} / 高設定${hv('endHigh')} / 高設定強${hv('endHighStrong')} / 幼少期${hv('endChild')}`);
@@ -1091,7 +1124,9 @@
       detailRow('NIGHT SPLASH',`${scN}回${scTotal?`　${fmtPct(scN/scTotal)}`:''}`),
       ...(scU?[detailRow('種類不明',`${scU}回${scTotal?`　${fmtPct(scU/scTotal)}`:''}`)]:[]),
       detailRow('SC中AT当選',ratio(hv('shootingChargeATHit'),scTotal)),
-      detailRow('スナイパーチャンス突破',ratio(hv('sniperChanceSuccess'),hv('sniperChanceTotal')))
+      detailRow('スナイパーチャンス突破',ratio(hv('sniperChanceSuccess'),hv('sniperChanceTotal'))),
+      detailRow('2戦目到達',`${hv('sniperSecondTotal')}回`,'設定5研究用。1戦目は集計対象外'),
+      detailRow('2戦目デス・ガン選択',ratio(hv('sniperSecondDeathGun'),hv('sniperSecondTotal')),'相対期待度の計算には未使用')
     ]));
     html.push(detailSection('共通ベル',[
       detailRow('通常時',rate(bellN,G)),
@@ -1133,6 +1168,10 @@
   function openHistoryDetail(i){const h=playHistory[i];if(!h)return;openedHistoryIndex=i;$('historyDetailBody').innerHTML=historyDetailHtml(h);$('historyDetailModal').classList.add('open');}
   function closeHistoryDetail(){openedHistoryIndex=-1;$('historyDetailModal').classList.remove('open');}
 
+  function historySniperSecondTotals(){
+    return playHistory.reduce((a,h)=>{const d=h&&h.data||{};a.total+=Math.max(0,Number(d.sniperSecondTotal||0));a.death+=Math.max(0,Number(d.sniperSecondDeathGun||0));return a;},{total:0,death:0});
+  }
+
   function renderHistory(){
     if(!$('historyList'))return;renderCumulativeResearch();$('historyCountBadge').textContent=playHistory.length+'件'; $('historyCountStat').textContent=playHistory.length+'件';
     const totalNet=playHistory.reduce((a,h)=>a+Number(h.net||0),0); $('historyNetStat').textContent=fmtCoins(totalNet); $('historyNetStat').style.color=totalNet>0?'#d9ec9a':totalNet<0?'#ff9faa':'#f4f7fb';
@@ -1144,6 +1183,10 @@
     $('historyScWater').textContent=`${scAgg.w}回${scAggTotal?` (${fmtPct(scAgg.w/scAggTotal)})`:''}`;
     $('historyScNight').textContent=`${scAgg.n}回${scAggTotal?` (${fmtPct(scAgg.n/scAggTotal)})`:''}`;
     $('historyScTotal').innerHTML=`種類判明SC：<strong>${scAggTotal}回</strong>`;
+    const sniperAgg=historySniperSecondTotals();
+    $('historySniperSecondTotal').textContent=`${sniperAgg.total}回`;
+    $('historySniperSecondDeathGun').textContent=`${sniperAgg.death}回`;
+    $('historySniperSecondRate').innerHTML=`累計選択率：<strong>${sniperAgg.total?fmtPct(sniperAgg.death/sniperAgg.total):'―'}</strong>`;
     const ggoRows=NR.historyGgoByBest(playHistory);$('historyGgoByBest').innerHTML=`<table class="research-table"><thead><tr><th>保存時1位</th><th>実戦</th><th>通常G</th><th>示唆総数</th><th>1000Gあたり</th><th>内訳</th></tr></thead><tbody>${ggoRows.map(a=>`<tr><td>設定${a.bestSetting}</td><td>${a.sessions}${a.sessions<5?'（参考）':''}</td><td>${a.normalGames.toLocaleString()}</td><td>${a.ggoTotal}</td><td>${a.normalGames?(a.ggoTotal/a.normalGames*1000).toFixed(2):'―'}</td><td>詩${a.shino}/キ${a.kirito}/シ${a.sinon}/死${a.death}/バ緑${a.buggyGreen}/バ赤${a.buggyRed}${a.buggyLegacy?`/バ不明${a.buggyLegacy}`:''}</td></tr>`).join('')}</tbody></table>`;
     if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
     $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0,nr=Array.isArray(d.normalResearchSegments)?d.normalResearchSegments.filter(x=>x.status==='closed').length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">総G / 通常G</div><div class="v">${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()} / ${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">通常時解析 / 旧ログ</div><div class="v">${nr} / ${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
@@ -1157,7 +1200,7 @@
     if(!confirm('現在の入力データ・通常時解析・旧CZ/ATログをリセットして、新しい実戦を開始しますか？\n保存済みの過去履歴は残ります。'))return; ids.forEach(id=>$(id).value=0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1]; memoLogs=[];normalResearchSegments=[];normalResearchGgoApplied=NR.blankHints();normalResearchEditId=null; clearMemoForm(); $('playDate').value=todayLocal(); $('investmentCoins').value=0; $('returnCoins').value=0; renderPriorInputs(); refresh(); activateTab('setting');
   }
   function historyListText(){
-    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / 総${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()}G・通常${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); return lines.join('\n');
+    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / 総${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()}G・通常${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); const sniperAgg=historySniperSecondTotals(); lines.push(''); lines.push('【設定5研究：2戦目デス・ガン累計】'); lines.push(`2戦目到達：${sniperAgg.total}回`); lines.push(`2戦目デス・ガン：${sniperAgg.death}回`); lines.push(`累計選択率：${sniperAgg.total?fmtPct(sniperAgg.death/sniperAgg.total):'―'}`); return lines.join('\n');
   }
 
   function renderPriorInputs(){
