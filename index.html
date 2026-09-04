@@ -178,7 +178,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.9 / CZ Zone Research</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.10 / 800G Ceiling</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -386,7 +386,7 @@
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.5.8.9：明示指定したCZ当選地点の派生集計と、保存履歴の過去CZ地点補完を追加。</div>
+    <div class="footer-note">Ver.5.8.10：CZ当選地点へ、6研究地点とは独立した「800G天井」を追加。</div>
   </section>
   </div>
 
@@ -478,7 +478,7 @@
 
     <section class="card">
       <div class="mode-head"><div><div class="mode-title">通常区間の終了</div><div class="mode-sub">CZ等を終端として区間を確定</div></div><span class="mode-badge" id="researchSegmentCount">0区間</span></div>
-      <div class="grid"><div class="field"><div class="name">結果</div><select id="researchEndType"><option value="">未確定</option><option value="cz_at_win">CZ→AT当選</option><option value="cz_at_fail">CZ→AT非当選</option><option value="game_ceiling_cz">G数天井CZ</option><option value="direct_at">AT直撃</option><option value="sc_at">SC中AT当選</option><option value="other">その他</option></select></div><div class="field"><div class="name">CZ・終端確認時液晶G</div><input id="researchEndGame" type="number" min="0" inputmode="numeric" placeholder="確認できた場合"></div><div class="field" id="researchCzZoneField" style="display:none"><div class="name">CZ当選地点</div><select id="researchCzZone"><option value="">未選択</option><option value="50">50G</option><option value="100">100G</option><option value="250">250G</option><option value="350">350G</option><option value="500">500G</option><option value="650">650G</option><option value="outside">研究地点外</option><option value="unknown">不明</option></select><div class="hint">実際にどの研究地点からのCZだったかを選択してください。終端G数から自動推測はしません。</div></div><div class="field"><div class="name">ランプ色</div><select id="researchLamp"><option value="">なし / 未確認</option><option>白</option><option>青</option><option>黄</option><option>緑</option><option>赤</option><option>紫</option></select></div><div class="field"><div class="name">追加メモ</div><textarea class="memo-text" id="researchNote"></textarea></div></div>
+      <div class="grid"><div class="field"><div class="name">結果</div><select id="researchEndType"><option value="">未確定</option><option value="cz_at_win">CZ→AT当選</option><option value="cz_at_fail">CZ→AT非当選</option><option value="game_ceiling_cz">G数天井CZ</option><option value="direct_at">AT直撃</option><option value="sc_at">SC中AT当選</option><option value="other">その他</option></select></div><div class="field"><div class="name">CZ・終端確認時液晶G</div><input id="researchEndGame" type="number" min="0" inputmode="numeric" placeholder="確認できた場合"></div><div class="field" id="researchCzZoneField" style="display:none"><div class="name">CZ当選地点</div><select id="researchCzZone"><option value="">未選択</option><option value="50">50G</option><option value="100">100G</option><option value="250">250G</option><option value="350">350G</option><option value="500">500G</option><option value="650">650G</option><option value="800">800G天井</option><option value="outside">研究地点外</option><option value="unknown">不明</option></select><div class="hint">実際にどの研究地点からのCZだったかを選択してください。終端G数から自動推測はしません。</div></div><div class="field"><div class="name">ランプ色</div><select id="researchLamp"><option value="">なし / 未確認</option><option>白</option><option>青</option><option>黄</option><option>緑</option><option>赤</option><option>紫</option></select></div><div class="field"><div class="name">追加メモ</div><textarea class="memo-text" id="researchNote"></textarea></div></div>
       <div class="actions"><button class="btn" id="researchFinalize">区間を確定</button><button class="btn secondary" id="researchCancelEdit" style="display:none">編集を終了</button></div>
       <div class="small">CZ系結果の確定後は、実機リセット仕様に基づく0G開始区間を自動作成します。それ以外は開始G不明の次区間を作成します。</div>
     </section>
@@ -643,7 +643,7 @@
   const GGO_LABELS={shino50:'詩乃 50%示唆',shinoSure:'詩乃 濃厚',kirito50:'キリト 50%クラス',kiritoSure:'キリト 濃厚',sinon50:'シノン 50%クラス',sinonSure:'シノン 濃厚',death50:'死銃 50%クラス',deathSure:'死銃 濃厚',buggyGreen:'バギー緑',buggyRed:'バギー赤',buggy:'バギー色不明'};
   const ZONE_STATES=['unreached','unconfirmed','no_premonition','premonition','cz_hit','sc_skipped'];
   const CZ_END_TYPES=['cz_at_win','cz_at_fail','game_ceiling_cz'];
-  const CZ_ZONE_VALUES=['50','100','250','350','500','650','outside','unknown'];
+  const CZ_ZONE_VALUES=['50','100','250','350','500','650','800','outside','unknown'];
   const nrn=v=>Math.max(0,Number(v)||0),nrClone=v=>JSON.parse(JSON.stringify(v));
   function nrId(prefix='nrs'){return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,9)}`;}
   function blankHints(){return Object.fromEntries(GGO_KEYS.map(k=>[k,0]));}
@@ -963,7 +963,7 @@
   function getLampCounts(logs,research=[]){return NR.lampCounts(logs,research);}
   const NR_ZONE_LABELS={unreached:'未到達',unconfirmed:'未確認',no_premonition:'前兆なし',premonition:'前兆あり',cz_hit:'CZ当選',sc_skipped:'SCスキップ'};
   const NR_END_LABELS={cz_at_win:'CZ→AT当選',cz_at_fail:'CZ→AT非当選',game_ceiling_cz:'G数天井CZ',direct_at:'AT直撃',sc_at:'SC中AT当選',other:'その他'};
-  const NR_CZ_ZONE_LABELS={'50':'50G','100':'100G','250':'250G','350':'350G','500':'500G','650':'650G',outside:'研究地点外',unknown:'不明'};
+  const NR_CZ_ZONE_LABELS={'50':'50G','100':'100G','250':'250G','350':'350G','500':'500G','650':'650G','800':'800G天井',outside:'研究地点外',unknown:'不明'};
   function ensureResearchCurrent(){let s=normalResearchEditId?normalResearchSegments.find(x=>x.id===normalResearchEditId):normalResearchSegments.find(x=>x.status==='open');if(!s&&!normalResearchEditId){s=NR.blankSegment(normalResearchSegments.length+1,'play_start_unknown');normalResearchSegments.push(s);}return s||null;}
   function researchCurrent(){return ensureResearchCurrent();}
   function reconcileResearchGgo(){const current={};for(const k of NR.GGO_KEYS)current[NR.GGO_COUNTER_MAP[k]]=n(NR.GGO_COUNTER_MAP[k]);const next=NR.ggoTotals(normalResearchSegments),r=NR.reconcileGgo(current,normalResearchGgoApplied,next);for(const [id,v] of Object.entries(r.totals))if($(id))$(id).value=v;normalResearchGgoApplied=r.applied;return r;}
