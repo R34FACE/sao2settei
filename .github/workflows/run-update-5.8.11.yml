@@ -21,6 +21,7 @@ jobs:
         run: |
           sed -n '/^H4s/,/^PATCH_B64$/p' .github/workflows/update-5.8.11.yml | sed '$d' > /tmp/update.patch.gz.b64
           base64 -d /tmp/update.patch.gz.b64 | gzip -d > /tmp/update.patch
+          sed -i 's#^--- /mnt/data/SAO2_Ver5.8.10.html.*#--- a/index.html#; s#^+++ /mnt/data/SAO2_Ver5.8.11.html.*#+++ b/index.html#' /tmp/update.patch
           git apply --check /tmp/update.patch
           git apply /tmp/update.patch
           test "$(sha256sum index.html | awk '{print $1}')" = "5b325c81d294432617b3de83e9360f572270169cd47de0a4290015a41be0b9b0"
