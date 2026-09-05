@@ -1,0 +1,36 @@
+name: Update SAO2 Ver.5.8.12
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-5.8.12.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply and verify Ver.5.8.12
+        shell: bash
+        run: |
+          test "$(git hash-object index.html)" = "023f8a2171878248193fb23e0b9bc1c613a1fd4e"
+          cat > /tmp/update.patch.gz.b64 <<'PATCH_B64'
+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
+PATCH_B64
+          base64 -d /tmp/update.patch.gz.b64 | gzip -d > /tmp/update.patch
+          git apply --check /tmp/update.patch
+          git apply /tmp/update.patch
+          test "$(sha256sum index.html | awk '{print $1}')" = "bb7f3ad579c749148d489dcd55edf75343c61135e66068c1fae58a6ef8650902"
+          test "$(git hash-object index.html)" = "0d4239b0667af361a08f4a5466a579b70fde6509"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git rm .github/workflows/update-5.8.12.yml
+          git commit -m "Update index to Ver.5.8.12"
+          git push
