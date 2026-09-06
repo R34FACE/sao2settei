@@ -178,7 +178,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.13 / One Hint One Record</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.14 / AT Start Stage</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -220,6 +220,9 @@
         <div class="field"><div class="name">CZ失敗時 AT強化アイテム獲得</div><div class="num-wrap"><button data-delta="-1" data-target="itemHit">−</button><input id="itemHit" type="number" min="0" value="0"><button data-delta="1" data-target="itemHit">＋</button></div><div class="calc" id="itemRate">獲得率：―</div></div>
         <div class="field"><div class="name">AT初当たり</div><div class="num-wrap"><button data-delta="-1" data-target="atCount">−</button><input id="atCount" type="number" min="0" value="0"><button data-delta="1" data-target="atCount">＋</button></div><div class="calc" id="atRate">―</div></div>
         <div class="field"><div class="name">詩乃モード由来AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="directAT">−</button><input id="directAT" type="number" min="0" value="0"><button data-delta="1" data-target="directAT">＋</button></div><div class="hint">天井・引き戻し・ウルティマチェリー・SC中図柄停止・フリーズ等は除外</div></div>
+        <div class="field"><div class="name">AT開始ステージ（奇偶判別）：荒野</div><div class="num-wrap"><button data-delta="-1" data-target="atStartWilderness">−</button><input id="atStartWilderness" type="number" min="0" value="0"><button data-delta="1" data-target="atStartWilderness">＋</button></div></div>
+        <div class="field"><div class="name">AT開始ステージ（奇偶判別）：バギー</div><div class="num-wrap"><button data-delta="-1" data-target="atStartBuggy">−</button><input id="atStartBuggy" type="number" min="0" value="0"><button data-delta="1" data-target="atStartBuggy">＋</button></div></div>
+        <div class="small" style="grid-column:1/-1">荒野＝奇数寄り / バギー＝偶数寄り<br>AT初当たり開始時点のみ。50G以内の引き戻しも対象。高確率モード開始・その後の荒野／バギー移行は対象外</div>
       </div>
     </details>
 
@@ -379,7 +382,7 @@
       <div class="priors" id="priorInputs"></div>
       <div class="actions"><button class="btn secondary" id="resetPriors">倍率を均等に戻す</button><button class="btn secondary" id="recalc">再計算</button></div>
       <h3>計算方式</h3>
-      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、通常時 強チャンス目A/B合算→確定CZ、CZ失敗時アイテム。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>
+      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、通常時 強チャンス目A/B合算→確定CZ、CZ失敗時アイテム、AT開始ステージ。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>
     </details>
   </section>
 
@@ -584,6 +587,15 @@
         <div class="calc" id="historySniperSecondRate">累計選択率：―</div>
         <div class="small">保存済み実戦を横断集計。1戦目は含めません。</div>
       </details>
+      <details open>
+        <summary>AT開始ステージ累計</summary>
+        <div class="grid three">
+          <div class="statbox"><div class="k">荒野</div><div class="v" id="historyAtStartWilderness">0回</div></div>
+          <div class="statbox"><div class="k">バギー</div><div class="v" id="historyAtStartBuggy">0回</div></div>
+          <div class="statbox"><div class="k">対象AT</div><div class="v" id="historyAtStartTotal">0回</div></div>
+        </div>
+        <div class="small">保存済み実戦のみを横断集計。現在入力中の実戦は含めません。</div>
+      </details>
       <details open><summary>保存時相対期待度1位別 GGO示唆統計</summary><div class="small">真の設定別出現率ではありません。保存時に相対期待度1位だった設定でまとめた参考集計です。</div><div style="overflow:auto;margin-top:8px" id="historyGgoByBest"></div></details>
       <details open><summary>通常時解析：過去CZ地点補完</summary><div class="small">保存済み履歴のCZ終了区間だけを対象に、実際のCZ当選地点を手動で補完します。終端G数から自動推測しません。</div><div class="calc" id="historyCzBackfillUnsetCount">CZ地点未設定：0件</div><label class="check" style="margin-top:8px"><input type="checkbox" id="historyCzBackfillIncludeSet">設定済みも表示</label><div class="memo-list" id="historyCzBackfillList" style="margin-top:10px"></div></details>
       <div class="history-list" id="historyList"></div>
@@ -670,7 +682,7 @@
   const STORAGE_KEY = 'sao2-setting-tool-v4';
   const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v3','sao2-setting-tool-v2','sao2-setting-tool-v1'];
   const ids = [
-    'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','lowStrongTotal','lowStrongCZ','lowStrongDirect',
+    'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','atStartWilderness','atStartBuggy','lowStrongTotal','lowStrongCZ','lowStrongDirect',
     'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','sniperChanceTotal','sniperChanceSuccess','sniperSecondTotal','sniperSecondDeathGun','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceA','strongChanceTotal','strongChanceNormalB','strongChanceDefCZ',
     'defCZTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild','trophyBronze','trophySilver','trophyGold','trophyLightning','trophyRainbow',
     'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit','ggoBuggyGreen','ggoBuggyRed','ggoBuggy'
@@ -686,9 +698,10 @@
     directDen:[18091.8,14160.5,14390.8,8498.0,4723.3,3415.7],
     defCZDen:[20177.5,17579.1,17586.3,13784.5,11459.0,7077.2],
     strongChanceDef:[.004,.008,.008,.016,.023,.051],
-    item:[.203,.211,.219,.227,.25,.301]
+    item:[.203,.211,.219,.227,.25,.301],
+    atStartStage:[.60,.40,.60,.40,.60,.40]
   };
-  const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70};
+  const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70,atStartStage:1.00};
   let priors = [1,1,1,1,1,1];
   let memoLogs = [];
   let memoEditIndex = -1;
@@ -785,6 +798,7 @@
     const wmN=n('watermelonTotal'), wmK=n('watermelonSC');
     const scN=n('strongChanceA')+n('strongChanceNormalB'), scK=n('strongChanceDefCZ');
     const itemN=n('czFail'), itemK=n('itemHit');
+    const stageK=n('atStartWilderness'), stageN=stageK+n('atStartBuggy');
     const minSet=hardMinSetting();
     const scores=S.map((set,idx)=>{
       if(set<minSet) return -Infinity;
@@ -798,10 +812,11 @@
       if(G>0 && n('defCZTotal')>=0) s += W.defCZ*poiLL(n('defCZTotal'),G/R.defCZDen[idx]);
       if(scN>0) s += W.strongDef*binLL(scK,scN,R.strongChanceDef[idx]);
       if(itemN>0) s += W.item*binLL(itemK,itemN,R.item[idx]);
+      if(stageN>0) s += W.atStartStage*binLL(stageK,stageN,R.atStartStage[idx]);
       return s;
     });
     const finite=scores.filter(Number.isFinite);
-    if(!finite.length || (!G && !lowN && !highN && !wmN && !scN && !itemN && minSet===1)) return {probs:[0,0,0,0,0,0],scores};
+    if(!finite.length || (!G && !lowN && !highN && !wmN && !scN && !itemN && !stageN && minSet===1)) return {probs:[0,0,0,0,0,0],scores};
     const mx=Math.max(...finite); let ex=scores.map(x=>Number.isFinite(x)?Math.exp(x-mx):0); const sum=ex.reduce((a,c)=>a+c,0)||1; ex=ex.map(x=>x/sum); return {probs:ex,scores};
   }
 
@@ -840,6 +855,7 @@
     if(G){out.push(ev('詩乃モード由来 AT直撃',`${n('directAT')}/${G.toLocaleString()}G = ${fmtDen(n('directAT'),G)}`,bestFitPoi(n('directAT'),G,R.directDen),'例外契機を除いた直撃のみ。設定6解析値 約1/3,416。',n('directAT')?'good':'mid'));}
     if(G){out.push(ev('CZ初当たり',`${n('czCount')}/${G.toLocaleString()}G = ${fmtDen(n('czCount'),G)}`,bestFitPoi(n('czCount'),G,R.czDen),'設定1 約1/238 ～ 設定6 約1/192。全体値は相関を考慮して低めの重み。', 'mid'));}
     if(G){out.push(ev('AT初当たり',`${n('atCount')}/${G.toLocaleString()}G = ${fmtDen(n('atCount'),G)}`,bestFitPoi(n('atCount'),G,R.atDen),'設定1 約1/386 ～ 設定6 約1/270。全体値は相関を考慮して低めの重み。', 'mid'));}
+    const stageW=n('atStartWilderness'),stageB=n('atStartBuggy'),stageN=stageW+stageB;if(stageN){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">AT開始ステージ</div><span class="pill mid">${stageN<3?'少数サンプル':'正式解析値'}</span></div><div class="ev-rate">荒野 ${stageW} / バギー ${stageB}</div><div class="ev-note">正式値：奇数設定 荒野60:バギー40 / 偶数設定 荒野40:バギー60。AT開始時点のみ集計し、高確率モード開始は対象外。</div></div>`);}
     if(n('czFail')){const k=n('itemHit'),tot=n('czFail');out.push(ev('CZ失敗時 AT強化アイテム',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.item),'設定1 20.3% ～ 設定6 30.1%。','mid'));}
     const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scAll=scKnown+n('shootingChargeUnknown');
     if(scAll){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">シューティングチャージ種類統計</div><span class="pill mid">参考記録</span></div><div class="ev-rate">キリト${n('shootingChargeKirito')} / シノン${n('shootingChargeSinon')} / 水鉄砲${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 不明${n('shootingChargeUnknown')}`:''}</div><div class="ev-note">種類判明${scKnown}回${scKnown?`：キリト${fmtPct(n('shootingChargeKirito')/scKnown)}・シノン${fmtPct(n('shootingChargeSinon')/scKnown)}・水鉄砲${fmtPct(n('shootingChargeWater')/scKnown)}・NIGHT SPLASH${fmtPct(n('shootingChargeNight')/scKnown)}`:''}。設定期待度の計算には未使用です。</div></div>`);}
@@ -897,6 +913,7 @@
     lines.push(`総ゲーム数：${totalG.toLocaleString()}G / 通常ゲーム数：${G.toLocaleString()}G / ATゲーム数：${autoATG.toLocaleString()}G`);
     lines.push(`CZ：${n('czCount')}回 ${n('czCount')&&G?'('+fmtDen(n('czCount'),G)+')':''} / 成功${n('czSuccess')}・失敗${n('czFail')}`);
     lines.push(`AT初当たり：${n('atCount')}回 ${n('atCount')&&G?'('+fmtDen(n('atCount'),G)+')':''}`);
+    lines.push(`AT開始ステージ：荒野${n('atStartWilderness')} / バギー${n('atStartBuggy')}`);
     lines.push(`詩乃モード由来AT直撃：${n('directAT')}回 ${n('directAT')&&G?'('+fmtDen(n('directAT'),G)+')':''}`);
     lines.push('');
     lines.push(`低確 強チェリー：${n('lowStrongTotal')}回 → CZ ${n('lowStrongCZ')} / AT直撃 ${n('lowStrongDirect')} / CZ相当 ${lowK}${n('lowStrongTotal')?' ('+fmtPct(lowK/n('lowStrongTotal'))+')':''}`);
@@ -921,6 +938,10 @@
     lines.push(`2戦目到達：${summarySniperHistory.total}回`);
     lines.push(`2戦目デス・ガン：${summarySniperHistory.death}回`);
     lines.push(`累計選択率：${summarySniperHistory.total?fmtPct(summarySniperHistory.death/summarySniperHistory.total):'―'}`);
+    const summaryStageHistory=historyAtStartTotals();
+    lines.push('');
+    lines.push('【AT開始ステージ累計】');
+    lines.push(`荒野${summaryStageHistory.wilderness} / バギー${summaryStageHistory.buggy} / 対象AT${summaryStageHistory.total}`);
     const cbAll=n('commonBellNormal')+n('commonBellAT'), gameAll=n('normalG')+n('atGameCount');
     lines.push(`共通ベル：通常時 ${n('commonBellNormal')}${n('normalG')&&n('commonBellNormal')?' ('+fmtDen(n('commonBellNormal'),n('normalG'))+')':''} / AT中ナビなし右下がり ${n('commonBellAT')}${n('atGameCount')&&n('commonBellAT')?' ('+fmtDen(n('commonBellAT'),n('atGameCount'))+')':''}${cbAll&&gameAll?' / 全状態参考 '+fmtDen(cbAll,gameAll):''}`);
     const bulletHit=n('bulletCZHit')+n('bulletDirectAT'), bulletMiss=Math.max(0,n('bulletMaxTotal')-bulletHit);
@@ -1050,7 +1071,7 @@
   }
   function saveCurrentToHistory(){
     const meta=currentMeta();
-    if(!n('totalG') && !n('normalG') && !memoLogs.length && !researchHasData() && !n('czCount') && !n('atCount') && !n('sniperSecondTotal') && !n('sniperSecondDeathGun')){alert('保存する実戦データがありません。');return;}
+    if(!n('totalG') && !n('normalG') && !memoLogs.length && !researchHasData() && !n('czCount') && !n('atCount') && !n('atStartWilderness') && !n('atStartBuggy') && !n('sniperSecondTotal') && !n('sniperSecondDeathGun')){alert('保存する実戦データがありません。');return;}
     const r=calculate(), mx=Math.max(...r.probs), top=r.probs.indexOf(mx);
     const entry={id:'h'+Date.now()+'_'+Math.random().toString(36).slice(2,7),date:meta.date||todayLocal(),investment:meta.investment,returns:meta.returns,net:meta.returns-meta.investment,savedAt:new Date().toISOString(),totalG:n('totalG'),normalG:n('normalG'),bestSetting:mx>0?top+1:null,bestPct:mx>0?mx*100:0,data:sessionSnapshot()};
     playHistory.unshift(entry); save(); renderHistory(); $('saveState').textContent='実戦履歴に保存しました';
@@ -1061,6 +1082,7 @@
     const histTotal=hv('totalG') || (hv('normalG')+hv('atGameCount')); const histAT=Math.max(0,histTotal-hv('normalG'));
     lines.push(`総ゲーム数：${histTotal.toLocaleString()}G / 通常ゲーム数：${hv('normalG').toLocaleString()}G / ATゲーム数：${histAT.toLocaleString()}G`); lines.push(`保存時設定推測：${entry.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}`);
     lines.push(`CZ：${hv('czCount')} / 成功${hv('czSuccess')}・失敗${hv('czFail')} / AT初当たり：${hv('atCount')} / 詩乃直撃：${hv('directAT')}`);
+    lines.push(`AT開始ステージ：荒野${hv('atStartWilderness')} / バギー${hv('atStartBuggy')}`);
     lines.push(`低確強チェ：${hv('lowStrongTotal')} → CZ${hv('lowStrongCZ')} / 直撃${hv('lowStrongDirect')}${hv('lowStrongTotal')?` / CZ相当${fmtPct(lowK/hv('lowStrongTotal'))}`:''}`);
     lines.push(`低確スイカ→シューティングチャージ：${hv('watermelonSC')}/${hv('watermelonTotal')}${hv('watermelonTotal')?` (${fmtPct(hv('watermelonSC')/hv('watermelonTotal'))})`:''}`);
     const histScAB=hv('strongChanceA')+hv('strongChanceNormalB'); lines.push(`強チャンス目：通常時A ${hv('strongChanceA')}回 / B総回数 ${hv('strongChanceTotal')}回${hv('strongChanceTotal')&&histTotal?` (B ${fmtDen(hv('strongChanceTotal'),histTotal)})`:''} / 通常時B ${hv('strongChanceNormalB')}回 / 通常時A+B→確定CZ ${hv('strongChanceDefCZ')}/${histScAB}${histScAB?` (${fmtPct(hv('strongChanceDefCZ')/histScAB)})`:''}`);
@@ -1109,6 +1131,7 @@
     html.push(detailSection('CZ・AT',[
       detailRow('CZ',rate(hv('czCount'),G),`成功 ${hv('czSuccess')} / 失敗 ${hv('czFail')}`),
       detailRow('AT初当たり',rate(hv('atCount'),G)),
+      detailRow('AT開始ステージ',`荒野 ${hv('atStartWilderness')} / バギー ${hv('atStartBuggy')}`),
       detailRow('詩乃由来AT直撃',rate(hv('directAT'),G)),
       detailRow('CZ失敗時アイテム',ratio(hv('itemHit'),hv('czFail')))
     ]));
@@ -1178,6 +1201,9 @@
   function historySniperSecondTotals(){
     return playHistory.reduce((a,h)=>{const d=h&&h.data||{};a.total+=Math.max(0,Number(d.sniperSecondTotal||0));a.death+=Math.max(0,Number(d.sniperSecondDeathGun||0));return a;},{total:0,death:0});
   }
+  function historyAtStartTotals(){
+    return playHistory.reduce((a,h)=>{const d=h&&h.data||{},w=Math.max(0,Number(d.atStartWilderness||0)),b=Math.max(0,Number(d.atStartBuggy||0));a.wilderness+=w;a.buggy+=b;a.total+=w+b;return a;},{wilderness:0,buggy:0,total:0});
+  }
 
   function historyCzBackfillRows(includeSet=false){
     const rows=[];
@@ -1221,6 +1247,10 @@
     $('historySniperSecondTotal').textContent=`${sniperAgg.total}回`;
     $('historySniperSecondDeathGun').textContent=`${sniperAgg.death}回`;
     $('historySniperSecondRate').innerHTML=`累計選択率：<strong>${sniperAgg.total?fmtPct(sniperAgg.death/sniperAgg.total):'―'}</strong>`;
+    const stageAgg=historyAtStartTotals();
+    $('historyAtStartWilderness').textContent=`${stageAgg.wilderness}回`;
+    $('historyAtStartBuggy').textContent=`${stageAgg.buggy}回`;
+    $('historyAtStartTotal').textContent=`${stageAgg.total}回`;
     const ggoRows=NR.historyGgoByBest(playHistory);$('historyGgoByBest').innerHTML=`<table class="research-table"><thead><tr><th>保存時1位</th><th>実戦</th><th>通常G</th><th>示唆総数</th><th>1000Gあたり</th><th>内訳</th></tr></thead><tbody>${ggoRows.map(a=>`<tr><td>設定${a.bestSetting}</td><td>${a.sessions}${a.sessions<5?'（参考）':''}</td><td>${a.normalGames.toLocaleString()}</td><td>${a.ggoTotal}</td><td>${a.normalGames?(a.ggoTotal/a.normalGames*1000).toFixed(2):'―'}</td><td>詩${a.shino}/キ${a.kirito}/シ${a.sinon}/死${a.death}/バ緑${a.buggyGreen}/バ赤${a.buggyRed}${a.buggyLegacy?`/バ不明${a.buggyLegacy}`:''}</td></tr>`).join('')}</tbody></table>`;
     if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
     $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0,nr=Array.isArray(d.normalResearchSegments)?d.normalResearchSegments.filter(x=>x.status==='closed').length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">総G / 通常G</div><div class="v">${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()} / ${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">通常時解析 / 旧ログ</div><div class="v">${nr} / ${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
@@ -1234,7 +1264,7 @@
     if(!confirm('現在の入力データ・通常時解析・旧CZ/ATログをリセットして、新しい実戦を開始しますか？\n保存済みの過去履歴は残ります。'))return; ids.forEach(id=>$(id).value=0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1]; memoLogs=[];normalResearchSegments=[];normalResearchGgoApplied=NR.blankHints();normalResearchEditId=null; clearMemoForm(); $('playDate').value=todayLocal(); $('investmentCoins').value=0; $('returnCoins').value=0; renderPriorInputs(); refresh(); activateTab('setting');
   }
   function historyListText(){
-    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / 総${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()}G・通常${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); const sniperAgg=historySniperSecondTotals(); lines.push(''); lines.push('【設定5研究：2戦目デス・ガン累計】'); lines.push(`2戦目到達：${sniperAgg.total}回`); lines.push(`2戦目デス・ガン：${sniperAgg.death}回`); lines.push(`累計選択率：${sniperAgg.total?fmtPct(sniperAgg.death/sniperAgg.total):'―'}`); return lines.join('\n');
+    if(!playHistory.length)return '保存した実戦履歴はありません。'; const lines=['【SAO2 実戦履歴】']; playHistory.forEach((h,i)=>lines.push(`${i+1}. ${h.date||'日付なし'} / 総${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()}G・通常${Number(h.normalG||0).toLocaleString()}G / 投資${Number(h.investment||0).toLocaleString()}枚 / 回収${Number(h.returns||0).toLocaleString()}枚 / ${fmtCoins(h.net||0)} / ${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'推測―'}`)); lines.push(`累計差枚：${fmtCoins(playHistory.reduce((a,h)=>a+Number(h.net||0),0))}`); const sniperAgg=historySniperSecondTotals(); lines.push(''); lines.push('【設定5研究：2戦目デス・ガン累計】'); lines.push(`2戦目到達：${sniperAgg.total}回`); lines.push(`2戦目デス・ガン：${sniperAgg.death}回`); lines.push(`累計選択率：${sniperAgg.total?fmtPct(sniperAgg.death/sniperAgg.total):'―'}`); const stageAgg=historyAtStartTotals(); lines.push(''); lines.push('【AT開始ステージ累計】'); lines.push(`荒野${stageAgg.wilderness} / バギー${stageAgg.buggy} / 対象AT${stageAgg.total}`); return lines.join('\n');
   }
 
   function renderPriorInputs(){
