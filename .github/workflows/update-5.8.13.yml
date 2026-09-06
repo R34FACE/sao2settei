@@ -1,0 +1,40 @@
+name: Update SAO2 Ver.5.8.13
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-5.8.13.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply and verify Ver.5.8.13
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object index.html)" = "0d4239b0667af361a08f4a5466a579b70fde6509"
+          cat > /tmp/update.patch.gz.b64 <<'PATCH_B64'
+          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
+          PATCH_B64
+          base64 -d /tmp/update.patch.gz.b64 | gzip -d > /tmp/update.patch
+          git apply --check /tmp/update.patch
+          git apply /tmp/update.patch
+          test "$(sha256sum index.html | awk '{print $1}')" = "aae0e3b8ef45a826e9c9987ecefd076f216a8f3e99d28d78b2331728b86eb92a"
+          test "$(git hash-object index.html)" = "8d1d46c29ca00a105f758fc6811e9456d6563f78"
+          grep -q 'Ver.5.8.13 / One Hint One Record' index.html
+          ! grep -q 'id="researchGgoCount"' index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git rm .github/workflows/update-5.8.13.yml
+          git commit -m "Update index to Ver.5.8.13"
+          git push
