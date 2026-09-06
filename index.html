@@ -178,7 +178,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.14 / AT Start Stage</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.15 / Backup &amp; SC Cleanup</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -263,12 +263,12 @@
         <div class="field"><div class="name">シノンビンタ</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeSinon">−</button><input id="shootingChargeSinon" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeSinon">＋</button></div><div class="calc" id="scSinonPct">構成比：―</div></div>
         <div class="field"><div class="name">水鉄砲チャージ</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeWater">−</button><input id="shootingChargeWater" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeWater">＋</button></div><div class="calc" id="scWaterPct">構成比：―</div></div>
         <div class="field"><div class="name">NIGHT SPLASH</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeNight">−</button><input id="shootingChargeNight" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeNight">＋</button></div><div class="calc" id="scNightPct">構成比：―</div></div>
-        <div class="field"><div class="name">種類不明 / 旧Ver.引継ぎ</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeUnknown">−</button><input id="shootingChargeUnknown" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeUnknown">＋</button></div><div class="hint">以前のSC総回数など、種類を記録していない分だけ使用</div></div>
-        <div class="field"><div class="name">SC中 AT当選</div><div class="num-wrap"><button data-delta="-1" data-target="shootingChargeATHit">−</button><input id="shootingChargeATHit" type="number" min="0" value="0"><button data-delta="1" data-target="shootingChargeATHit">＋</button></div><div class="hint">SC中の7図柄停止などからATへ当選した回数</div></div>
       </div>
+      <input type="hidden" id="shootingChargeUnknown" value="0">
+      <input type="hidden" id="shootingChargeATHit" value="0">
       <div class="calc" id="shootingChargeTotalView">SC総回数：―</div>
       <div class="calc" id="shootingChargeRate">参考・SC出現率：―</div>
-      <div class="calc" id="shootingChargeATHitRate">SC中AT当選率：―</div>
+      <div class="small" id="shootingChargeLegacyNote" style="display:none"></div>
       <div class="small">統計の主目的は4種類の出現数と構成比です。種類別データは実戦履歴にも保存され、履歴タブで累計を確認できます。設定推測には使用しません。</div>
     </details>
 
@@ -388,7 +388,7 @@
 
   <section class="card">
     <h2>データ操作</h2>
-    <div class="actions three"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn secondary" id="exportJson">JSON保存</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
+    <div class="actions"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
     <div class="footer-note">Ver.5.8.11：通常時解析のSC入力UIを廃止し、液晶800G天井CZと実G数499G天井CZを分離。</div>
   </section>
   </div>
@@ -559,6 +559,12 @@
       </div>
       <div class="actions"><button class="btn" id="saveHistory">実戦終了・履歴に保存</button><button class="btn secondary" id="newSession">新しい実戦を開始</button></div>
       <div class="small" style="margin-top:8px">履歴へ保存しても現在の入力は消えません。「新しい実戦を開始」を押した時だけ現在データをリセットします。</div>
+    </section>
+
+    <section class="card">
+      <div class="mode-head"><div><div class="mode-title">データバックアップ</div><div class="mode-sub">現在の入力・通常時解析・保存済み履歴をまとめて端末へ保存します。</div></div><span class="mode-badge">手動保存</span></div>
+      <div class="actions"><button class="btn secondary" id="backupSave">バックアップ保存</button><button class="btn secondary" id="backupRestore">バックアップから復元</button></div>
+      <input type="file" id="backupFile" accept=".json,application/json" hidden>
     </section>
 
     <section class="card">
@@ -734,6 +740,21 @@
   function snapshot(){
     const data=sessionSnapshot(); data.currentMeta=currentMeta(); data.playHistory=playHistory; return data;
   }
+  function backupStamp(includeTime=true){const d=new Date(),p=v=>String(v).padStart(2,'0'),date=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;return includeTime?`${date}_${p(d.getHours())}${p(d.getMinutes())}`:date;}
+  function downloadBackup(data,filename){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+  function validateBackupSnapshot(d){
+    if(!d||typeof d!=='object'||Array.isArray(d))return false;
+    if(!Object.prototype.hasOwnProperty.call(d,'normalG')||!Object.prototype.hasOwnProperty.call(d,'czCount'))return false;
+    if(!Array.isArray(d.priors)||d.priors.length!==6||!Array.isArray(d.memoLogs)||!Array.isArray(d.normalResearchSegments)||!Array.isArray(d.playHistory))return false;
+    if(!d.normalResearchGgoApplied||typeof d.normalResearchGgoApplied!=='object'||Array.isArray(d.normalResearchGgoApplied))return false;
+    if(!d.currentMeta||typeof d.currentMeta!=='object'||Array.isArray(d.currentMeta))return false;
+    return d.playHistory.every(h=>h&&typeof h==='object'&&!Array.isArray(h)&&h.data&&typeof h.data==='object'&&!Array.isArray(h.data)&&(!h.data.priors||(Array.isArray(h.data.priors)&&h.data.priors.length===6))&&(!h.data.memoLogs||Array.isArray(h.data.memoLogs))&&(!h.data.normalResearchSegments||Array.isArray(h.data.normalResearchSegments)));
+  }
+  function applyBackupSnapshot(d){
+    ids.forEach(id=>$(id).value=d[id]??0);checks.forEach(id=>$(id).checked=!!d[id]);priors=d.priors.map(x=>Math.max(.001,Number(x)||1));memoLogs=JSON.parse(JSON.stringify(d.memoLogs));normalResearchSegments=NR.normalizeSegments(d.normalResearchSegments);normalResearchGgoApplied={...NR.blankHints(),...d.normalResearchGgoApplied};playHistory=JSON.parse(JSON.stringify(d.playHistory));
+    const hasScTypes=['shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown'].some(id=>Number(d[id]||0)>0);if(!hasScTypes&&Number(d.shootingChargeTotal||0)>0)$('shootingChargeUnknown').value=Number(d.shootingChargeTotal||0);
+    normalResearchEditId=null;researchMenuEditId=null;researchGgoEditId=null;clearMemoForm();$('playDate').value=d.currentMeta.date||todayLocal();$('investmentCoins').value=Math.max(0,Number(d.currentMeta.investment||0));$('returnCoins').value=Math.max(0,Number(d.currentMeta.returns||0));renderPriorInputs();refresh();activateTab('history');$('saveState').textContent='バックアップを復元しました';
+  }
   function save(){
     try{localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot()));$('saveState').textContent='保存済み '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});}catch(e){$('saveState').textContent='端末保存を利用できません';}
   }
@@ -858,7 +879,7 @@
     const stageW=n('atStartWilderness'),stageB=n('atStartBuggy'),stageN=stageW+stageB;if(stageN){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">AT開始ステージ</div><span class="pill mid">${stageN<3?'少数サンプル':'正式解析値'}</span></div><div class="ev-rate">荒野 ${stageW} / バギー ${stageB}</div><div class="ev-note">正式値：奇数設定 荒野60:バギー40 / 偶数設定 荒野40:バギー60。AT開始時点のみ集計し、高確率モード開始は対象外。</div></div>`);}
     if(n('czFail')){const k=n('itemHit'),tot=n('czFail');out.push(ev('CZ失敗時 AT強化アイテム',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.item),'設定1 20.3% ～ 設定6 30.1%。','mid'));}
     const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scAll=scKnown+n('shootingChargeUnknown');
-    if(scAll){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">シューティングチャージ種類統計</div><span class="pill mid">参考記録</span></div><div class="ev-rate">キリト${n('shootingChargeKirito')} / シノン${n('shootingChargeSinon')} / 水鉄砲${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 不明${n('shootingChargeUnknown')}`:''}</div><div class="ev-note">種類判明${scKnown}回${scKnown?`：キリト${fmtPct(n('shootingChargeKirito')/scKnown)}・シノン${fmtPct(n('shootingChargeSinon')/scKnown)}・水鉄砲${fmtPct(n('shootingChargeWater')/scKnown)}・NIGHT SPLASH${fmtPct(n('shootingChargeNight')/scKnown)}`:''}。設定期待度の計算には未使用です。</div></div>`);}
+    if(scAll){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">シューティングチャージ種類統計</div><span class="pill mid">参考記録</span></div><div class="ev-rate">キリト${n('shootingChargeKirito')} / シノン${n('shootingChargeSinon')} / 水鉄砲${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 旧Ver.種類不明${n('shootingChargeUnknown')}`:''}</div><div class="ev-note">種類判明${scKnown}回${scKnown?`：キリト${fmtPct(n('shootingChargeKirito')/scKnown)}・シノン${fmtPct(n('shootingChargeSinon')/scKnown)}・水鉄砲${fmtPct(n('shootingChargeWater')/scKnown)}・NIGHT SPLASH${fmtPct(n('shootingChargeNight')/scKnown)}`:''}。設定期待度の計算には未使用です。</div></div>`);}
     if(n('sniperChanceTotal')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">スナイパーチャンス突破率</div><span class="pill mid">参考記録</span></div><div class="ev-rate">${n('sniperChanceSuccess')}/${n('sniperChanceTotal')} = ${fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))}</div><div class="ev-note">AT中のスナイパーチャンス総数と突破数を保存します。現時点では設定期待度の計算には使用しません。</div></div>`);}
     if(n('strongChanceTotal') && n('totalG')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">強チャンス目B 出現率</div><span class="pill mid">総G基準</span></div><div class="ev-rate">${n('strongChanceTotal')}回 / ${n('totalG').toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),n('totalG'))}</div><div class="ev-note">総ゲーム数を分母にした実戦出現率です。</div></div>`);}
     if(n('strongChanceA')+n('strongChanceNormalB')){const k=n('strongChanceDefCZ'),tot=n('strongChanceA')+n('strongChanceNormalB');out.push(ev('通常時 強チャンス目A/B → 確定CZ',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.strongChanceDef),'通常時の強チャンス目A・B合算を分母。AT中のA/Bは含めません。設定1 0.4% ～ 設定6 5.1%。','good'));}
@@ -878,14 +899,14 @@
     const wtot=n('watermelonTotal'),wk=n('watermelonSC'); $('watermelonRate').innerHTML=`当選率：<strong>${wtot?`${wk}/${wtot} = ${fmtPct(wk/wtot)}`:'―'}</strong>`;
     const ftot=n('czFail'),fk=n('itemHit'); $('itemRate').innerHTML=`獲得率：<strong>${ftot?`${fk}/${ftot} = ${fmtPct(fk/ftot)}`:'―'}</strong>`;
     const scK=n('shootingChargeKirito'), scS=n('shootingChargeSinon'), scW=n('shootingChargeWater'), scN=n('shootingChargeNight'), scU=n('shootingChargeUnknown'), sch=n('shootingChargeATHit');
-    const scKnown=scK+scS+scW+scN, sct=scKnown+scU;
-    $('shootingChargeTotalView').innerHTML=`SC総回数：<strong>${sct}回</strong>${scU?`（うち種類不明 ${scU}回）`:''}`;
+    const scKnown=scK+scS+scW+scN;
+    $('shootingChargeTotalView').innerHTML=`SC総回数：<strong>${scKnown}回</strong>`;
     $('scKiritoPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scK/scKnown):'―'}</strong>`;
     $('scSinonPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scS/scKnown):'―'}</strong>`;
     $('scWaterPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scW/scKnown):'―'}</strong>`;
     $('scNightPct').innerHTML=`構成比：<strong>${scKnown?fmtPct(scN/scKnown):'―'}</strong>`;
-    $('shootingChargeRate').innerHTML=`参考・SC出現率：<strong>${(sct&&G)?`${sct}回 / ${G.toLocaleString()}G = ${fmtDen(sct,G)}`:'―'}</strong>`;
-    $('shootingChargeATHitRate').innerHTML=`SC中AT当選率：<strong>${sct?`${sch}/${sct} = ${fmtPct(sch/sct)}`:'―'}</strong>`;
+    $('shootingChargeRate').innerHTML=`参考・SC出現率：<strong>${(scKnown&&G)?`${scKnown}回 / ${G.toLocaleString()}G = ${fmtDen(scKnown,G)}`:'―'}</strong>`;
+    const scLegacy=$('shootingChargeLegacyNote');scLegacy.style.display=scU||sch?'block':'none';scLegacy.textContent=scU||sch?`旧Ver.記録：種類不明 ${scU}回 / SC中AT当選 ${sch}回`:'';
     const spt=n('sniperChanceTotal'), sps=n('sniperChanceSuccess'); $('sniperChanceRate').innerHTML=`突破率：<strong>${spt?`${sps}/${spt} = ${fmtPct(sps/spt)}`:'―'}</strong>`;
     const ssTotal=n('sniperSecondTotal'), ssDeath=n('sniperSecondDeathGun'); $('sniperSecondDeathGunRate').innerHTML=`2戦目デス・ガン選択率：<strong>${ssTotal?`${ssDeath}/${ssTotal} = ${fmtPct(ssDeath/ssTotal)}`:'―'}</strong>`;
     const cbn=n('commonBellNormal'), atg=n('atGameCount'), cba=n('commonBellAT');
@@ -922,9 +943,10 @@
     const scABTotal=n('strongChanceA')+n('strongChanceNormalB'); lines.push(`強チャンス目：通常時A ${n('strongChanceA')}回 / B総回数 ${n('strongChanceTotal')}回${n('strongChanceTotal')&&n('totalG')?' (B '+fmtDen(n('strongChanceTotal'),n('totalG'))+')':''} / 通常時B ${n('strongChanceNormalB')}回 / 通常時A+B→確定CZ ${n('strongChanceDefCZ')}/${scABTotal}${scABTotal?' ('+fmtPct(n('strongChanceDefCZ')/scABTotal)+')':''}`);
     lines.push(`確定CZ総回数：${n('defCZTotal')}回`);
     lines.push(`CZ失敗時アイテム：${n('itemHit')}/${n('czFail')}${n('czFail')?' ('+fmtPct(n('itemHit')/n('czFail'))+')':''}`);
-    const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scTotal=scKnown+n('shootingChargeUnknown');
-    lines.push(`シューティングチャージ種類：キリト射撃訓練${n('shootingChargeKirito')} / シノンビンタ${n('shootingChargeSinon')} / 水鉄砲チャージ${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 種類不明${n('shootingChargeUnknown')}`:''}`);
-    lines.push(`SC合計：${scTotal}回${scTotal&&G?' ('+fmtDen(scTotal,G)+')':''} / SC中AT当選 ${n('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(n('shootingChargeATHit')/scTotal)+')':''}`);
+    const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scLegacyUnknown=n('shootingChargeUnknown'),scLegacyATHit=n('shootingChargeATHit');
+    lines.push(`シューティングチャージ種類：キリト射撃訓練${n('shootingChargeKirito')} / シノンビンタ${n('shootingChargeSinon')} / 水鉄砲チャージ${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}`);
+    lines.push(`SC合計：${scKnown}回${scKnown&&G?' ('+fmtDen(scKnown,G)+')':''}`);
+    if(scLegacyUnknown||scLegacyATHit)lines.push(`旧Ver.記録：種類不明${scLegacyUnknown} / SC中AT当選${scLegacyATHit}`);
     lines.push(`スナイパーチャンス：${n('sniperChanceSuccess')}/${n('sniperChanceTotal')}${n('sniperChanceTotal')?' ('+fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))+')':''}`);
     lines.push('');
     lines.push('【設定5研究：2戦目デス・ガン】');
@@ -1086,9 +1108,10 @@
     lines.push(`低確強チェ：${hv('lowStrongTotal')} → CZ${hv('lowStrongCZ')} / 直撃${hv('lowStrongDirect')}${hv('lowStrongTotal')?` / CZ相当${fmtPct(lowK/hv('lowStrongTotal'))}`:''}`);
     lines.push(`低確スイカ→シューティングチャージ：${hv('watermelonSC')}/${hv('watermelonTotal')}${hv('watermelonTotal')?` (${fmtPct(hv('watermelonSC')/hv('watermelonTotal'))})`:''}`);
     const histScAB=hv('strongChanceA')+hv('strongChanceNormalB'); lines.push(`強チャンス目：通常時A ${hv('strongChanceA')}回 / B総回数 ${hv('strongChanceTotal')}回${hv('strongChanceTotal')&&histTotal?` (B ${fmtDen(hv('strongChanceTotal'),histTotal)})`:''} / 通常時B ${hv('strongChanceNormalB')}回 / 通常時A+B→確定CZ ${hv('strongChanceDefCZ')}/${histScAB}${histScAB?` (${fmtPct(hv('strongChanceDefCZ')/histScAB)})`:''}`);
-    const oldScTotal=hv('shootingChargeTotal'), scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldScTotal:0), scKnown=scK+scS+scW+scN, scTotal=scKnown+scU;
-    lines.push(`シューティングチャージ種類：キリト射撃訓練${scK} / シノンビンタ${scS} / 水鉄砲チャージ${scW} / NIGHT SPLASH${scN}${scU?` / 種類不明${scU}`:''}`);
-    lines.push(`SC合計：${scTotal}回${scTotal&&hv('normalG')?' ('+fmtDen(scTotal,hv('normalG'))+')':''} / SC中AT当選${hv('shootingChargeATHit')}/${scTotal}${scTotal?' ('+fmtPct(hv('shootingChargeATHit')/scTotal)+')':''}`);
+    const oldScTotal=hv('shootingChargeTotal'), scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldScTotal:0), scKnown=scK+scS+scW+scN, scLegacyHit=hv('shootingChargeATHit');
+    lines.push(`シューティングチャージ種類：キリト射撃訓練${scK} / シノンビンタ${scS} / 水鉄砲チャージ${scW} / NIGHT SPLASH${scN}`);
+    lines.push(`SC合計：${scKnown}回${scKnown&&hv('normalG')?' ('+fmtDen(scKnown,hv('normalG'))+')':''}`);
+    if(scU||scLegacyHit)lines.push(`旧Ver.記録：種類不明${scU} / SC中AT当選${scLegacyHit}`);
     lines.push('');
     lines.push('【設定5研究：2戦目デス・ガン】');
     lines.push(`スナイパーチャンス：${hv('sniperChanceTotal')}回`);
@@ -1115,7 +1138,7 @@
     const net=Number(entry?.net||0), netCls=net>0?'plus':net<0?'minus':'zero';
     const lowHit=hv('lowStrongCZ')+hv('lowStrongDirect'), highHit=hv('highStrongCZ')+hv('highStrongDirect');
     const scK=hv('shootingChargeKirito'), scS=hv('shootingChargeSinon'), scW=hv('shootingChargeWater'), scN=hv('shootingChargeNight'), oldSc=hv('shootingChargeTotal');
-    const scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldSc:0), scTotal=scK+scS+scW+scN+scU;
+    const scU=hv('shootingChargeUnknown') || ((!scK&&!scS&&!scW&&!scN)?oldSc:0), scKnown=scK+scS+scW+scN,scLegacyHit=hv('shootingChargeATHit');
     const bellN=hv('commonBellNormal'), bellAT=hv('commonBellAT'), atG=autoATG;
     const ml=Array.isArray(d.memoLogs)?d.memoLogs:[], lc=getLampCounts(ml,d.normalResearchSegments||[]);
     const conf=[]; if(hb('end2plus'))conf.push('設定2以上'); if(hb('end3plus'))conf.push('設定3以上'); if(hb('end4plus'))conf.push('設定4以上'); if(hb('end6'))conf.push('設定6濃厚'); if(hb('ed4plus'))conf.push('ED 設定4以上'); if(hb('ed6'))conf.push('ED 設定6濃厚'); if(hb('mr4plus'))conf.push('マザロザ 設定4以上'); if(hb('mr6'))conf.push('マザロザ 設定6濃厚');
@@ -1146,13 +1169,12 @@
       detailRow('確定CZ 総回数',`${hv('defCZTotal')}回`)
     ]));
     html.push(detailSection('シューティングチャージ',[
-      detailRow('SC合計',rate(scTotal,G),scU?`種類不明 ${scU}回を含む`:''),
-      detailRow('キリト射撃訓練',`${scK}回${scTotal?`　${fmtPct(scK/scTotal)}`:''}`),
-      detailRow('シノンビンタ',`${scS}回${scTotal?`　${fmtPct(scS/scTotal)}`:''}`),
-      detailRow('水鉄砲チャージ',`${scW}回${scTotal?`　${fmtPct(scW/scTotal)}`:''}`),
-      detailRow('NIGHT SPLASH',`${scN}回${scTotal?`　${fmtPct(scN/scTotal)}`:''}`),
-      ...(scU?[detailRow('種類不明',`${scU}回${scTotal?`　${fmtPct(scU/scTotal)}`:''}`)]:[]),
-      detailRow('SC中AT当選',ratio(hv('shootingChargeATHit'),scTotal)),
+      detailRow('SC合計',rate(scKnown,G)),
+      detailRow('キリト射撃訓練',`${scK}回${scKnown?`　${fmtPct(scK/scKnown)}`:''}`),
+      detailRow('シノンビンタ',`${scS}回${scKnown?`　${fmtPct(scS/scKnown)}`:''}`),
+      detailRow('水鉄砲チャージ',`${scW}回${scKnown?`　${fmtPct(scW/scKnown)}`:''}`),
+      detailRow('NIGHT SPLASH',`${scN}回${scKnown?`　${fmtPct(scN/scKnown)}`:''}`),
+      ...((scU||scLegacyHit)?[detailRow('旧Ver.記録',`種類不明 ${scU} / SC中AT当選 ${scLegacyHit}`)]:[]),
       detailRow('スナイパーチャンス突破',ratio(hv('sniperChanceSuccess'),hv('sniperChanceTotal'))),
       detailRow('2戦目到達',`${hv('sniperSecondTotal')}回`,'設定5研究用。1戦目は集計対象外'),
       detailRow('2戦目デス・ガン選択',ratio(hv('sniperSecondDeathGun'),hv('sniperSecondTotal')),'相対期待度の計算には未使用')
@@ -1290,9 +1312,9 @@
     const d={totalG:4603,normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,shootingChargeUnknown:12,shootingChargeATHit:0,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
     ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];memoLogs=[];normalResearchSegments=[];normalResearchGgoApplied=NR.blankHints();normalResearchEditId=null;$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
   };
-  $('exportJson').onclick=()=>{
-    const blob=new Blob([JSON.stringify(snapshot(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sao2_playdata_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  };
+  $('backupSave').onclick=()=>{downloadBackup(snapshot(),`sao2_backup_${backupStamp()}.json`);$('saveState').textContent='バックアップを保存しました';};
+  $('backupRestore').onclick=()=>$('backupFile').click();
+  $('backupFile').addEventListener('change',()=>{const file=$('backupFile').files&&$('backupFile').files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(String(reader.result||''));if(!validateBackupSnapshot(data))throw new Error('invalid backup');if(!confirm('現在の入力内容と保存済み履歴をバックアップ内容で置き換えます。よろしいですか？'))return;downloadBackup(snapshot(),`sao2_backup_before_restore_${backupStamp()}.json`);applyBackupSnapshot(data);}catch(e){alert('このファイルはSAO2バックアップとして読み込めません。');}finally{$('backupFile').value='';}};reader.onerror=()=>{alert('このファイルはSAO2バックアップとして読み込めません。');$('backupFile').value='';};reader.readAsText(file);});
 
   document.addEventListener('click',e=>{
     const toggle=e.target.closest('[data-research-toggle]');if(toggle){const id='research'+toggle.dataset.researchToggle[0].toUpperCase()+toggle.dataset.researchToggle.slice(1)+'Form',open=$(id).style.display==='none';['researchMenuForm','researchGgoForm'].forEach(x=>$(x).style.display=x===id&&open?'block':'none');return;}
