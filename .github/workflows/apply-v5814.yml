@@ -1,0 +1,44 @@
+name: Apply SAO2 Ver.5.8.14
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-v5814.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply and verify Ver.5.8.14
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_old_sha256='aae0e3b8ef45a826e9c9987ecefd076f216a8f3e99d28d78b2331728b86eb92a'
+          expected_old_blob='8d1d46c29ca00a105f758fc6811e9456d6563f78'
+          expected_new_sha256='427b76c12c8a891a9d9b245f50dcf1f66bc3fd6feba84cc14f8077fcf329abfc'
+          expected_new_blob='f421cabfeab0488485e483f59fb332c25b08281d'
+
+          test "$(sha256sum index.html | awk '{print $1}')" = "$expected_old_sha256"
+          test "$(git hash-object index.html)" = "$expected_old_blob"
+
+          base64 -d .github/update/v5814.patch.gz.b64 | gunzip > /tmp/v5814.patch
+          git apply --check /tmp/v5814.patch
+          git apply /tmp/v5814.patch
+
+          test "$(sha256sum index.html | awk '{print $1}')" = "$expected_new_sha256"
+          test "$(git hash-object index.html)" = "$expected_new_blob"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git rm .github/workflows/apply-v5814.yml .github/update/v5814.patch.gz.b64
+          git commit -m 'Update index to Ver.5.8.14'
+          git push origin HEAD:main
