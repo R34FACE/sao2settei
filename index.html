@@ -178,7 +178,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.15 / Backup &amp; SC Cleanup</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.16 / DirectAT Auto Sync</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -219,7 +219,7 @@
         <div class="field"><div class="name">CZ失敗</div><div class="num-wrap"><button data-delta="-1" data-target="czFail">−</button><input id="czFail" type="number" min="0" value="0"><button data-delta="1" data-target="czFail">＋</button></div><div class="hint">下のAT強化アイテム獲得率の分母にも使用</div></div>
         <div class="field"><div class="name">CZ失敗時 AT強化アイテム獲得</div><div class="num-wrap"><button data-delta="-1" data-target="itemHit">−</button><input id="itemHit" type="number" min="0" value="0"><button data-delta="1" data-target="itemHit">＋</button></div><div class="calc" id="itemRate">獲得率：―</div></div>
         <div class="field"><div class="name">AT初当たり</div><div class="num-wrap"><button data-delta="-1" data-target="atCount">−</button><input id="atCount" type="number" min="0" value="0"><button data-delta="1" data-target="atCount">＋</button></div><div class="calc" id="atRate">―</div></div>
-        <div class="field"><div class="name">詩乃モード由来AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="directAT">−</button><input id="directAT" type="number" min="0" value="0"><button data-delta="1" data-target="directAT">＋</button></div><div class="hint">天井・引き戻し・ウルティマチェリー・SC中図柄停止・フリーズ等は除外</div></div>
+        <div class="field"><div class="name">詩乃モード由来AT直撃（総数）</div><div class="num-wrap"><button data-delta="-1" data-target="directAT">−</button><input id="directAT" type="number" min="0" value="0"><button data-delta="1" data-target="directAT">＋</button></div><div class="hint">低確/高確 強チェ直撃・バレット直撃は自動反映。ここはその他の詩乃直撃を含む総数</div><div class="calc" id="directATAutoInfo">自動反映：低確0 / 高確0 / バレット0 = 0回</div><div class="calc" id="directATManualInfo">その他手動分：0回 / 総数：0回</div><input type="hidden" id="directATAutoApplied" value="0"></div>
         <div class="field"><div class="name">AT開始ステージ（奇偶判別）：荒野</div><div class="num-wrap"><button data-delta="-1" data-target="atStartWilderness">−</button><input id="atStartWilderness" type="number" min="0" value="0"><button data-delta="1" data-target="atStartWilderness">＋</button></div></div>
         <div class="field"><div class="name">AT開始ステージ（奇偶判別）：バギー</div><div class="num-wrap"><button data-delta="-1" data-target="atStartBuggy">−</button><input id="atStartBuggy" type="number" min="0" value="0"><button data-delta="1" data-target="atStartBuggy">＋</button></div></div>
         <div class="small" style="grid-column:1/-1">荒野＝奇数寄り / バギー＝偶数寄り<br>AT初当たり開始時点のみ。50G以内の引き戻しも対象。高確率モード開始・その後の荒野／バギー移行は対象外</div>
@@ -234,7 +234,7 @@
         <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="lowStrongDirect">−</button><input id="lowStrongDirect" type="number" min="0" value="0"><button data-delta="1" data-target="lowStrongDirect">＋</button></div></div>
       </div>
       <div class="calc" id="lowStrongRate">CZ相当当選率：―</div>
-      <div class="small">詩乃モードでCZ当選がAT直撃へ変換されたケースを考慮し、初期設定では「CZ＋詩乃直撃」をCZ相当当選として評価します。</div>
+      <div class="small">詩乃モードでCZ当選がAT直撃へ変換されたケースを考慮し、「CZ＋詩乃直撃」をCZ相当当選として評価します。AT直撃回数は「詩乃モード由来AT直撃」へ自動反映されます。</div>
     </details>
 
     <details class="setting-order-high-strong">
@@ -245,6 +245,7 @@
         <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="highStrongDirect">−</button><input id="highStrongDirect" type="number" min="0" value="0"><button data-delta="1" data-target="highStrongDirect">＋</button></div></div>
       </div>
       <div class="calc" id="highStrongRate">CZ相当当選率：―</div>
+      <div class="small">AT直撃回数は「詩乃モード由来AT直撃」へ自動反映されます。</div>
     </details>
 
     <details open class="setting-order-watermelon">
@@ -303,14 +304,14 @@
       <div class="grid three">
         <div class="field"><div class="name">MAX到達回数</div><div class="num-wrap"><button data-delta="-1" data-target="bulletMaxTotal">−</button><input id="bulletMaxTotal" type="number" min="0" value="0"><button data-delta="1" data-target="bulletMaxTotal">＋</button></div><div class="hint">バレット7個到達でCZ抽選を受けた回数</div></div>
         <div class="field"><div class="name">→ CZ当選</div><div class="num-wrap"><button data-delta="-1" data-target="bulletCZHit">−</button><input id="bulletCZHit" type="number" min="0" value="0"><button data-delta="1" data-target="bulletCZHit">＋</button></div></div>
-        <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="bulletDirectAT">−</button><input id="bulletDirectAT" type="number" min="0" value="0"><button data-delta="1" data-target="bulletDirectAT">＋</button></div><div class="hint">詩乃モード等でCZ当選がAT直撃に変換されたと考えられるケース</div></div>
+        <div class="field"><div class="name">→ AT直撃</div><div class="num-wrap"><button data-delta="-1" data-target="bulletDirectAT">−</button><input id="bulletDirectAT" type="number" min="0" value="0"><button data-delta="1" data-target="bulletDirectAT">＋</button></div><div class="hint">詩乃モードでCZ当選がAT直撃へ変換されたケース。詩乃直撃総数へ自動反映</div></div>
       </div>
       <div class="mode-summary">
         <div class="statbox"><div class="k">CZ相当当選</div><div class="v" id="bulletHitView">0 / 0</div></div>
         <div class="statbox"><div class="k">非当選</div><div class="v" id="bulletMissView">0回</div></div>
       </div>
       <div class="calc" id="bulletRate">CZ相当当選率：―</div>
-      <div class="small">「CZ当選＋AT直撃」をCZ相当当選として集計します。現時点では設定別の具体的な解析値が未公表のため、設定期待度の計算には使用しません。AT直撃は基本データの「詩乃モード由来AT直撃」の内訳として別途数えてください。</div>
+      <div class="small">「CZ当選＋AT直撃」をCZ相当当選として集計します。現時点では設定別の具体的な解析値が未公表のため、設定期待度の計算には使用しません。AT直撃は基本データの「詩乃モード由来AT直撃」へ自動反映されます。</div>
     </details>
 
     <details class="setting-order-def-cz">
@@ -407,8 +408,8 @@
         <div class="grid">
           <div class="field"><div class="name">50%示唆</div><div class="num-wrap"><button data-delta="-1" data-target="shino50">−</button><input id="shino50" type="number" min="0" value="0"><button data-delta="1" data-target="shino50">＋</button></div></div>
           <div class="field"><div class="name">濃厚示唆</div><div class="num-wrap"><button data-delta="-1" data-target="shinoSure">−</button><input id="shinoSure" type="number" min="0" value="0"><button data-delta="1" data-target="shinoSure">＋</button></div></div>
-          <div class="field"><div class="name">詩乃由来 AT直撃（設定推測と共通）</div><div class="linked-count"><button data-delta="-1" data-target="directAT">−</button><div class="linked-value" id="directATMirror">0</div><button data-delta="1" data-target="directAT">＋</button></div><div class="hint">設定推測タブの「詩乃モード由来AT直撃」と同じカウンターです</div></div>
-          <div class="field"><div class="name">強チェ由来の詩乃直撃（参考）</div><div class="linked-count"><button data-delta="-1" data-target="lowStrongDirect">−</button><div class="linked-value" id="lowStrongDirectMirror">0</div><button data-delta="1" data-target="lowStrongDirect">＋</button></div><div class="hint">低確強チェリー欄と共通。二重入力不要</div></div>
+          <div class="field"><div class="name">詩乃由来 AT直撃（総数・設定推測と共通）</div><div class="linked-count"><button data-delta="-1" data-target="directAT">−</button><div class="linked-value" id="directATMirror">0</div><button data-delta="1" data-target="directAT">＋</button></div><div class="hint">低確/高確 強チェ直撃・バレット直撃を自動反映した総数です</div></div>
+          <div class="field"><div class="name">低確 強チェ由来の詩乃直撃（参考）</div><div class="linked-count"><button data-delta="-1" data-target="lowStrongDirect">−</button><div class="linked-value" id="lowStrongDirectMirror">0</div><button data-delta="1" data-target="lowStrongDirect">＋</button></div><div class="hint">低確強チェリー欄と共通。低確/高確 強チェ直撃・バレット直撃は詩乃直撃総数へ自動反映</div></div>
         </div>
       </details>
 
@@ -688,7 +689,7 @@
   const STORAGE_KEY = 'sao2-setting-tool-v4';
   const LEGACY_STORAGE_KEYS = ['sao2-setting-tool-v3','sao2-setting-tool-v2','sao2-setting-tool-v1'];
   const ids = [
-    'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','atStartWilderness','atStartBuggy','lowStrongTotal','lowStrongCZ','lowStrongDirect',
+    'totalG','normalG','czCount','czSuccess','czFail','atCount','directAT','directATAutoApplied','atStartWilderness','atStartBuggy','lowStrongTotal','lowStrongCZ','lowStrongDirect',
     'highStrongTotal','highStrongCZ','highStrongDirect','watermelonTotal','watermelonSC','shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown','shootingChargeATHit','sniperChanceTotal','sniperChanceSuccess','sniperSecondTotal','sniperSecondDeathGun','commonBellNormal','atGameCount','commonBellAT','bulletMaxTotal','bulletCZHit','bulletDirectAT','strongChanceA','strongChanceTotal','strongChanceNormalB','strongChanceDefCZ',
     'defCZTotal','itemHit','shino50','shinoSure','endDefault','endOdd','endEven','endHigh','endHighStrong','endChild','trophyBronze','trophySilver','trophyGold','trophyLightning','trophyRainbow',
     'ggoKirito50','ggoKiritoSure','ggoKiritoBenefit','ggoSinon50','ggoSinonSure','ggoSinonBenefit','ggoDeath50','ggoDeathSure','ggoDeathBenefit','ggoBuggyGreen','ggoBuggyRed','ggoBuggy'
@@ -724,6 +725,9 @@
   const fmtCoins = v => {const x=Number(v)||0; return `${x>0?'+':x<0?'−':'±'}${Math.abs(x).toLocaleString()}枚`;};
   const n = id => Math.max(0, Number($(id)?.value || 0));
   const b = id => !!$(id)?.checked;
+  const autoDirectATSource = () => n('lowStrongDirect')+n('highStrongDirect')+n('bulletDirectAT');
+  function baselineDirectATAutoIfMissing(d){if(!d||!Object.prototype.hasOwnProperty.call(d,'directATAutoApplied'))$('directATAutoApplied').value=autoDirectATSource();}
+  function syncDirectAT(){const autoNow=autoDirectATSource(),applied=n('directATAutoApplied'),delta=autoNow-applied;if(delta!==0){$('directAT').value=Math.max(0,n('directAT')+delta);$('directATAutoApplied').value=autoNow;}}
   const fmtPct = (x,d=1) => Number.isFinite(x) ? (x*100).toFixed(d)+'%' : '―';
   const fmtDen = (hits,total) => hits>0 ? '1/'+Math.round(total/hits).toLocaleString() : '―';
   const clampP = p => Math.min(.999999,Math.max(.000001,p));
@@ -751,7 +755,7 @@
     return d.playHistory.every(h=>h&&typeof h==='object'&&!Array.isArray(h)&&h.data&&typeof h.data==='object'&&!Array.isArray(h.data)&&(!h.data.priors||(Array.isArray(h.data.priors)&&h.data.priors.length===6))&&(!h.data.memoLogs||Array.isArray(h.data.memoLogs))&&(!h.data.normalResearchSegments||Array.isArray(h.data.normalResearchSegments)));
   }
   function applyBackupSnapshot(d){
-    ids.forEach(id=>$(id).value=d[id]??0);checks.forEach(id=>$(id).checked=!!d[id]);priors=d.priors.map(x=>Math.max(.001,Number(x)||1));memoLogs=JSON.parse(JSON.stringify(d.memoLogs));normalResearchSegments=NR.normalizeSegments(d.normalResearchSegments);normalResearchGgoApplied={...NR.blankHints(),...d.normalResearchGgoApplied};playHistory=JSON.parse(JSON.stringify(d.playHistory));
+    ids.forEach(id=>$(id).value=d[id]??0);checks.forEach(id=>$(id).checked=!!d[id]);baselineDirectATAutoIfMissing(d);priors=d.priors.map(x=>Math.max(.001,Number(x)||1));memoLogs=JSON.parse(JSON.stringify(d.memoLogs));normalResearchSegments=NR.normalizeSegments(d.normalResearchSegments);normalResearchGgoApplied={...NR.blankHints(),...d.normalResearchGgoApplied};playHistory=JSON.parse(JSON.stringify(d.playHistory));
     const hasScTypes=['shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown'].some(id=>Number(d[id]||0)>0);if(!hasScTypes&&Number(d.shootingChargeTotal||0)>0)$('shootingChargeUnknown').value=Number(d.shootingChargeTotal||0);
     normalResearchEditId=null;researchMenuEditId=null;researchGgoEditId=null;clearMemoForm();$('playDate').value=d.currentMeta.date||todayLocal();$('investmentCoins').value=Math.max(0,Number(d.currentMeta.investment||0));$('returnCoins').value=Math.max(0,Number(d.currentMeta.returns||0));renderPriorInputs();refresh();activateTab('history');$('saveState').textContent='バックアップを復元しました';
   }
@@ -766,6 +770,7 @@
       const d=JSON.parse(raw);
       ids.forEach(id=>{if(d[id]!==undefined && $(id))$(id).value=d[id]});
       checks.forEach(id=>{if(d[id]!==undefined)$(id).checked=!!d[id]});
+      baselineDirectATAutoIfMissing(d);
       if(Array.isArray(d.priors)&&d.priors.length===6)priors=d.priors.map(x=>Math.max(.001,Number(x)||1));
       const hasScTypes=['shootingChargeKirito','shootingChargeSinon','shootingChargeWater','shootingChargeNight','shootingChargeUnknown'].some(id=>Number(d[id]||0)>0);
       if(!hasScTypes && Number(d.shootingChargeTotal||0)>0 && $('shootingChargeUnknown')) $('shootingChargeUnknown').value=Number(d.shootingChargeTotal||0);
@@ -873,7 +878,7 @@
       const tot=n('bulletMaxTotal'), hit=n('bulletCZHit')+n('bulletDirectAT');
       out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">バレットMAX → CZ相当（参考統計）</div><span class="pill mid">計算未使用</span></div><div class="ev-rate">${hit}/${tot} = ${fmtPct(hit/tot)}</div><div class="ev-note">CZ ${n('bulletCZHit')} / AT直撃 ${n('bulletDirectAT')} / 非当選 ${Math.max(0,tot-hit)}。設定別解析値が未公表のため現在は参考記録のみ。</div></div>`);
     }
-    if(G){out.push(ev('詩乃モード由来 AT直撃',`${n('directAT')}/${G.toLocaleString()}G = ${fmtDen(n('directAT'),G)}`,bestFitPoi(n('directAT'),G,R.directDen),'例外契機を除いた直撃のみ。設定6解析値 約1/3,416。',n('directAT')?'good':'mid'));}
+    if(G){const auto=autoDirectATSource(),manual=Math.max(0,n('directAT')-n('directATAutoApplied'));out.push(ev('詩乃モード由来 AT直撃',`${n('directAT')}/${G.toLocaleString()}G = ${fmtDen(n('directAT'),G)}`,bestFitPoi(n('directAT'),G,R.directDen),`例外契機を除いた直撃のみ。設定6解析値 約1/3,416。自動反映：低確${n('lowStrongDirect')} / 高確${n('highStrongDirect')} / バレット${n('bulletDirectAT')} = ${auto}、その他手動${manual}。`,n('directAT')?'good':'mid'));}
     if(G){out.push(ev('CZ初当たり',`${n('czCount')}/${G.toLocaleString()}G = ${fmtDen(n('czCount'),G)}`,bestFitPoi(n('czCount'),G,R.czDen),'設定1 約1/238 ～ 設定6 約1/192。全体値は相関を考慮して低めの重み。', 'mid'));}
     if(G){out.push(ev('AT初当たり',`${n('atCount')}/${G.toLocaleString()}G = ${fmtDen(n('atCount'),G)}`,bestFitPoi(n('atCount'),G,R.atDen),'設定1 約1/386 ～ 設定6 約1/270。全体値は相関を考慮して低めの重み。', 'mid'));}
     const stageW=n('atStartWilderness'),stageB=n('atStartBuggy'),stageN=stageW+stageB;if(stageN){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">AT開始ステージ</div><span class="pill mid">${stageN<3?'少数サンプル':'正式解析値'}</span></div><div class="ev-rate">荒野 ${stageW} / バギー ${stageB}</div><div class="ev-note">正式値：奇数設定 荒野60:バギー40 / 偶数設定 荒野40:バギー60。AT開始時点のみ集計し、高確率モード開始は対象外。</div></div>`);}
@@ -920,6 +925,9 @@
     $('bulletRate').innerHTML=`CZ相当当選率：<strong>${btot?`${bhit}/${btot} = ${fmtPct(bhit/btot)}`:'―'}</strong>`;
     if($('directATMirror')) $('directATMirror').textContent=n('directAT');
     if($('lowStrongDirectMirror')) $('lowStrongDirectMirror').textContent=n('lowStrongDirect');
+    const directAuto=autoDirectATSource(),directManual=Math.max(0,n('directAT')-n('directATAutoApplied'));
+    if($('directATAutoInfo'))$('directATAutoInfo').innerHTML=`自動反映：低確${n('lowStrongDirect')} / 高確${n('highStrongDirect')} / バレット${n('bulletDirectAT')} = <strong>${directAuto}回</strong>`;
+    if($('directATManualInfo'))$('directATManualInfo').innerHTML=`その他手動分：<strong>${directManual}回</strong> / 総数：<strong>${n('directAT')}回</strong>`;
     if($('netCoinsPreview')){
       const meta=currentMeta(), net=meta.returns-meta.investment; const el=$('netCoinsPreview'); el.textContent=fmtCoins(net); el.className='net-preview '+(net>0?'plus':net<0?'minus':'zero');
     }
@@ -936,6 +944,7 @@
     lines.push(`AT初当たり：${n('atCount')}回 ${n('atCount')&&G?'('+fmtDen(n('atCount'),G)+')':''}`);
     lines.push(`AT開始ステージ：荒野${n('atStartWilderness')} / バギー${n('atStartBuggy')}`);
     lines.push(`詩乃モード由来AT直撃：${n('directAT')}回 ${n('directAT')&&G?'('+fmtDen(n('directAT'),G)+')':''}`);
+    lines.push(`詩乃直撃内訳：低確強チェ${n('lowStrongDirect')} / 高確強チェ${n('highStrongDirect')} / バレット${n('bulletDirectAT')} / その他手動${Math.max(0,n('directAT')-n('directATAutoApplied'))}`);
     lines.push('');
     lines.push(`低確 強チェリー：${n('lowStrongTotal')}回 → CZ ${n('lowStrongCZ')} / AT直撃 ${n('lowStrongDirect')} / CZ相当 ${lowK}${n('lowStrongTotal')?' ('+fmtPct(lowK/n('lowStrongTotal'))+')':''}`);
     if(n('highStrongTotal')) lines.push(`高確 強チェリー：${n('highStrongTotal')}回 → CZ ${n('highStrongCZ')} / AT直撃 ${n('highStrongDirect')} / CZ相当 ${highK} (${fmtPct(highK/n('highStrongTotal'))})`);
@@ -1104,6 +1113,7 @@
     const histTotal=hv('totalG') || (hv('normalG')+hv('atGameCount')); const histAT=Math.max(0,histTotal-hv('normalG'));
     lines.push(`総ゲーム数：${histTotal.toLocaleString()}G / 通常ゲーム数：${hv('normalG').toLocaleString()}G / ATゲーム数：${histAT.toLocaleString()}G`); lines.push(`保存時設定推測：${entry.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}`);
     lines.push(`CZ：${hv('czCount')} / 成功${hv('czSuccess')}・失敗${hv('czFail')} / AT初当たり：${hv('atCount')} / 詩乃直撃：${hv('directAT')}`);
+    const histAutoNow=hv('lowStrongDirect')+hv('highStrongDirect')+hv('bulletDirectAT'),histApplied=Object.prototype.hasOwnProperty.call(d,'directATAutoApplied')?hv('directATAutoApplied'):histAutoNow; lines.push(`詩乃直撃内訳：低確強チェ${hv('lowStrongDirect')} / 高確強チェ${hv('highStrongDirect')} / バレット${hv('bulletDirectAT')} / その他手動${Math.max(0,hv('directAT')-histApplied)}`);
     lines.push(`AT開始ステージ：荒野${hv('atStartWilderness')} / バギー${hv('atStartBuggy')}`);
     lines.push(`低確強チェ：${hv('lowStrongTotal')} → CZ${hv('lowStrongCZ')} / 直撃${hv('lowStrongDirect')}${hv('lowStrongTotal')?` / CZ相当${fmtPct(lowK/hv('lowStrongTotal'))}`:''}`);
     lines.push(`低確スイカ→シューティングチャージ：${hv('watermelonSC')}/${hv('watermelonTotal')}${hv('watermelonTotal')?` (${fmtPct(hv('watermelonSC')/hv('watermelonTotal'))})`:''}`);
@@ -1279,7 +1289,7 @@
   }
   function restoreHistory(i){
     const h=playHistory[i]; if(!h||!h.data)return; if(!confirm('現在の入力内容を、この過去実戦データで上書きしますか？\n履歴そのものは消えません。'))return; const d=h.data;
-    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=!!d[id]); priors=Array.isArray(d.priors)&&d.priors.length===6?d.priors.map(x=>Math.max(.001,Number(x)||1)):[1,1,1,1,1,1]; memoLogs=Array.isArray(d.memoLogs)?JSON.parse(JSON.stringify(d.memoLogs)):[];normalResearchSegments=NR.normalizeSegments(d.normalResearchSegments);normalResearchGgoApplied={...NR.blankHints(),...(d.normalResearchGgoApplied||{})};normalResearchEditId=null;
+    ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=!!d[id]); baselineDirectATAutoIfMissing(d); priors=Array.isArray(d.priors)&&d.priors.length===6?d.priors.map(x=>Math.max(.001,Number(x)||1)):[1,1,1,1,1,1]; memoLogs=Array.isArray(d.memoLogs)?JSON.parse(JSON.stringify(d.memoLogs)):[];normalResearchSegments=NR.normalizeSegments(d.normalResearchSegments);normalResearchGgoApplied={...NR.blankHints(),...(d.normalResearchGgoApplied||{})};normalResearchEditId=null;
     $('playDate').value=h.date||todayLocal(); $('investmentCoins').value=Math.max(0,Number(h.investment||0)); $('returnCoins').value=Math.max(0,Number(h.returns||0)); clearMemoForm(); renderPriorInputs(); refresh(); activateTab('setting'); $('saveState').textContent='過去実戦を現在データへ復元しました';
   }
   function clearCurrentSession(){
@@ -1293,12 +1303,12 @@
     $('priorInputs').innerHTML=priors.map((v,i)=>`<label>設定${i+1}<input type="number" min="0.001" step="0.1" value="${v}" data-prior="${i}"></label>`).join('');
     document.querySelectorAll('[data-prior]').forEach(el=>el.addEventListener('input',()=>{priors[Number(el.dataset.prior)]=Math.max(.001,Number(el.value)||1);refresh();}));
   }
-  function refresh(){reconcileResearchGgo();validate();updateDerived();const r=calculate();renderBars(r.probs);renderEvidence();renderMemo();renderResearch();renderHistory();save();}
+  function refresh(){reconcileResearchGgo();syncDirectAT();validate();updateDerived();const r=calculate();renderBars(r.probs);renderEvidence();renderMemo();renderResearch();renderHistory();save();}
 
   document.addEventListener('click',e=>{
-    const btn=e.target.closest('[data-delta]'); if(btn){const id=btn.dataset.target,delta=Number(btn.dataset.delta),sourceKey=Object.keys(NR.GGO_COUNTER_MAP).find(k=>NR.GGO_COUNTER_MAP[k]===id);if(delta<0&&sourceKey&&n(id)<=Number(normalResearchGgoApplied[sourceKey]||0)){$('saveState').textContent='自動反映分は通常時解析側で修正してください';return;}$(id).value=Math.max(0,n(id)+delta);refresh();return;}
+    const btn=e.target.closest('[data-delta]'); if(btn){const id=btn.dataset.target,delta=Number(btn.dataset.delta),sourceKey=Object.keys(NR.GGO_COUNTER_MAP).find(k=>NR.GGO_COUNTER_MAP[k]===id);if(delta<0&&sourceKey&&n(id)<=Number(normalResearchGgoApplied[sourceKey]||0)){$('saveState').textContent='自動反映分は通常時解析側で修正してください';return;}if(id==='directAT'&&delta<0&&n('directAT')<=n('directATAutoApplied')){$('saveState').textContent='自動反映分は低確/高確強チェ・バレット欄で修正してください';return;}$(id).value=Math.max(0,n(id)+delta);refresh();return;}
   });
-  ids.forEach(id=>$(id).addEventListener('input',refresh)); checks.forEach(id=>$(id).addEventListener('change',refresh));
+  ids.forEach(id=>$(id).addEventListener('input',()=>{if(id==='directAT'&&n('directAT')<n('directATAutoApplied')){$('directAT').value=n('directATAutoApplied');$('saveState').textContent='自動反映分は低確/高確強チェ・バレット欄で修正してください';}refresh();})); checks.forEach(id=>$(id).addEventListener('change',refresh));
   $('scrollTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
   $('copySummary').onclick=async()=>{const text=summary();try{await navigator.clipboard.writeText(text);$('saveState').textContent='全データまとめをコピーしました';}catch(e){$('summaryText').value=text;$('textModal').classList.add('open');}};
   $('openText').onclick=()=>{$('summaryText').value=summary();$('textModal').classList.add('open');};
@@ -1309,7 +1319,7 @@
   $('resetPriors').onclick=()=>{priors=[1,1,1,1,1,1];renderPriorInputs();refresh();}; $('recalc').onclick=refresh;
   $('resetAll').onclick=()=>{if(!confirm('現在の入力データ・通常時解析・旧CZ/ATログを削除しますか？\n保存済みの過去履歴は残ります。'))return;ids.forEach(id=>$(id).value=0);checks.forEach(id=>$(id).checked=false);priors=[1,1,1,1,1,1];memoLogs=[];normalResearchSegments=[];normalResearchGgoApplied=NR.blankHints();normalResearchEditId=null;clearMemoForm();$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();};
   $('loadSample').onclick=()=>{
-    const d={totalG:4603,normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,shootingChargeUnknown:12,shootingChargeATHit:0,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
+    const d={totalG:4603,normalG:4603,czCount:11,czSuccess:7,czFail:4,atCount:12,directAT:2,directATAutoApplied:2,lowStrongTotal:11,lowStrongCZ:4,lowStrongDirect:2,watermelonTotal:24,watermelonSC:12,shootingChargeUnknown:12,shootingChargeATHit:0,itemHit:1,defCZTotal:0,shino50:1,endDefault:7,endOdd:1,endEven:3,endHighStrong:1};
     ids.forEach(id=>$(id).value=d[id]??0); checks.forEach(id=>$(id).checked=false); priors=[1,1,1,1,1,1];memoLogs=[];normalResearchSegments=[];normalResearchGgoApplied=NR.blankHints();normalResearchEditId=null;$('playDate').value=todayLocal();$('investmentCoins').value=0;$('returnCoins').value=0;renderPriorInputs();refresh();window.scrollTo({top:0,behavior:'smooth'});
   };
   $('backupSave').onclick=()=>{downloadBackup(snapshot(),`sao2_backup_${backupStamp()}.json`);$('saveState').textContent='バックアップを保存しました';};
