@@ -1,0 +1,128 @@
+from pathlib import Path
+import math, hashlib
+
+src_path = Path('index.html')
+out_path = Path('SAO2_Ver6.0.html')
+src = src_path.read_text(encoding='utf-8')
+original_hash = hashlib.sha256(src.encode('utf-8')).hexdigest()
+text = src
+
+def replace_once(old, new, label):
+    global text
+    count = text.count(old)
+    if count != 1:
+        raise SystemExit(f'{label}: expected exactly 1 match, found {count}')
+    text = text.replace(old, new, 1)
+
+replace_once(
+    '<span class="tag">Ver.5.8.16 / DirectAT Auto Sync</span>',
+    '<span class="tag">Ver.6.0 / Strong Chance B Analysis</span>',
+    'version tag'
+)
+
+css_anchor = '  body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none}'
+css_add = '''  .strong-b-official{margin-top:10px;border:1px solid rgba(183,213,114,.28);border-radius:12px;padding:10px;background:rgba(183,213,114,.055)}
+  .strong-b-official-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .strong-b-rate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+  .strong-b-rate-cell{min-width:0;border:1px solid rgba(255,245,210,.10);border-radius:9px;padding:7px;background:rgba(38,36,19,.50);display:flex;align-items:baseline;justify-content:space-between;gap:5px}
+  .strong-b-rate-cell span{font-size:10px;color:var(--muted);white-space:nowrap}.strong-b-rate-cell strong{font-size:12px;white-space:nowrap}
+  @media(max-width:430px){.strong-b-rate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.strong-b-rate-cell span{font-size:13px}.strong-b-rate-cell strong{font-size:15px}.strong-b-official-head{align-items:flex-start}}
+
+''' + css_anchor
+replace_once(css_anchor, css_add, 'strong B CSS')
+
+strong_note = '      <div class="small">強チャンス目Bの出現率は全状態のB総回数÷総ゲーム数。確定CZ当選率だけは通常時A＋通常時Bを分母にします。</div>'
+strong_ui = '''      <div class="strong-b-official">
+        <div class="strong-b-official-head"><strong>強チャンス目B 正式公開解析値</strong><span class="pill good">設定推測へ使用</span></div>
+        <div class="strong-b-rate-grid" aria-label="強チャンス目B 設定別正式解析値">
+          <div class="strong-b-rate-cell"><span>設定1</span><strong>1/1057.0</strong></div>
+          <div class="strong-b-rate-cell"><span>設定2</span><strong>1/993.0</strong></div>
+          <div class="strong-b-rate-cell"><span>設定3</span><strong>1/936.2</strong></div>
+          <div class="strong-b-rate-cell"><span>設定4</span><strong>1/885.6</strong></div>
+          <div class="strong-b-rate-cell"><span>設定5</span><strong>1/840.2</strong></div>
+          <div class="strong-b-rate-cell"><span>設定6</span><strong>1/799.2</strong></div>
+        </div>
+        <div class="small" style="margin-top:8px">正式公開解析値。通常時＋AT中の<strong>総ゲーム数</strong>を分母に、強チャンス目Bの出現回数を二項尤度で設定推測へ反映します。通常時A/B→確定CZ当選率とは別の判別要素です。</div>
+      </div>
+''' + strong_note
+replace_once(strong_note, strong_ui, 'strong B official UI')
+
+calc_method_old = '      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、通常時 強チャンス目A/B合算→確定CZ、CZ失敗時アイテム、AT開始ステージ。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>'
+calc_method_new = '      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、<strong>強チャンス目B出現率（総G基準）</strong>、通常時 強チャンス目A/B合算→確定CZ、CZ失敗時アイテム、AT開始ステージ。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>'
+replace_once(calc_method_old, calc_method_new, 'calculation method note')
+
+replace_once(
+    '    strongChanceDef:[.004,.008,.008,.016,.023,.051],\n    item:[.203,.211,.219,.227,.25,.301],',
+    '    strongChanceDef:[.004,.008,.008,.016,.023,.051],\n    strongChanceBDen:[1057.0,993.0,936.2,885.6,840.2,799.2],\n    item:[.203,.211,.219,.227,.25,.301],',
+    'R strongChanceBDen'
+)
+replace_once(
+    '  const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70,atStartStage:1.00};',
+    '  const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,strongB:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70,atStartStage:1.00};',
+    'W strongB'
+)
+
+replace_once(
+    "    const G=n('normalG');\n    const lowN=n('lowStrongTotal'), lowK=n('lowStrongCZ')+n('lowStrongDirect');",
+    "    const G=n('normalG'), totalG=n('totalG'), strongBK=n('strongChanceTotal');\n    const lowN=n('lowStrongTotal'), lowK=n('lowStrongCZ')+n('lowStrongDirect');",
+    'calculate strong B inputs'
+)
+replace_once(
+    "      if(wmN>0) s += W.watermelon*binLL(wmK,wmN,R.watermelonSC[idx]);\n      if(G>0 && n('directAT')>=0) s += W.direct*poiLL(n('directAT'),G/R.directDen[idx]);",
+    "      if(wmN>0) s += W.watermelon*binLL(wmK,wmN,R.watermelonSC[idx]);\n      if(totalG>0) s += W.strongB*binLL(strongBK,totalG,1/R.strongChanceBDen[idx]);\n      if(G>0 && n('directAT')>=0) s += W.direct*poiLL(n('directAT'),G/R.directDen[idx]);",
+    'calculate strong B likelihood'
+)
+replace_once(
+    "    if(!finite.length || (!G && !lowN && !highN && !wmN && !scN && !itemN && !stageN && minSet===1)) return {probs:[0,0,0,0,0,0],scores};",
+    "    if(!finite.length || (!G && !totalG && !lowN && !highN && !wmN && !scN && !itemN && !stageN && minSet===1)) return {probs:[0,0,0,0,0,0],scores};",
+    'calculate no-data guard'
+)
+
+validate_anchor = "    if(n('strongChanceNormalB')>n('strongChanceTotal')) msgs.push('通常時の強チャンス目BがB総回数を超えています。');"
+replace_once(validate_anchor, validate_anchor + "\n    if(n('totalG')>0 && n('strongChanceTotal')>n('totalG')) msgs.push('強チャンス目B回数が総ゲーム数を超えています。');", 'strong B validation')
+
+evidence_old = '''    if(n('strongChanceTotal') && n('totalG')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">強チャンス目B 出現率</div><span class="pill mid">総G基準</span></div><div class="ev-rate">${n('strongChanceTotal')}回 / ${n('totalG').toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),n('totalG'))}</div><div class="ev-note">総ゲーム数を分母にした実戦出現率です。</div></div>`);}'''
+evidence_new = '''    if(n('totalG')){const tot=n('totalG'),k=n('strongChanceTotal'),best=bestFitBin(k,tot,R.strongChanceBDen.map(d=>1/d)),sample=tot<2000?'サンプル少':tot<5000?'参考':'正式判別',tendency=best>=5?'高設定寄り傾向':best<=2?'低設定寄り傾向':'中間設定寄り傾向',actual=k?`${k}回 / ${tot.toLocaleString()}G = ${fmtDen(k,tot)}`:`0回 / ${tot.toLocaleString()}G`;out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">強チャンス目B（正式公開解析値）</div><span class="pill ${tot<2000?'mid':'good'}">${sample}</span></div><div class="ev-rate">${actual}</div><div class="ev-note">設定1 1/1057.0 ～ 設定6 1/799.2。総Gと出現回数を二項尤度で相対期待度へ反映。現在は${tendency}（尤度上もっとも近い設定${best}）。${tot<2000?'試行量が少ないため強く断定しません。':''} B出現率と通常時A/B→確定CZ移行率は別要素として評価します。</div></div>`);}'''
+replace_once(evidence_old, evidence_new, 'strong B evidence')
+
+derived_old = "    $('strongChanceRate').innerHTML=`B出現率：<strong>${(n('strongChanceTotal')&&total)?`${n('strongChanceTotal')}回 / ${total.toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),total)}`:'―'}</strong>`;"
+derived_new = "    const strongBCount=n('strongChanceTotal'); $('strongChanceRate').innerHTML=`B出現率：<strong>${total?`${strongBCount}回 / ${total.toLocaleString()}G${strongBCount?` = ${fmtDen(strongBCount,total)}`:' = 0回'}`:'―'}</strong>`;"
+replace_once(derived_old, derived_new, 'strong B derived display')
+
+footer_old = '    <div class="footer-note">Ver.5.8.11：通常時解析のSC入力UIを廃止し、液晶800G天井CZと実G数499G天井CZを分離。</div>'
+footer_new = '    <div class="footer-note">Ver.6.0：強チャンス目Bの正式設定別出現率を、総ゲーム数×出現回数の二項尤度として相対期待度へ正式採用。既存データ形式は変更していません。</div>'
+replace_once(footer_old, footer_new, 'footer version note')
+
+out_path.write_text(text, encoding='utf-8')
+
+after_hash = hashlib.sha256(src_path.read_bytes()).hexdigest()
+assert original_hash == after_hash, 'master index.html was modified'
+
+# Static compatibility checks.
+assert "const STORAGE_KEY = 'sao2-setting-tool-v4';" in text
+assert "const EVENT_STORAGE_KEY='sao2-event-store-v1';" in text
+assert 'normalResearchSegments' in text and 'sessions' in text and 'segments' in text and 'events' in text
+assert text.count('id="strongChanceTotal"') == 1
+assert 'strongChanceBDen:[1057.0,993.0,936.2,885.6,840.2,799.2]' in text
+assert "if(totalG>0) s += W.strongB*binLL(strongBK,totalG,1/R.strongChanceBDen[idx]);" in text
+assert 'Ver.6.0 / Strong Chance B Analysis' in text
+assert '※公開解析値への相対尤度。真の設定確率ではありません。' in text
+
+# Formula tests: binomial likelihood; setting-independent combination term cancels during normalization.
+dens=[1057.0,993.0,936.2,885.6,840.2,799.2]
+def ll(k,n,d):
+    p=1/d
+    return k*math.log(p)+(n-k)*math.log1p(-p)
+def probs(k,n):
+    vals=[ll(k,n,d) for d in dens]
+    m=max(vals); ex=[math.exp(v-m) for v in vals]; s=sum(ex)
+    return [v/s for v in ex]
+for k,n in [(0,1000),(0,10000),(1,800),(7,4823),(20,10000)]:
+    ps=probs(k,n)
+    assert all(math.isfinite(x) for x in ps)
+    assert abs(sum(ps)-1.0)<1e-12
+assert probs(0,1000) != probs(0,10000)
+assert probs(7,4823)[5] > probs(7,4823)[0]
+print('MASTER_SHA256', original_hash)
+print('OUTPUT_SHA256', hashlib.sha256(out_path.read_bytes()).hexdigest())
+print('STATIC_AND_LIKELIHOOD_TESTS_OK')
