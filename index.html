@@ -146,6 +146,13 @@
     input,select,textarea,button,.field,.card{max-width:100%}
   }
 
+  .strong-b-official{margin-top:10px;border:1px solid rgba(183,213,114,.28);border-radius:12px;padding:10px;background:rgba(183,213,114,.055)}
+  .strong-b-official-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .strong-b-rate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+  .strong-b-rate-cell{min-width:0;border:1px solid rgba(255,245,210,.10);border-radius:9px;padding:7px;background:rgba(38,36,19,.50);display:flex;align-items:baseline;justify-content:space-between;gap:5px}
+  .strong-b-rate-cell span{font-size:10px;color:var(--muted);white-space:nowrap}.strong-b-rate-cell strong{font-size:12px;white-space:nowrap}
+  @media(max-width:430px){.strong-b-rate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.strong-b-rate-cell span{font-size:13px}.strong-b-rate-cell strong{font-size:15px}.strong-b-official-head{align-items:flex-start}}
+
   body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none}
   body::before{
     z-index:0;opacity:.62;
@@ -178,7 +185,7 @@
 <body>
 <div class="app">
   <div class="hero">
-    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.5.8.16 / DirectAT Auto Sync</span></div></div>
+    <div class="title-row"><h1>SAO2 判別・実戦ログ</h1><div style="display:flex;align-items:center;gap:6px"><button class="install-btn" id="installApp">ホームに追加</button><span class="tag">Ver.6.0 / Strong Chance B Analysis</span></div></div>
     <div class="save-state" id="saveState">入力すると自動保存されます</div>
   </div>
   <div class="install-note" id="installNote">ホーム画面から起動すると、ブラウザのURLバーなしでアプリ風に使えます。</div>
@@ -323,6 +330,18 @@
         <div class="field"><div class="name">通常時 A/B→確定CZ</div><div class="num-wrap"><button data-delta="-1" data-target="strongChanceDefCZ">−</button><input id="strongChanceDefCZ" type="number" min="0" value="0"><button data-delta="1" data-target="strongChanceDefCZ">＋</button></div><div class="calc" id="strongChanceDefRate">通常時A+B当選率：―</div></div>
         <div class="field"><div class="name">確定CZ 総回数</div><div class="num-wrap"><button data-delta="-1" data-target="defCZTotal">−</button><input id="defCZTotal" type="number" min="0" value="0"><button data-delta="1" data-target="defCZTotal">＋</button></div></div>
       </div>
+      <div class="strong-b-official">
+        <div class="strong-b-official-head"><strong>強チャンス目B 正式公開解析値</strong><span class="pill good">設定推測へ使用</span></div>
+        <div class="strong-b-rate-grid" aria-label="強チャンス目B 設定別正式解析値">
+          <div class="strong-b-rate-cell"><span>設定1</span><strong>1/1057.0</strong></div>
+          <div class="strong-b-rate-cell"><span>設定2</span><strong>1/993.0</strong></div>
+          <div class="strong-b-rate-cell"><span>設定3</span><strong>1/936.2</strong></div>
+          <div class="strong-b-rate-cell"><span>設定4</span><strong>1/885.6</strong></div>
+          <div class="strong-b-rate-cell"><span>設定5</span><strong>1/840.2</strong></div>
+          <div class="strong-b-rate-cell"><span>設定6</span><strong>1/799.2</strong></div>
+        </div>
+        <div class="small" style="margin-top:8px">正式公開解析値。通常時＋AT中の<strong>総ゲーム数</strong>を分母に、強チャンス目Bの出現回数を二項尤度で設定推測へ反映します。通常時A/B→確定CZ当選率とは別の判別要素です。</div>
+      </div>
       <div class="small">強チャンス目Bの出現率は全状態のB総回数÷総ゲーム数。確定CZ当選率だけは通常時A＋通常時Bを分母にします。</div>
     </details>
 
@@ -383,14 +402,14 @@
       <div class="priors" id="priorInputs"></div>
       <div class="actions"><button class="btn secondary" id="resetPriors">倍率を均等に戻す</button><button class="btn secondary" id="recalc">再計算</button></div>
       <h3>計算方式</h3>
-      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、通常時 強チャンス目A/B合算→確定CZ、CZ失敗時アイテム、AT開始ステージ。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>
+      <div class="small">二項分布：強チェリーCZ相当、スイカ→SC、<strong>強チャンス目B出現率（総G基準）</strong>、通常時 強チャンス目A/B合算→確定CZ、CZ失敗時アイテム、AT開始ステージ。ポアソン近似：CZ、AT初当たり、詩乃AT直撃、確定CZ総数。CZ/ATなど相関しやすい全体確率は重みを下げています。</div>
     </details>
   </section>
 
   <section class="card">
     <h2>データ操作</h2>
     <div class="actions"><button class="btn secondary" id="loadSample">今回の実戦データ</button><button class="btn danger" id="resetAll">現在の入力を削除</button></div>
-    <div class="footer-note">Ver.5.8.11：通常時解析のSC入力UIを廃止し、液晶800G天井CZと実G数499G天井CZを分離。</div>
+    <div class="footer-note">Ver.6.0：強チャンス目Bの正式設定別出現率を、総ゲーム数×出現回数の二項尤度として相対期待度へ正式採用。既存データ形式は変更していません。</div>
   </section>
   </div>
 
@@ -705,14 +724,16 @@
     directDen:[18091.8,14160.5,14390.8,8498.0,4723.3,3415.7],
     defCZDen:[20177.5,17579.1,17586.3,13784.5,11459.0,7077.2],
     strongChanceDef:[.004,.008,.008,.016,.023,.051],
+    strongChanceBDen:[1057.0,993.0,936.2,885.6,840.2,799.2],
     item:[.203,.211,.219,.227,.25,.301],
     atStartStage:[.60,.40,.60,.40,.60,.40]
   };
-  const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70,atStartStage:1.00};
+  const W = {cz:.35,at:.35,lowStrong:.90,highStrong:.80,watermelon:1.00,strongB:1.00,direct:.75,defCZ:.30,strongDef:1.00,item:.70,atStartStage:1.00};
   let priors = [1,1,1,1,1,1];
   let memoLogs = [];
   let memoEditIndex = -1;
   let playHistory = [];
+  let historyVer6EstimateCache = new Map();
   const NR=globalThis.SAO2NormalResearchV58Core;
   let normalResearchSegments=[];
   let normalResearchGgoApplied=NR.blankHints();
@@ -804,6 +825,7 @@
     if(n('highStrongCZ')+n('highStrongDirect')>n('highStrongTotal')) msgs.push('高確強チェリーのCZ＋直撃が成立回数を超えています。');
     if(n('watermelonSC')>n('watermelonTotal')) msgs.push('スイカ→SC当選がスイカ回数を超えています。');
     if(n('strongChanceNormalB')>n('strongChanceTotal')) msgs.push('通常時の強チャンス目BがB総回数を超えています。');
+    if(n('totalG')>0 && n('strongChanceTotal')>n('totalG')) msgs.push('強チャンス目B回数が総ゲーム数を超えています。');
     if(n('strongChanceDefCZ')>n('strongChanceA')+n('strongChanceNormalB')) msgs.push('通常時A/B→確定CZが通常時の強チャンス目A+B回数を超えています。');
     if(n('itemHit')>n('czFail')) msgs.push('AT強化アイテム獲得がCZ失敗回数を超えています。');
     const scTotal=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight')+n('shootingChargeUnknown');
@@ -818,7 +840,7 @@
   }
 
   function calculate(){
-    const G=n('normalG');
+    const G=n('normalG'), totalG=n('totalG'), strongBK=n('strongChanceTotal');
     const lowN=n('lowStrongTotal'), lowK=n('lowStrongCZ')+n('lowStrongDirect');
     const highN=n('highStrongTotal'), highK=n('highStrongCZ')+n('highStrongDirect');
     const wmN=n('watermelonTotal'), wmK=n('watermelonSC');
@@ -834,6 +856,7 @@
       if(lowN>0) s += W.lowStrong*binLL(lowK,lowN,R.lowStrong[idx]);
       if(highN>0) s += W.highStrong*binLL(highK,highN,R.highStrong[idx]);
       if(wmN>0) s += W.watermelon*binLL(wmK,wmN,R.watermelonSC[idx]);
+      if(totalG>0) s += W.strongB*binLL(strongBK,totalG,1/R.strongChanceBDen[idx]);
       if(G>0 && n('directAT')>=0) s += W.direct*poiLL(n('directAT'),G/R.directDen[idx]);
       if(G>0 && n('defCZTotal')>=0) s += W.defCZ*poiLL(n('defCZTotal'),G/R.defCZDen[idx]);
       if(scN>0) s += W.strongDef*binLL(scK,scN,R.strongChanceDef[idx]);
@@ -842,7 +865,7 @@
       return s;
     });
     const finite=scores.filter(Number.isFinite);
-    if(!finite.length || (!G && !lowN && !highN && !wmN && !scN && !itemN && !stageN && minSet===1)) return {probs:[0,0,0,0,0,0],scores};
+    if(!finite.length || (!G && !totalG && !lowN && !highN && !wmN && !scN && !itemN && !stageN && minSet===1)) return {probs:[0,0,0,0,0,0],scores};
     const mx=Math.max(...finite); let ex=scores.map(x=>Number.isFinite(x)?Math.exp(x-mx):0); const sum=ex.reduce((a,c)=>a+c,0)||1; ex=ex.map(x=>x/sum); return {probs:ex,scores};
   }
 
@@ -886,7 +909,7 @@
     const scKnown=n('shootingChargeKirito')+n('shootingChargeSinon')+n('shootingChargeWater')+n('shootingChargeNight'), scAll=scKnown+n('shootingChargeUnknown');
     if(scAll){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">シューティングチャージ種類統計</div><span class="pill mid">参考記録</span></div><div class="ev-rate">キリト${n('shootingChargeKirito')} / シノン${n('shootingChargeSinon')} / 水鉄砲${n('shootingChargeWater')} / NIGHT SPLASH${n('shootingChargeNight')}${n('shootingChargeUnknown')?` / 旧Ver.種類不明${n('shootingChargeUnknown')}`:''}</div><div class="ev-note">種類判明${scKnown}回${scKnown?`：キリト${fmtPct(n('shootingChargeKirito')/scKnown)}・シノン${fmtPct(n('shootingChargeSinon')/scKnown)}・水鉄砲${fmtPct(n('shootingChargeWater')/scKnown)}・NIGHT SPLASH${fmtPct(n('shootingChargeNight')/scKnown)}`:''}。設定期待度の計算には未使用です。</div></div>`);}
     if(n('sniperChanceTotal')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">スナイパーチャンス突破率</div><span class="pill mid">参考記録</span></div><div class="ev-rate">${n('sniperChanceSuccess')}/${n('sniperChanceTotal')} = ${fmtPct(n('sniperChanceSuccess')/n('sniperChanceTotal'))}</div><div class="ev-note">AT中のスナイパーチャンス総数と突破数を保存します。現時点では設定期待度の計算には使用しません。</div></div>`);}
-    if(n('strongChanceTotal') && n('totalG')){out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">強チャンス目B 出現率</div><span class="pill mid">総G基準</span></div><div class="ev-rate">${n('strongChanceTotal')}回 / ${n('totalG').toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),n('totalG'))}</div><div class="ev-note">総ゲーム数を分母にした実戦出現率です。</div></div>`);}
+    if(n('totalG')){const tot=n('totalG'),k=n('strongChanceTotal'),best=bestFitBin(k,tot,R.strongChanceBDen.map(d=>1/d)),sample=tot<2000?'サンプル少':tot<5000?'参考':'正式判別',tendency=best>=5?'高設定寄り傾向':best<=2?'低設定寄り傾向':'中間設定寄り傾向',actual=k?`${k}回 / ${tot.toLocaleString()}G = ${fmtDen(k,tot)}`:`0回 / ${tot.toLocaleString()}G`;out.push(`<div class="ev"><div class="ev-top"><div class="ev-title">強チャンス目B（正式公開解析値）</div><span class="pill ${tot<2000?'mid':'good'}">${sample}</span></div><div class="ev-rate">${actual}</div><div class="ev-note">設定1 1/1057.0 ～ 設定6 1/799.2。総Gと出現回数を二項尤度で相対期待度へ反映。現在は${tendency}（尤度上もっとも近い設定${best}）。${tot<2000?'試行量が少ないため強く断定しません。':''} B出現率と通常時A/B→確定CZ移行率は別要素として評価します。</div></div>`);}
     if(n('strongChanceA')+n('strongChanceNormalB')){const k=n('strongChanceDefCZ'),tot=n('strongChanceA')+n('strongChanceNormalB');out.push(ev('通常時 強チャンス目A/B → 確定CZ',`${k}/${tot} = ${fmtPct(k/tot)}`,bestFitBin(k,tot,R.strongChanceDef),'通常時の強チャンス目A・B合算を分母。AT中のA/Bは含めません。設定1 0.4% ～ 設定6 5.1%。','good'));}
     if(G){out.push(ev('確定CZ 総出現',`${n('defCZTotal')}/${G.toLocaleString()}G = ${fmtDen(n('defCZTotal'),G)}`,bestFitPoi(n('defCZTotal'),G,R.defCZDen),'設定1 約1/20,178 ～ 設定6 約1/7,077。強チャンス目経由と相関するため低めの重み。','mid'));}
     const qual=[]; if(n('endOdd'))qual.push(`奇数示唆${n('endOdd')}`);if(n('endEven'))qual.push(`偶数示唆${n('endEven')}`);if(n('endHigh'))qual.push(`高設定示唆${n('endHigh')}`);if(n('endHighStrong'))qual.push(`高設定示唆強${n('endHighStrong')}`);if(n('endChild'))qual.push(`幼少期${n('endChild')}`);
@@ -897,7 +920,7 @@
   function updateDerived(){
     const total=n('totalG'), G=n('normalG'), autoAT=Math.max(0,total-G); if($('atGameCount')) $('atGameCount').value=autoAT;
     $('czRate').textContent=n('czCount')&&G?`出現率：${fmtDen(n('czCount'),G)}`:'出現率：―'; $('atRate').textContent=n('atCount')&&G?`出現率：${fmtDen(n('atCount'),G)}`:'出現率：―';
-    $('strongChanceRate').innerHTML=`B出現率：<strong>${(n('strongChanceTotal')&&total)?`${n('strongChanceTotal')}回 / ${total.toLocaleString()}G = ${fmtDen(n('strongChanceTotal'),total)}`:'―'}</strong>`;
+    const strongBCount=n('strongChanceTotal'); $('strongChanceRate').innerHTML=`B出現率：<strong>${total?`${strongBCount}回 / ${total.toLocaleString()}G${strongBCount?` = ${fmtDen(strongBCount,total)}`:' = 0回'}`:'―'}</strong>`;
     const scAB=n('strongChanceA')+n('strongChanceNormalB'); $('strongChanceDefRate').innerHTML=`通常時A+B当選率：<strong>${scAB?`${n('strongChanceDefCZ')}/${scAB} = ${fmtPct(n('strongChanceDefCZ')/scAB)}`:'―'}</strong>`;
     const ltot=n('lowStrongTotal'),lk=n('lowStrongCZ')+n('lowStrongDirect'); $('lowStrongRate').innerHTML=`CZ相当当選率：<strong>${ltot?`${lk}/${ltot} = ${fmtPct(lk/ltot)}`:'―'}</strong>`;
     const htot=n('highStrongTotal'),hk=n('highStrongCZ')+n('highStrongDirect'); $('highStrongRate').innerHTML=`CZ相当当選率：<strong>${htot?`${hk}/${htot} = ${fmtPct(hk/htot)}`:'―'}</strong>`;
@@ -1093,12 +1116,22 @@
 
   function getBestFromSession(data){
     const current={}; ids.forEach(id=>current[id]=$(id).value); checks.forEach(id=>current[id]=$(id).checked); const oldP=priors.slice(), oldMemo=memoLogs;
+    const source={...(data||{})};
+    if(source.totalG===undefined){source.totalG=Math.max(0,Number(source.normalG||0))+Math.max(0,Number(source.atGameCount||0));}
     try{
-      ids.forEach(id=>{if(data[id]!==undefined)$(id).value=data[id]}); checks.forEach(id=>{if(data[id]!==undefined)$(id).checked=!!data[id]}); if(Array.isArray(data.priors)&&data.priors.length===6)priors=data.priors.slice();
+      ids.forEach(id=>{$(id).value=source[id]??0;}); checks.forEach(id=>{$(id).checked=!!source[id];}); priors=Array.isArray(source.priors)&&source.priors.length===6?source.priors.map(x=>Math.max(.001,Number(x)||1)):[1,1,1,1,1,1];
       const r=calculate(), mx=Math.max(...r.probs), idx=r.probs.indexOf(mx); return {setting:mx>0?idx+1:null,pct:mx>0?mx*100:0,probs:r.probs.slice()};
     } finally {
       ids.forEach(id=>$(id).value=current[id]); checks.forEach(id=>$(id).checked=current[id]); priors=oldP; memoLogs=oldMemo;
     }
+  }
+  function getHistoryVer6Estimate(entry){
+    if(!entry)return {setting:null,pct:0,probs:[0,0,0,0,0,0]};
+    const source={...(entry.data||{})};
+    if(source.totalG===undefined){source.totalG=Math.max(0,Number(entry.totalG||0))||Math.max(0,Number(source.normalG||entry.normalG||0))+Math.max(0,Number(source.atGameCount||0));}
+    const key=entry.id||`${entry.savedAt||''}|${entry.date||''}|${source.totalG||0}|${source.strongChanceTotal||0}`;
+    if(historyVer6EstimateCache.has(key))return historyVer6EstimateCache.get(key);
+    const result=getBestFromSession(source);historyVer6EstimateCache.set(key,result);return result;
   }
   function saveCurrentToHistory(){
     const meta=currentMeta();
@@ -1142,7 +1175,7 @@
   const detailRow=(k,v,sub='')=>`<div class="detail-row"><div class="detail-k">${esc(k)}</div><div class="detail-v">${v}${sub?`<div class="detail-sub">${esc(sub)}</div>`:''}</div></div>`;
   const detailSection=(title,rows)=>`<div class="detail-section"><div class="detail-section-title">${esc(title)}</div>${rows.join('')}</div>`;
   function historyDetailHtml(entry){
-    const d=entry?.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id], G=hv('normalG'), totalG=hv('totalG')||(G+hv('atGameCount')), autoATG=Math.max(0,totalG-G);
+    const d=entry?.data||{}, hv=id=>Math.max(0,Number(d[id]||0)), hb=id=>!!d[id], G=hv('normalG'), totalG=hv('totalG')||(G+hv('atGameCount')), autoATG=Math.max(0,totalG-G), ver6=getHistoryVer6Estimate(entry);
     const rate=(hits,total)=>hits&&total?`${hits}回　${fmtDen(hits,total)}`:`${hits}回`;
     const ratio=(hits,total)=>total?`${hits}/${total}　${fmtPct(hits/total)}`:`${hits}/${total}`;
     const net=Number(entry?.net||0), netCls=net>0?'plus':net<0?'minus':'zero';
@@ -1153,7 +1186,7 @@
     const ml=Array.isArray(d.memoLogs)?d.memoLogs:[], lc=getLampCounts(ml,d.normalResearchSegments||[]);
     const conf=[]; if(hb('end2plus'))conf.push('設定2以上'); if(hb('end3plus'))conf.push('設定3以上'); if(hb('end4plus'))conf.push('設定4以上'); if(hb('end6'))conf.push('設定6濃厚'); if(hb('ed4plus'))conf.push('ED 設定4以上'); if(hb('ed6'))conf.push('ED 設定6濃厚'); if(hb('mr4plus'))conf.push('マザロザ 設定4以上'); if(hb('mr6'))conf.push('マザロザ 設定6濃厚');
     const html=[];
-    html.push(`<div class="detail-hero"><div><div class="detail-date">${esc(entry?.date||'日付なし')}</div><div class="detail-est">保存時推測：${entry?.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}</div></div><div class="detail-net ${netCls}">${esc(fmtCoins(net))}</div></div>`);
+    html.push(`<div class="detail-hero"><div><div class="detail-date">${esc(entry?.date||'日付なし')}</div><div class="detail-est">保存時推測：${entry?.bestSetting?`設定${entry.bestSetting} ${(entry.bestPct||0).toFixed(1)}%`:'データ不足'}<br>Ver6再計算：${ver6.setting?`設定${ver6.setting} ${ver6.pct.toFixed(1)}%`:'データ不足'}</div></div><div class="detail-net ${netCls}">${esc(fmtCoins(net))}</div></div>`);
     html.push(detailSection('実戦結果',[
       detailRow('総ゲーム数',`${totalG.toLocaleString()}G`),
       detailRow('通常ゲーム数',`${G.toLocaleString()}G`),
@@ -1285,7 +1318,7 @@
     $('historyAtStartTotal').textContent=`${stageAgg.total}回`;
     const ggoRows=NR.historyGgoByBest(playHistory);$('historyGgoByBest').innerHTML=`<table class="research-table"><thead><tr><th>保存時1位</th><th>実戦</th><th>通常G</th><th>示唆総数</th><th>1000Gあたり</th><th>内訳</th></tr></thead><tbody>${ggoRows.map(a=>`<tr><td>設定${a.bestSetting}</td><td>${a.sessions}${a.sessions<5?'（参考）':''}</td><td>${a.normalGames.toLocaleString()}</td><td>${a.ggoTotal}</td><td>${a.normalGames?(a.ggoTotal/a.normalGames*1000).toFixed(2):'―'}</td><td>詩${a.shino}/キ${a.kirito}/シ${a.sinon}/死${a.death}/バ緑${a.buggyGreen}/バ赤${a.buggyRed}${a.buggyLegacy?`/バ不明${a.buggyLegacy}`:''}</td></tr>`).join('')}</tbody></table>`;
     if(!playHistory.length){$('historyList').innerHTML='<div class="empty-memo">保存した実戦はまだありません。<br>実戦終了時に「履歴に保存」を押すとここに残ります。</div>';return;}
-    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0,nr=Array.isArray(d.normalResearchSegments)?d.normalResearchSegments.filter(x=>x.status==='closed').length:0; return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">総G / 通常G</div><div class="v">${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()} / ${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">通常時解析 / 旧ログ</div><div class="v">${nr} / ${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
+    $('historyList').innerHTML=playHistory.map((h,i)=>{const net=Number(h.net||0), cls=net>0?'plus':net<0?'minus':'zero', d=h.data||{}, ml=Array.isArray(d.memoLogs)?d.memoLogs.length:0,nr=Array.isArray(d.normalResearchSegments)?d.normalResearchSegments.filter(x=>x.status==='closed').length:0,ver6=getHistoryVer6Estimate(h); return `<div class="history-entry"><div class="history-head"><div><div class="history-date">${esc(h.date||'日付なし')}</div><div class="history-sub">保存時 ${h.savedAt?new Date(h.savedAt).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="history-net ${cls}">${esc(fmtCoins(net))}</div></div><div class="history-metrics"><div class="history-metric"><div class="k">総G / 通常G</div><div class="v">${Number(h.totalG||(h.data?.totalG)||(Number(h.normalG||0)+Number(h.data?.atGameCount||0))||0).toLocaleString()} / ${Number(h.normalG||0).toLocaleString()}G</div></div><div class="history-metric"><div class="k">保存時推測</div><div class="v">${h.bestSetting?`設定${h.bestSetting} ${(h.bestPct||0).toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">Ver6再計算</div><div class="v">${ver6.setting?`設定${ver6.setting} ${ver6.pct.toFixed(1)}%`:'―'}</div></div><div class="history-metric"><div class="k">投資 / 回収</div><div class="v">${Number(h.investment||0).toLocaleString()} / ${Number(h.returns||0).toLocaleString()}枚</div></div><div class="history-metric"><div class="k">通常時解析 / 旧ログ</div><div class="v">${nr} / ${ml}件</div></div></div><div class="history-actions"><button data-history-view="${i}">詳細を見る</button><button class="restore" data-history-restore="${i}">復元</button><button class="del" data-history-delete="${i}">削除</button></div></div>`;}).join('');
   }
   function restoreHistory(i){
     const h=playHistory[i]; if(!h||!h.data)return; if(!confirm('現在の入力内容を、この過去実戦データで上書きしますか？\n履歴そのものは消えません。'))return; const d=h.data;
